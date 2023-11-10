@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  db:
+    image: bitnami/postgresql
+
+    ports:
+      - "1281:1234"
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=image_processing
+      - POSTGRESQL_PORT_NUMBER=1234
+    networks:
+      - my-network
+  db_manager:
+    build: db_manager/
+    ports:
+      - "1282:1235"
+    depends_on:
+      - db
+    networks:
+      my-network:
+networks:
+  my-network:
