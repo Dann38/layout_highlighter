@@ -1,9 +1,18 @@
 version: "3"
 
 services:
+  api:
+    build: api/
+    ports:
+      - "1280:1233"
+    depends_on:
+      - db
+      - db_manager
+      - tesseract
+    networks:
+      my-network:
   db:
     image: bitnami/postgresql
-
     ports:
       - "1281:1234"
     environment:
@@ -17,6 +26,14 @@ services:
     build: db_manager/
     ports:
       - "1282:1235"
+    depends_on:
+      - db
+    networks:
+      my-network:
+  tesseract:
+    build: tesseract/
+    ports:
+      - "1283:1236"
     depends_on:
       - db
     networks:

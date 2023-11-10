@@ -1,0 +1,11 @@
+html{
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.main{
+  height: 500px;
+}
+.classifier-block{
+    background-color: rgb(200, 219, 247)
+}

@@ -20,6 +20,6 @@ COPY ./tesseract_reader /tesseract/tesseract_reader
 #COPY ./setup.py /tesseract/setup.py
 #RUN tesseract/setup.py install
 
-COPY ./api /tesseract
+COPY ./api /tesseract/api
 
-CMD ["python3", "main.py"]
+CMD ["python3", "api/main.py"]
