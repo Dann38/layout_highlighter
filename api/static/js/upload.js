@@ -4,23 +4,25 @@ var addHistoryImg = function(id, pr=false) {
     card.classList.add("card");
     card.style="width: 100%;";
     var card_img = document.createElement("img");
+    card_img.classList.add("card-img-top")
     var card_body = document.createElement("div");
     card_body.classList.add("card-body");
+    var btn_id = document.createElement("a");
+    btn_id.classList.add("button_id_send");
+    btn_id.classList.add("btn");
+    btn_id.classList.add("btn-primary");
+    btn_id.dataset.rowId = id;
+    btn_id.id = id;
+    btn_id.innerText = "id: " + id;
+    card_body.prepend(btn_id);
+    card.prepend(card_body);
+    card.prepend(card_img);
 
-    let new_history_img = `<div class="card" style="width: 100%;">
-             <img src="" class="card-img-top" alt="...">
-             <div class="card-body">
-                  <a href="#" class="button_id_send btn btn-primary" data-row-id="`+id +`">id: `+id+`</a>
-             </div>
-        </div>`;
-
-
-    console.log(new_history_img);
-    setSrcID(new_history_img, id);
+    setSrcID(card_img, id);
     if (pr) {
-        $("#history-group").prepend(new_history_img)
+        $("#history-group").prepend(card)
     }else{
-        $("#history-group").append(new_history_img);
+        $("#history-group").append(card);
     }
 
     $(".button_id_send").on("click", btnClassClick);
@@ -64,7 +66,7 @@ var btnClassClick = function(e){
 //    addSetClassify(e.target.dataset.rowId)
 }
 
-var getSrcID = function(img_object, id_image){
+var setSrcID = function(img_object, id_image){
     console.log(id_image)
     const get_img = new XMLHttpRequest();
     //    const formData = new FormData();
@@ -73,16 +75,14 @@ var getSrcID = function(img_object, id_image){
     get_img.send();
     var rez = "";
     get_img.onload = function() {
-        window['rez']  = "data:image/jpeg;base64,"+$.parseJSON(get_img.response);
+        $(img_object).attr("src", "data:image/jpeg;base64,"+$.parseJSON(get_img.response));
     }
-    console.log(window['rez'])
-    return window['rez'];
 }
 
 var openImage = function(id_image){
-    var src = getSrcID(id_image)
-    $(".upload-file").attr("src", src);
-    $(".result-file").attr("src", src);
+    var src = setSrcID($(".upload-file"), id_image)
+//    $(".upload-file").attr("src", src);
+//    $(".result-file").attr("src", src);
     $("#work-id").attr("data-row-id", id_image)
 }
 
