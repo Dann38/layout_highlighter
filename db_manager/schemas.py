@@ -10,5 +10,5 @@ class ImageCreate(ImageBase):
 
 
 class Image(ImageBase):
-    id: int
+    id: str
     bytes_img: bytes

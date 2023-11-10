@@ -1,3 +1,5 @@
+import base64
+
 from fastapi import Depends, FastAPI, UploadFile, File
 from sqlalchemy.orm import Session
 import uvicorn
@@ -28,3 +30,10 @@ async def create_image(file: UploadFile = File(...), db: Session = Depends(get_d
 async def read_images(page: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     images = crud.get_images(db, page=page, limit=limit)
     return [img.id for img in images]
+
+
+@app.get("/image/{id_image}/")
+async def read_images(id_image: str, db: Session = Depends(get_db)):
+    images = crud.get_image_id(db, image_id=id_image)
+    base64_utf8_str = base64.b64encode(images.image).decode('utf-8')
+    return base64_utf8_str

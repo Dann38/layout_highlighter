@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 import models, schemas
 
 
-def get_image_id(db: Session, image_id: int):
-    return db.query(models.Image).filter(models.Image.id == image_id).first()
+def get_image_id(db: Session, image_id: str):
+    rez = db.query(models.Image).filter(models.Image.id == image_id).first()
+    return rez
 
 
 def create_image(db: Session, image: schemas.ImageCreate):
