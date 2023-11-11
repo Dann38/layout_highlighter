@@ -25,11 +25,7 @@ def index():
 
 @app.route("/upload_image", methods=["POST"])
 def upload():
-    # bytes_file = request.files["file"].stream.read()
     requests_upload = requests.post(f'{host_db_manager}/upload_image', files=request.files)
-    # print(requests_upload)
-    # id_image = json.loads(requests_upload.content)["id_image"]
-
     return requests_upload.content
 
 
@@ -59,7 +55,7 @@ def get_image(id_image: str):
 #
 @app.route("/get_history", methods=["GET"])
 def get_history():
-    content = requests.get(f'{host_db_manager}/images/?page=0&limit=10').content
+    content = requests.get(f'{host_db_manager}/images/?page=1&limit=10').content
     return content
 #
 #
@@ -67,3 +63,26 @@ def get_history():
 # def get_set_classifier(id_image):
 #     content = requests.get(f'{host_classifier}/file/get_set_classifier/{id_image}').content
 #     return json.loads(content)
+
+
+@app.route("/processing_create/<id_image>", methods=["POST"])
+def create_processing(id_image: str):
+    content = requests.post(f'{host_db_manager}/processing_create/', json={"id_image": id_image}).content
+    return content
+
+
+@app.route("/tesseract_process/", methods=["POST"])
+def tesseract_processing():
+    id_process = str(request.form["id_process"])
+    id_image = requests.get(f'{host_db_manager}/processing/{id_process}').json()["id_image"]
+    image = bytes.decode(get_image(id_image=id_image), "utf-8")
+
+    content = requests.post(f'{host_tesseract}/bboxes/', json={
+        "base64": image,
+        "list_bboxes": [
+                {}
+        ],
+        "list_text": [
+             "string"
+        ]}).content
+    return content

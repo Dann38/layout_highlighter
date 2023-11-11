@@ -17,8 +17,8 @@ RUN python3 -m pip install --no-cache-dir --upgrade -r /tesseract/requirements.t
 
 #
 COPY ./tesseract_reader /tesseract/tesseract_reader
-#COPY ./setup.py /tesseract/setup.py
-#RUN tesseract/setup.py install
+COPY ./setup.py /tesseract/setup.py
+RUN python3 setup.py install
 
 COPY ./api /tesseract/api
 

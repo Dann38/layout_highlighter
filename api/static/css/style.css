@@ -9,3 +9,11 @@ html{
 .classifier-block{
     background-color: rgb(200, 219, 247)
 }
+
+.setting{
+    display: none;
+}
+
+#progress{
+    display: none;
+}

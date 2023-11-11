@@ -33,7 +33,21 @@ async def read_images(page: int = 0, limit: int = 10, db: Session = Depends(get_
 
 
 @app.get("/image/{id_image}/")
-async def read_images(id_image: str, db: Session = Depends(get_db)):
+async def read_image(id_image: str, db: Session = Depends(get_db)):
     images = crud.get_image_id(db, image_id=id_image)
     base64_utf8_str = base64.b64encode(images.image).decode('utf-8')
     return base64_utf8_str
+
+
+@app.post("/processing_create/")
+async def create_processing(proc: schemas.ProcessingCreate, db: Session = Depends(get_db)):
+    processing = schemas.ProcessingCreate(id_image=proc.id_image)
+    processing = crud.create_processing(db, processing)
+    return processing.id
+
+
+@app.get("/processing/{id_process}/")
+async def read_processing(id_process: str, db: Session = Depends(get_db)):
+    processing = crud.get_processing(db, id_process)
+    return processing
+

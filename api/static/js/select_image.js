@@ -25,23 +25,8 @@ var addHistoryImg = function(id, pr=false) {
         $("#history-group").append(card);
     }
 
-    $(".button_id_send").on("click", btnClassClick);
+    $(btn_id).on("click", btnClassClick);
  }
-
-//var addSetClassify = function(id_image) {
-//    const xhr_set_classify = new XMLHttpRequest();
-//    xhr_set_classify.open("GET", "/get_set_classifier/"+id_image);
-//    xhr_set_classify.send();
-//    xhr_set_classify.onload = function() {
-//        if (xhr_set_classify.status == 200) {
-//            var response_set_classify = $.parseJSON(xhr_set_classify.response);
-//            $("#method-input")[0].value = response_set_classify.method;
-//            $("#coef-input")[0].value = response_set_classify.coef;
-//            $("#coef-input-text")[0].innerHTML =  response_set_classify.coef;
-//        }
-//    }
-//    $(".button_id_send").on("click", btnClassClick);
-// }
 
 var addHistory = function() {
     const xhr_history = new XMLHttpRequest();
@@ -59,17 +44,12 @@ var addHistory = function() {
  }
 
 var btnClassClick = function(e){
-    d = new Date();
-    $(".upload-file").attr("src", getSrcID(e.target.dataset.rowId));
-    $(".result-file").attr("src", getSrcID(e.target.dataset.rowId));
-    $("#work-id").attr("data-row-id", e.target.dataset.rowId);
-//    addSetClassify(e.target.dataset.rowId)
+    openImage(e.target.dataset.rowId);
 }
 
 var setSrcID = function(img_object, id_image){
-    console.log(id_image)
+
     const get_img = new XMLHttpRequest();
-    //    const formData = new FormData();
 
     get_img.open('GET', '/image/' + id_image);
     get_img.send();
@@ -80,10 +60,9 @@ var setSrcID = function(img_object, id_image){
 }
 
 var openImage = function(id_image){
-    var src = setSrcID($(".upload-file"), id_image)
-//    $(".upload-file").attr("src", src);
-//    $(".result-file").attr("src", src);
-    $("#work-id").attr("data-row-id", id_image)
+    setSrcID($(".upload-file"), id_image)
+    $("#image-id").attr("data-row-id", id_image)
+
 }
 
 $("#button_upload").click(function(){
@@ -104,39 +83,11 @@ $("#button_upload").click(function(){
           alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
             var response_upload = $.parseJSON(xhr.response);
-            console.log(response_upload);
             openImage(response_upload);
+            addHistoryImg(response_upload, pr=true);
         }
     };
 });
 
-$("#button_classifier").click(function(){
-    const id_image = $("#work-id")[0].dataset.rowId;
 
-    const method_classifier = document.getElementById('method-input').value;
-    const coef = document.getElementById('coef-input').value;
-    console.log(id_image, method_classifier, coef)
-
-    const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-
-
-    formData.append('method_classifier', method_classifier);
-    formData.append('coef', coef);
-
-    xhr.open('POST', '/classify_image/'+id_image);
-    xhr.send(formData);
-
-    xhr.onload = function() {
-        if (xhr.status != 200) {
-          alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
-        } else {
-            d = new Date();
-            $(".result-file").attr("src", "/get_image_result/"+id_image+"?"+d.getTime());
-            addSetClassify(id_image);
-        }
-      };
-});
-
-addHistory();
 

@@ -12,3 +12,15 @@ class ImageCreate(ImageBase):
 class Image(ImageBase):
     id: str
     bytes_img: bytes
+
+
+class ProcessingBase(BaseModel):
+    id_image: str
+
+
+class ProcessingCreate(ProcessingBase):
+    pass
+
+
+class Processing(ProcessingBase):
+    id: str

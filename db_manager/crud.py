@@ -20,3 +20,16 @@ def get_images(db: Session, page: int = 1, limit: int = 10):
     skip = (1-page)*limit
     rez = db.query(models.Image).offset(skip).limit(limit).all()
     return rez
+
+
+def create_processing(db: Session, processing: schemas.ProcessingCreate) -> schemas.Processing:
+    db_processing = models.Processing(id_image=processing.id_image)
+    db.add(db_processing)
+    db.commit()
+    db.refresh(db_processing)
+    return db_processing
+
+
+def get_processing(db: Session, processing_id: str) -> schemas.Processing:
+    rez = db.query(models.Processing).filter(models.Processing.id == processing_id).first()
+    return rez

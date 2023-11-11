@@ -15,24 +15,54 @@
           <div class="row">
               <div class="col-3 classifier-block vh-100">
                     <div class="row gy-5">
-                         <p class="h1" id="work-id">Обработка (id)</p>
-                         <div class="col-12">
-                         <form id="form-method" oninput="range1value.value = range1.valueAsNumber">
-                             <p class="h3">Метод классификации</p>
-                             <select id="method-input" class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                  <option value="1">Среднее</option>
-                                  <option value="2">Медиана</option>
-                                  <option value="3">Площадь к периметру</option>
-                             </select>
-                             <label for="coef-input" class="form-label">Вероятность найти жирный шрифт не правильно</label>
-                             <input type="range" class="form-range" min="0" max="1" step="0.01" id="coef-input" name="range1">
-                             <output name="range1value" for="range1" id="coef-input-text">0.5</output>
-                         </form>
+                            <div id="button_open_processing" class="btn btn-primary">Исследовать</div>
+                    </div>
+                    <div id="progress">
+                        <ul class="list-group">
+                          <li id="image-id" class="list-group-item d-flex justify-content-between align-items-center">
+                            <div id="a-indicator-image" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                                Загрузка
+                            </div>
+                            <span id="indicator-image" class="badge bg-primary rounded-pill">Текущее</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <dib id="a-indicator-tesseract"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                              Обработка Tesseract
+                            </dib>
+                            <span id="indicator-tesseract" class="badge bg-primary rounded-pill"></span>
+                          </li>
+                        </ul>
+                    </div>
+                    <div id="upload-setting" class="row gy-5 setting">
+                        <p class="h1">Поле загрузки</p>
+                          <form id="form-upload" method="POST" action="">
+                              <div class="form-context">
+                                   <div class="input-group">
+                                        <label class="label-input input-group-text" for="file-input">Выберите файл</label>
+                                        <input class="input-file form-control" id="file-input" type="file" name="file" multiple>
+                                   </div>
+                              </div>
+                          </form>
                         <div class="col-6">
-                            <div id="button_classifier" class="btn btn-primary">Обработать</div>
+                            <div id="button_upload" class="btn btn-primary">Загрузить</div>
                          </div>
+                        <div class="col-6">
+                            <div id="start_processing" class="btn btn-primary">Далее</div>
                          </div>
+                    </div>
 
+                    <div id="tesseract-setting" class="row gy-5 setting">
+                        <p class="h1">Настройка Tesseract</p>
+                          <form id="form-tesseract" method="POST" action="">
+                              <div class="form-context">
+                                   <div class="input-group">
+
+                                   </div>
+                              </div>
+                          </form>
+                        <div class="col-6">
+                            <div id="button_tesseract" class="btn btn-primary">Обработать</div>
+                         </div>
                     </div>
                </div>
 
@@ -59,25 +89,16 @@
 
               </div>
               <div style="overflow-y:auto;" class="col-3 history-block vh-100">
-                  <p class="h1">Поле загрузки</p>
-                          <form id="form-upload" method="POST" action="">
-                              <div class="form-context">
-                                   <div class="input-group">
-                                        <label class="label-input input-group-text" for="file-input">Выберите файл</label>
-                                        <input class="input-file form-control" id="file-input" type="file" name="file" multiple>
-                                   </div>
-                              </div>
-                          </form>
-                        <div class="col-6">
-                            <div id="button_upload" class="btn btn-primary">Загрузить</div>
-                         </div>
+                  <div id="history-list" class="row gy-5 setting">
                   <p class="h1">История</p>
                     <ul id="history-group" class="list-group">
-
                     </ul>
+                  </div>
               </div>
           </div>
      </div>
 </body>
-     <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/create_processing.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/select_image.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/tesseract.js') }}"></script>
 </html>
