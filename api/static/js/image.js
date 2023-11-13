@@ -2,14 +2,13 @@ $("#button_open_processing").click(
     function(){
         $("#button_open_processing").text("Новое исследование");
         $("#progress").css("display" ,"block");
-        $("#upload-setting").css("display" ,"block");
+        select("image");
         $("#history-list").css("display" ,"block");
         addHistory();
     }
 );
 
 $("#start_processing").click(function(){
-    changeIndicatorImage();
     const get_processing = new XMLHttpRequest();
     const id_image = process.id_image;
     get_processing.open('POST', '/processing_create/' + id_image);
@@ -18,17 +17,27 @@ $("#start_processing").click(function(){
     get_processing.onload = function() {
         process.id = $.parseJSON(get_processing.response);
     }
-
+    unlockStep("tesseract");
 })
 
-var changeIndicatorImage = function(){
-    $("#a-indicator-image").removeClass("link-primary");
-    $("#a-indicator-image").addClass("link-success");
-    $("#indicator-image").text("OK");
-    $("#indicator-image").removeClass("bg-primary");
-    $("#indicator-image").addClass("bg-success");
-    $("#a-indicator-tesseract").removeClass("link-secondary");
-    $("#a-indicator-tesseract").addClass("link-warning");
+
+var openImage = function(id_image){
+    const get_img = new XMLHttpRequest();
+
+    get_img.open('GET', '/image/' + id_image);
+    get_img.send();
+
+    get_img.onload = function() {
+        process.image_base64 = $.parseJSON(get_img.response);
+        process.id_image = id_image;
+        process.exist_data_step["image"] = true;
+        functionImageStep();
+    }
 }
 
-var process = {};
+
+var functionImageStep = function(){
+    if (process.exist_data_step["image"]){
+        writeImage(process.image_base64);
+    }
+}

@@ -1,13 +1,3 @@
-$("#a-indicator-tesseract").click(function(){
-    if (!$("#a-indicator-tesseract")[0].classList.contains("link-secondary")) {
-        $(".setting").css("display", "none");
-        $("#tesseract-setting").css("display" ,"block");
-        $("#indicator-tesseract").text("Текущий");
-        $("#a-indicator-tesseract").removeClass("link-warning")
-        $("#a-indicator-tesseract").addClass("link-primary");
-    }
-})
-
 $("#button_tesseract").click(function(){
 
     const xhr = new XMLHttpRequest();
@@ -25,22 +15,20 @@ $("#button_tesseract").click(function(){
             var response_tesseract = $.parseJSON(xhr.response);
             const bboxes = response_tesseract.list_bboxes;
             process.bboxes = bboxes;
-            for(var i = 0; i < bboxes.length; i++){
-                const bbox = bboxes[i];
-                writeRectangle(bbox.x_top_left, bbox.y_top_left, bbox.width, bbox.height);
-            }
-            changeIndicatorTesseract();
+            process.exist_data_step["tesseract"] = true;
+            functionTesseractStep();
         }
     };
 });
 
-
-var changeIndicatorTesseract = function(){
-    $("#a-indicator-tesseract").removeClass("link-primary");
-    $("#a-indicator-tesseract").addClass("link-success");
-    $("#indicator-tesseract").text("OK");
-    $("#indicator-tesseract").removeClass("bg-primary");
-    $("#indicator-tesseract").addClass("bg-success");
-    $("#a-indicator-graph").removeClass("link-secondary");
-    $("#a-indicator-graph").addClass("link-warning");
+var functionTesseractStep = function(){
+    if (process.exist_data_step["tesseract"]){
+        functionImageStep();
+        for(var i = 0; i < process.bboxes.length; i++){
+            const bbox = process.bboxes[i];
+            writeRectangle(bbox.x_top_left, bbox.y_top_left, bbox.width, bbox.height);
+        }
+        unlockStep("graph");
+    }
 }
+

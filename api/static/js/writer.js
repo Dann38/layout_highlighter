@@ -49,12 +49,18 @@ var writePoint = function(x, y) {
     ctx.fillStyle = '#00ff00';
     ctx.arc(pointX, pointY, size, 0 * Math.PI, 2 * Math.PI);
     ctx.fill();
-//    if (label) {
-//        var textX = pointX;
-//        var textY = Math.round(pointY - size - 3);
-//        context.font = 'Italic 14px Arial';
-//        context.fillStyle = color;
-//        context.textAlign = 'center';
-//        context.fillText(label, textX, textY);
-//    }
+}
+
+var writeLine = function(x0, y0, x1, y1) {
+    const canvas = document.getElementById("result-image");
+    const ctx = canvas.getContext("2d");
+    const coef = process.coef_image;
+
+    ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(coef*x0, coef*y0);
+    ctx.lineTo(coef*x1, coef*y1);
+    ctx.stroke();
 }

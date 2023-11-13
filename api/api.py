@@ -89,10 +89,28 @@ def tesseract_processing():
 
 
 @app.route("/graph_process/", methods=["POST"])
-def graph_processing():
+def point_processing():
     bboxes = json.loads(request.form["bboxes"])
-    content = requests.post(f'{host_graph}/bboxes_to_points/', json={
+    points = json.loads(requests.post(f'{host_graph}/bboxes_to_points/', json={
         "list_bboxes": bboxes,
         "count": 1
+    }).text)["list_point"]
+
+    edges = json.loads(requests.post(f'{host_graph}/point_to_delone/', json={
+        "list_point": points
+    }).text)["list_edge"]
+
+    return {"list_point": points, "list_edge": edges}
+
+
+@app.route("/delone_to_segment/", methods=["POST"])
+def delone_to_graph_segments():
+    edges = json.loads(request.form["edges"])
+    points = json.loads(request.form["points"])
+    threshold = json.loads(request.form["threshold"])
+    content = requests.post(f'{host_graph}/delone_to_graph_segments/', json={
+        "list_edge": edges,
+        "list_point": points,
+        "threshold": threshold
     }).content
     return content

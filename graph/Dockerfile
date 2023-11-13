@@ -9,6 +9,8 @@ COPY ./api /graph/api
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir --upgrade -r /graph/requirements.txt
 
+RUN pip install /graph
+
 WORKDIR /graph/api
 
 ENTRYPOINT ["python"]

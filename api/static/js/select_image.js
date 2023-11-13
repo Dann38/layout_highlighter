@@ -59,23 +59,6 @@ var setSrcID = function(img_object, id_image){
     }
 }
 
-var setCanvasID = function(id_image){
-
-    const get_img = new XMLHttpRequest();
-
-    get_img.open('GET', '/image/' + id_image);
-    get_img.send();
-
-    get_img.onload = function() {
-        writeImage($.parseJSON(get_img.response));
-    }
-}
-
-var openImage = function(id_image){
-    setCanvasID(id_image)
-    process.id_image = id_image
-
-}
 
 $("#button_upload").click(function(){
     const fileInput = document.getElementById('file-input');

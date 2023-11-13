@@ -1,13 +1,3 @@
-$("#a-indicator-graph").click(function(){
-    if (!$("#a-indicator-graph")[0].classList.contains("link-secondary")) {
-        $(".setting").css("display", "none");
-        $("#graph-setting").css("display" ,"block");
-        $("#indicator-graph").text("Текущий");
-        $("#a-indicator-graph").removeClass("link-warning")
-        $("#a-indicator-graph").addClass("link-primary");
-    }
-})
-
 $("#button_graph").click(function(){
 
     const xhr = new XMLHttpRequest();
@@ -25,23 +15,28 @@ $("#button_graph").click(function(){
         } else {
             var response_bboxes = $.parseJSON(xhr.response);
             const points = response_bboxes.list_point;
+            const edges = response_bboxes.list_edge;
             process.points = points;
-            for(var i = 0; i < points.length; i++){
-                const point = points[i];
-                writePoint(point.x, point.y);
-            }
-            changeIndicatorPoint();
-
+            process.edges = edges;
+            process.exist_data_step["graph"] = true;
+            functionGraphStep();
         }
     };
 });
+var functionGraphStep = function(){
+    if (process.exist_data_step["graph"]){
+        functionImageStep();
+        for(var i = 0; i < process.points.length; i++){
+            const point = process.points[i];
+            writePoint(point.x, point.y);
+        }
+        for(var i = 0; i < process.edges.length; i++){
+            const point1 = process.points[process.edges[i].node1];
+            const point2 = process.points[process.edges[i].node2];
+            writeLine(point1.x, point1.y, point2.x, point2.y);
+        }
+        unlockStep("segment");
+    }
 
-var changeIndicatorPoint = function(){
-    $("#a-indicator-graph").removeClass("link-primary");
-    $("#a-indicator-graph").addClass("link-success");
-    $("#indicator-graph").text("OK");
-    $("#indicator-graph").removeClass("bg-primary");
-    $("#indicator-graph").addClass("bg-success");
-//    $("#a-indicator-segment").removeClass("link-secondary");
-//    $("#a-indicator-segment").addClass("link-warning");
+
 }
