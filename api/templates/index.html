@@ -31,6 +31,12 @@
                             </dib>
                             <span id="indicator-tesseract" class="badge bg-primary rounded-pill"></span>
                           </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <dib id="a-indicator-graph"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                              Построение связного графа
+                            </dib>
+                            <span id="indicator-graph" class="badge bg-primary rounded-pill"></span>
+                          </li>
                         </ul>
                     </div>
                     <div id="upload-setting" class="row gy-5 setting">
@@ -47,7 +53,7 @@
                             <div id="button_upload" class="btn btn-primary">Загрузить</div>
                          </div>
                         <div class="col-6">
-                            <div id="start_processing" class="btn btn-primary">Далее</div>
+                            <div id="start_processing" class="btn btn-primary">Выбрать изображение</div>
                          </div>
                     </div>
 
@@ -64,28 +70,45 @@
                             <div id="button_tesseract" class="btn btn-primary">Обработать</div>
                          </div>
                     </div>
+
+                    <div id="graph-setting" class="row gy-5 setting">
+                        <p class="h1">Настройка связного графа</p>
+                          <form id="form-graph" method="POST" action="">
+                              <div class="form-context">
+                                   <div class="input-group">
+
+                                   </div>
+                              </div>
+                          </form>
+                        <div class="col-6">
+                            <div id="button_graph" class="btn btn-primary">Построить</div>
+                         </div>
+                    </div>
                </div>
 
 
               <div class="col-6 image-block vh-100">
-               <div id="carouselExampleDark" class="carousel carousel-dark slide">
-                    <div class="carousel-inner">
-                      <div class="carousel-item active">
-                         <img src="{{ url_for('static',  filename='img/no_img.jpg') }}" alt="Изображение не загружено" class="upload-file d-block w-100">
-                      </div>
-                      <div class="carousel-item">
-                        <img src="{{ url_for('static',  filename='img/no_img.jpg') }}" class="result-file d-block w-100" alt="Изображение не загружено">
-                      </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Предыдущий</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Следующий</span>
-                    </button>
-                  </div>
+                  <canvas id="result-image" class="col-12">
+
+                  </canvas>
+<!--               <div id="carouselExampleDark" class="carousel carousel-dark slide">-->
+<!--                    <div class="carousel-inner">-->
+<!--                      <div class="carousel-item active">-->
+<!--                         <img src="{{ url_for('static',  filename='img/no_img.jpg') }}" alt="Изображение не загружено" class="upload-file d-block w-100">-->
+<!--                      </div>-->
+<!--                      <div class="carousel-item">-->
+<!--                        <img src="{{ url_for('static',  filename='img/no_img.jpg') }}" class="result-file d-block w-100" alt="Изображение не загружено">-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">-->
+<!--                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+<!--                      <span class="visually-hidden">Предыдущий</span>-->
+<!--                    </button>-->
+<!--                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">-->
+<!--                      <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+<!--                      <span class="visually-hidden">Следующий</span>-->
+<!--                    </button>-->
+<!--                  </div>-->
 
               </div>
               <div style="overflow-y:auto;" class="col-3 history-block vh-100">
@@ -98,7 +121,9 @@
           </div>
      </div>
 </body>
+     <script src="{{ url_for('static', filename='js/writer.js') }}"></script>
      <script src="{{ url_for('static', filename='js/create_processing.js') }}"></script>
      <script src="{{ url_for('static', filename='js/select_image.js') }}"></script>
      <script src="{{ url_for('static', filename='js/tesseract.js') }}"></script>
+
 </html>

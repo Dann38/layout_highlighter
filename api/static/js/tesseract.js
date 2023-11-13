@@ -23,7 +23,25 @@ $("#button_tesseract").click(function(){
           alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
             var response_tesseract = $.parseJSON(xhr.response);
-            console.log(response_tesseract)
+            console.log(response_tesseract);
+            const bboxes = response_tesseract.list_bboxes;
+            for(var i = 0; i < bboxes.length; i++){
+                const bbox = bboxes[i];
+                writeRectangle(bbox.x_top_left, bbox.y_top_left, bbox.width, bbox.height);
+            }
+            changeIndicatorTesseract();
+
         }
     };
 });
+
+
+var changeIndicatorTesseract = function(){
+    $("#a-indicator-tesseract").removeClass("link-primary");
+    $("#a-indicator-tesseract").addClass("link-success");
+    $("#indicator-tesseract").text("OK");
+    $("#indicator-tesseract").removeClass("bg-primary");
+    $("#indicator-tesseract").addClass("bg-success");
+    $("#a-indicator-graph").removeClass("link-secondary");
+    $("#a-indicator-graph").addClass("link-warning");
+}

@@ -53,14 +53,26 @@ var setSrcID = function(img_object, id_image){
 
     get_img.open('GET', '/image/' + id_image);
     get_img.send();
-    var rez = "";
+
     get_img.onload = function() {
         $(img_object).attr("src", "data:image/jpeg;base64,"+$.parseJSON(get_img.response));
     }
 }
 
+var setCanvasID = function(id_image){
+
+    const get_img = new XMLHttpRequest();
+
+    get_img.open('GET', '/image/' + id_image);
+    get_img.send();
+
+    get_img.onload = function() {
+        writeImage($.parseJSON(get_img.response));
+    }
+}
+
 var openImage = function(id_image){
-    setSrcID($(".upload-file"), id_image)
+    setCanvasID(id_image)
     $("#image-id").attr("data-row-id", id_image)
 
 }
