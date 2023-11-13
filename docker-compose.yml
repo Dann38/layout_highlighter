@@ -38,5 +38,14 @@ services:
       - db
     networks:
       my-network:
+  graph:
+    build: graph/
+    ports:
+      - "1284:1237"
+    depends_on:
+      - tesseract
+    networks:
+      my-network:
+
 networks:
   my-network:

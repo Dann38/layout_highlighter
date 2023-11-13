@@ -12,7 +12,7 @@ $("#button_tesseract").click(function(){
 
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
-    const id_process = $("#progress")[0].dataset["rowId"];
+    const id_process = process.id;
     formData.append('id_process', id_process);
 
     xhr.open('POST', '/tesseract_process');
@@ -23,14 +23,13 @@ $("#button_tesseract").click(function(){
           alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
             var response_tesseract = $.parseJSON(xhr.response);
-            console.log(response_tesseract);
             const bboxes = response_tesseract.list_bboxes;
+            process.bboxes = bboxes;
             for(var i = 0; i < bboxes.length; i++){
                 const bbox = bboxes[i];
                 writeRectangle(bbox.x_top_left, bbox.y_top_left, bbox.width, bbox.height);
             }
             changeIndicatorTesseract();
-
         }
     };
 });

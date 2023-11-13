@@ -7,7 +7,7 @@ from flask import Flask, render_template, request
 
 host_db_manager = "http://db_manager:1235"
 host_tesseract = "http://tesseract:1236"
-
+host_graph = "http://graph:1237"
 
 class File:
     def __init__(self):
@@ -85,4 +85,14 @@ def tesseract_processing():
         "list_text": [
              "string"
         ]}).content
+    return content
+
+
+@app.route("/graph_process/", methods=["POST"])
+def graph_processing():
+    bboxes = json.loads(request.form["bboxes"])
+    content = requests.post(f'{host_graph}/bboxes_to_points/', json={
+        "list_bboxes": bboxes,
+        "count": 1
+    }).content
     return content

@@ -73,7 +73,7 @@ var setCanvasID = function(id_image){
 
 var openImage = function(id_image){
     setCanvasID(id_image)
-    $("#image-id").attr("data-row-id", id_image)
+    process.id_image = id_image
 
 }
 

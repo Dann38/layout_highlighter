@@ -20,3 +20,10 @@ class Processing(Base):
     id = Column(GUID, primary_key=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
     id_image = Column(GUID, ForeignKey('images.id'))
     # id_tesseract_processing = Column(GUID, ForeignKey('tesseract_processing.id'))
+
+
+# class TesseractProcess(Base):
+#     __tablename__ = "tesseract_processing"
+#     id = Column(GUID, primary_key=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
+#     bboxes = Column(LargeBinary, nullable=True)
+
