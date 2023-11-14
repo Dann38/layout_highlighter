@@ -4,7 +4,7 @@ $("#button_segment").click(function(){
     const formData = new FormData();
     const edges = process.edges;
     const points = process.points;
-    const threshold = document.getElementById('threshold-segment-input').value
+    const threshold = document.getElementById('threshold_segment_input').value
     formData.append('edges', JSON.stringify(edges));
     formData.append('points', JSON.stringify(points));
     formData.append('threshold', threshold);

@@ -83,7 +83,11 @@
                           <form id="form-graph" method="POST" action="">
                               <div class="form-context">
                                    <div class="input-group">
-
+                                    <select id="count-point-input" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                                      <option value="1">1 (посередине)</option>
+                                      <option value="2">2 (по краям)</option>
+                                      <option value="3">3 (одна посередине и две с краю)</option>
+                                    </select>
                                    </div>
                               </div>
                           </form>
@@ -94,12 +98,12 @@
 
                     <div id="segment-setting" class="row gy-5 setting">
                         <p class="h1">Настройка сегментации</p>
-                          <form id="segment-graph" method="POST" action="">
+                          <form id="segment-graph" method="POST" action="" oninput="threshold_segment_range_value.value = threshold_segment_range.valueAsNumber">
                               <div class="form-context">
                                    <div class="input-group">
-                                    <label for="threshold-segment-input" class="form-label">Вероятность найти жирный шрифт не правильно</label>
-                                    <input type="range" class="form-range" min="0" max="150" step="1" id="threshold-segment-input" name="threshold-segment-range">
-                                    <output name="threshold-segment-range-value" for="threshold-segment-input" id="threshold-segment-input-text">50</output>
+                                    <label for="threshold_segment_input" class="form-label">Вероятность найти жирный шрифт не правильно</label>
+                                    <input type="range" class="form-range" min="0" max="150" step="1" id="threshold_segment_input" name="threshold_segment_range">
+                                    <output name="threshold_segment_range_value" for="threshold_segment_input" id="threshold_segment_input_text">50</output>
                                    </div>
                               </div>
                           </form>
