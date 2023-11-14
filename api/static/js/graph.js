@@ -33,7 +33,7 @@ var functionGraphStep = function(){
         for(var i = 0; i < process.edges.length; i++){
             const point1 = process.points[process.edges[i].node1];
             const point2 = process.points[process.edges[i].node2];
-            writeLine(point1.x, point1.y, point2.x, point2.y);
+            writeLine(point1.x, point1.y, point2.x, point2.y, "rgba(0, 0, 255, 0.5)");
         }
         unlockStep("segment");
     }

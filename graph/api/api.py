@@ -40,16 +40,20 @@ async def point_to_delone(points: schemas.CreateGraph) -> schemas.Graph:
 @app.post("/delone_to_graph_segments/")
 async def point_to_delone(related_graph: schemas.CreateGraphSegments) -> List[schemas.GraphSegment]:
     graph = Graph()
+    index_and_id_node = dict()
+    id_list = []
     for i, point in enumerate(related_graph.list_point):
-        graph.add_node(point["x"], point["y"])
+        id_ = graph.add_node(point["x"], point["y"])
+        index_and_id_node[id_] = i
+        id_list.append(id_)
 
     new_edge = [edge for edge in related_graph.list_edge if edge["width"] < related_graph.threshold]
 
     for edge in new_edge:
-        graph.add_edge(edge["node1"] + 1, edge["node2"] + 1)
+        graph.add_edge(id_list[edge["node1"]], id_list[edge["node2"]])
 
-    segments = [Segment(r) for r in graph.get_related_graphs()]
-    return [schemas.CreateGraphSegments(
+    segments = [Segment(r, index_and_id_node) for r in graph.get_related_graphs()]
+    return [schemas.GraphSegment(
         list_edge=seg.list_edge,
         list_index_point=seg.list_index_point,
         x_left=seg.x_left,

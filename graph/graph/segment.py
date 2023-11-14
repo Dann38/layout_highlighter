@@ -2,11 +2,12 @@ from graph.related_graph import RelatedGraph
 
 
 class Segment:
-    def __init__(self, r: RelatedGraph):
-        self.list_edge = [{"node1":  edge.get_nodes()[0].index-1, "node2": edge.get_nodes()[1].index-1}
-                     for edge in r.get_edges()]
+    def __init__(self, r: RelatedGraph, index_and_id_node: dict):
+        self.list_edge = [{"node1": index_and_id_node[edge.get_nodes()[0].index],
+                           "node2": index_and_id_node[edge.get_nodes()[1].index]}
+                          for edge in r.get_edges()]
         nodes = r.get_nodes()
-        self.list_index_point = [node.index-1 for node in nodes]
+        self.list_index_point = [index_and_id_node[node.index] for node in nodes]
         x_array = [node.x for node in nodes]
         y_array = [node.y for node in nodes]
         self.x_left = round(min(x_array))

@@ -51,12 +51,12 @@ var writePoint = function(x, y) {
     ctx.fill();
 }
 
-var writeLine = function(x0, y0, x1, y1) {
+var writeLine = function(x0, y0, x1, y1, color) {
     const canvas = document.getElementById("result-image");
     const ctx = canvas.getContext("2d");
     const coef = process.coef_image;
 
-    ctx.strokeStyle = "rgba(0, 0, 255, 0.5)";
+    ctx.strokeStyle = color;
     ctx.lineWidth = 2;
 
     ctx.beginPath();

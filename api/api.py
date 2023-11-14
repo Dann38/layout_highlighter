@@ -9,6 +9,7 @@ host_db_manager = "http://db_manager:1235"
 host_tesseract = "http://tesseract:1236"
 host_graph = "http://graph:1237"
 
+
 class File:
     def __init__(self):
         self.name = ""
@@ -107,7 +108,8 @@ def point_processing():
 def delone_to_graph_segments():
     edges = json.loads(request.form["edges"])
     points = json.loads(request.form["points"])
-    threshold = json.loads(request.form["threshold"])
+    threshold = float(request.form["threshold"])
+
     content = requests.post(f'{host_graph}/delone_to_graph_segments/', json={
         "list_edge": edges,
         "list_point": points,
