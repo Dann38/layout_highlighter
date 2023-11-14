@@ -30,6 +30,7 @@ $("#button_segment").click(function(){
         }
     };
 });
+
 var functionSegmentStep = function(){
     if (process.exist_data_step["segment"]){
         functionImageStep();
@@ -55,3 +56,49 @@ var functionSegmentStep = function(){
 //    unlockStep("graph");
 }
 
+var plotWidthBar = function(){
+    const max_width = 150;
+    const step = 5;
+    const count_bar = Math.round(max_width/step);
+    let arr = new Array(count_bar).fill(0);
+    for (var i = 0; i < process.edges.length; i++){
+        var ind = Math.round(process.edges[i].width / step);
+        if (ind >= count_bar){
+            arr[count_bar-1] += 1
+        }else {
+            arr[ind] += 1;
+        }
+    }
+    let arr_label = new Array(count_bar)
+    for (var i=0; i < count_bar; i++){
+        arr_label[i] = i*step + step/2;
+    }
+    const canvas = document.getElementById('width-edge')
+    const ctx = canvas.getContext('2d');
+    // рисуем фон
+    ctx.fillStyle = "white";
+    canvas.height = canvas.width
+    ctx.fillRect(0,0,canvas.width, canvas.height);
+
+    // рисуем данные
+    ctx.fillStyle = "blue";
+    let arr_rez = new Array(count_bar).fill(0);
+    for (var i = 0; i < count_bar; i++){
+        if (isNaN(arr[i])) {
+            arr_rez[i] = 0;
+        }else{
+            arr_rez[i] = arr[i];
+        }
+
+    }
+    arr = arr_rez;
+    const canvas_step = canvas.width/(count_bar+4)
+    const h_step = canvas.height/ Math.round(Math.max(... arr)+2)
+    for(var i=0; i<count_bar; i++) {
+      var dp = arr[i]*h_step;
+      ctx.fillRect(2*canvas_step + i*canvas_step, canvas.height-dp , canvas_step, dp);
+    }
+//    for(var i=0; i<count_bar; i++) {
+//      ctx.fillText(arr_label[i], canvas_step + i*canvas_step, canvas.height);
+//    }
+}

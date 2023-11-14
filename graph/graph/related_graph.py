@@ -14,7 +14,6 @@ class RelatedGraph:
 
     def add_node(self, node: Node, node_connect: Node):
         if not (node_connect in self.nodes):
-            print("НЕТ УЗЛА ДЛЯ СОЕДИНЕНИЯ")
             return
         if not (node in self.nodes):
             self.nodes[node] = node.index
@@ -22,11 +21,9 @@ class RelatedGraph:
 
     def add_edge(self, node1: Node, node2: Node):
         if not (node1 in self.nodes) or not (node2 in self.nodes):
-            print("НЕТ ТАКИХ УЗЛОВ")
             return
         keys_edge = tuple({self.nodes[node1], self.nodes[node2]})
-        if keys_edge in self.edges:
-            print("УЗЕЛ УЖЕ ЕСТЬ")
+
         self.edges[keys_edge] = Edge({node1, node2})
         node1.add_neighbor(node2)
         node2.add_neighbor(node1)
