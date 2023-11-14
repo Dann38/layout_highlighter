@@ -101,10 +101,14 @@
                           <form id="segment-graph" method="POST" action="" oninput="threshold_segment_range_value.value = threshold_segment_range.valueAsNumber">
                               <div class="form-context">
                                    <div class="input-group">
-                                    <label for="threshold_segment_input" class="form-label">Вероятность найти жирный шрифт не правильно</label>
+                                    <label for="threshold_segment_input" class="form-label">удалить ребра большие:</label>
                                     <input type="range" class="form-range" min="0" max="150" step="1" id="threshold_segment_input" name="threshold_segment_range">
                                     <output name="threshold_segment_range_value" for="threshold_segment_input" id="threshold_segment_input_text">50</output>
                                    </div>
+                                  <div class="form-check form-switch">
+                                      <input class="form-check-input" type="checkbox" id="segment_graph">
+                                      <label class="form-check-label" for="segment_graph">Отображать графы</label>
+                                  </div>
                               </div>
                           </form>
                         <div class="col-6">

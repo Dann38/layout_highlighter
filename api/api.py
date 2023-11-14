@@ -93,16 +93,17 @@ def tesseract_processing():
 def point_processing():
     bboxes = json.loads(request.form["bboxes"])
     count = int(request.form["count"])
-    points = json.loads(requests.post(f'{host_graph}/bboxes_to_points/', json={
+    point_rez = json.loads(requests.post(f'{host_graph}/bboxes_to_points/', json={
         "list_bboxes": bboxes,
         "count": count
-    }).text)["list_point"]
-
+    }).text)
+    points = point_rez["list_point"]
+    bboxes_edge = point_rez["bboxes_edge"]
     edges = json.loads(requests.post(f'{host_graph}/point_to_delone/', json={
         "list_point": points
     }).text)["list_edge"]
 
-    return {"list_point": points, "list_edge": edges}
+    return {"list_point": points, "list_edge": edges, "bboxes_edge": bboxes_edge}
 
 
 @app.route("/delone_to_segment/", methods=["POST"])
@@ -111,9 +112,12 @@ def delone_to_graph_segments():
     points = json.loads(request.form["points"])
     threshold = float(request.form["threshold"])
 
+    mandatory_links = json.loads(request.form["mandatory_links"])
+
     content = requests.post(f'{host_graph}/delone_to_graph_segments/', json={
         "list_edge": edges,
         "list_point": points,
-        "threshold": threshold
+        "threshold": threshold,
+        "mandatory_links": mandatory_links
     }).content
     return content

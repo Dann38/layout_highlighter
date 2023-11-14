@@ -16,8 +16,10 @@ $("#button_graph").click(function(){
             var response_bboxes = $.parseJSON(xhr.response);
             const points = response_bboxes.list_point;
             const edges = response_bboxes.list_edge;
+            const bboxes_edge = response_bboxes.bboxes_edge
             process.points = points;
             process.edges = edges;
+            process.bboxes_edge = bboxes_edge;
             process.exist_data_step["graph"] = true;
             functionGraphStep();
         }

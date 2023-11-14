@@ -17,29 +17,38 @@ def run_api(host: str, port: int) -> None:
 @app.post("/bboxes_to_points/")
 async def bboxes_to_points(bboxes: schemas.CreatePointBboxes) -> schemas.Point:
     points_list = []
+    bboxes_edge = []
+    index = 0
     if bboxes.count == 1:
-        for bbox in bboxes.list_bboxes:
+        for i, bbox in enumerate(bboxes.list_bboxes):
             y = round(bbox["y_top_left"] + bbox["height"] / 2)
             x = round(bbox["x_top_left"] + bbox["width"] / 2)
             points_list.append({"x": x, "y": y})
+
     elif bboxes.count == 2:
-        for bbox in bboxes.list_bboxes:
+        for i, bbox in enumerate(bboxes.list_bboxes):
             y = round(bbox["y_top_left"] + bbox["height"] / 2)
             x1 = bbox["x_top_left"]
             x2 = bbox["x_top_left"] + bbox["width"]
             points_list.append({"x": x1, "y": y})
             points_list.append({"x": x2, "y": y})
+            index += 2
+            bboxes_edge.append({"node1": index-2, "node2": index-1})
+
     elif bboxes.count == 3:
-        for bbox in bboxes.list_bboxes:
+        for i, bbox in enumerate(bboxes.list_bboxes):
             y = round(bbox["y_top_left"] + bbox["height"] / 2)
-            x0 = round(bbox["x_top_left"] + bbox["width"] / 2)
-            x1 = bbox["x_top_left"]
+            x0 = bbox["x_top_left"]
+            x1 = round(bbox["x_top_left"] + bbox["width"] / 2)
             x2 = bbox["x_top_left"] + bbox["width"]
             points_list.append({"x": x0, "y": y})
             points_list.append({"x": x1, "y": y})
             points_list.append({"x": x2, "y": y})
+            index += 3
+            bboxes_edge.append({"node1": index - 3, "node2": index - 2})
+            bboxes_edge.append({"node1": index - 2, "node2": index - 1})
 
-    return schemas.Point(list_point=points_list)
+    return schemas.Point(list_point=points_list, bboxes_edge=bboxes_edge)
 
 
 @app.post("/point_to_delone/")
@@ -64,7 +73,8 @@ async def point_to_delone(related_graph: schemas.CreateGraphSegments) -> List[sc
         index_and_id_node[id_] = i
         id_list.append(id_)
 
-    new_edge = [edge for edge in related_graph.list_edge if edge["width"] < related_graph.threshold]
+    new_edge = [edge for edge in related_graph.list_edge
+                if edge["width"] < related_graph.threshold] + related_graph.mandatory_links
 
     for edge in new_edge:
         graph.add_edge(id_list[edge["node1"]], id_list[edge["node2"]])

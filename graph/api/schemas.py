@@ -9,6 +9,7 @@ class CreatePointBboxes(BaseModel):
 
 class Point(BaseModel):
     list_point: List[Dict]
+    bboxes_edge: List[Dict]
 
 
 class CreateGraph(BaseModel):
@@ -22,6 +23,7 @@ class Graph(BaseModel):
 class CreateGraphSegments(BaseModel):
     list_edge: List[Dict]
     list_point: List[Dict]
+    mandatory_links: List[Dict]
     threshold: float
 
 
