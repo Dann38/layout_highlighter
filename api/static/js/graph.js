@@ -3,9 +3,9 @@ $("#button_graph").click(function(){
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     const bboxes = process.bboxes;
-
+    const count = document.getElementById('count-point-input').value;
     formData.append('bboxes', JSON.stringify(bboxes));
-
+    formData.append('count', count);
     xhr.open('POST', '/graph_process');
     xhr.send(formData);
 

@@ -92,9 +92,10 @@ def tesseract_processing():
 @app.route("/graph_process/", methods=["POST"])
 def point_processing():
     bboxes = json.loads(request.form["bboxes"])
+    count = int(request.form["count"])
     points = json.loads(requests.post(f'{host_graph}/bboxes_to_points/', json={
         "list_bboxes": bboxes,
-        "count": 1
+        "count": count
     }).text)["list_point"]
 
     edges = json.loads(requests.post(f'{host_graph}/point_to_delone/', json={

@@ -22,6 +22,23 @@ async def bboxes_to_points(bboxes: schemas.CreatePointBboxes) -> schemas.Point:
             y = round(bbox["y_top_left"] + bbox["height"] / 2)
             x = round(bbox["x_top_left"] + bbox["width"] / 2)
             points_list.append({"x": x, "y": y})
+    elif bboxes.count == 2:
+        for bbox in bboxes.list_bboxes:
+            y = round(bbox["y_top_left"] + bbox["height"] / 2)
+            x1 = bbox["x_top_left"]
+            x2 = bbox["x_top_left"] + bbox["width"]
+            points_list.append({"x": x1, "y": y})
+            points_list.append({"x": x2, "y": y})
+    elif bboxes.count == 3:
+        for bbox in bboxes.list_bboxes:
+            y = round(bbox["y_top_left"] + bbox["height"] / 2)
+            x0 = round(bbox["x_top_left"] + bbox["width"] / 2)
+            x1 = bbox["x_top_left"]
+            x2 = bbox["x_top_left"] + bbox["width"]
+            points_list.append({"x": x0, "y": y})
+            points_list.append({"x": x1, "y": y})
+            points_list.append({"x": x2, "y": y})
+
     return schemas.Point(list_point=points_list)
 
 
