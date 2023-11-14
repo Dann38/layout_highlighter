@@ -29,14 +29,15 @@ var functionSegmentStep = function(){
         functionImageStep();
         for(var i = 0; i < process.segment.length; i++){
             const seg = process.segment[i];
-            writeRectangle(seg.x_left, seg.y_top, seg.x_right, seg.y_bottom);
-            for(var i = 0; i < seg.list_index_point.length; i++){
-                const point = process.points[seg.list_index_point[i]];
+            console.log(seg.x_left, seg.y_top, seg.x_right, seg.y_bottom)
+            writeRectangle(seg.x_left, seg.y_top, seg.x_right-seg.x_left, seg.y_bottom-seg.y_top);
+            for(var j = 0; j < seg.list_index_point.length; j++){
+                const point = process.points[seg.list_index_point[j]];
                 writePoint(point.x, point.y);
             }
-            for(var i = 0; i < seg.list_edge.length; i++){
-                const point1 = process.points[seg.list_edge[i].node1];
-                const point2 = process.points[seg.list_edge[i].node2];
+            for(var j = 0; j < seg.list_edge.length; j++){
+                const point1 = process.points[seg.list_edge[j].node1];
+                const point2 = process.points[seg.list_edge[j].node2];
                 writeLine(point1.x, point1.y, point2.x, point2.y, "rgba(0, 0, 255, 0.5)");
             }
         }
