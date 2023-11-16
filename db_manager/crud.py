@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 import models, schemas
 
@@ -18,7 +19,7 @@ def create_image(db: Session, image: schemas.ImageCreate):
 
 def get_images(db: Session, page: int = 1, limit: int = 10):
     skip = (1-page)*limit
-    rez = db.query(models.Image).offset(skip).limit(limit).all()
+    rez = db.query(models.Image).order_by(desc(models.Image.date_create)).offset(skip).limit(limit).all()
     return rez
 
 
