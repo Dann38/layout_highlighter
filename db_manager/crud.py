@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
 import models, schemas
+from typing import List
 
 
 def get_image_id(db: Session, image_id: str):
@@ -34,3 +35,21 @@ def create_processing(db: Session, processing: schemas.ProcessingCreate) -> sche
 def get_processing(db: Session, processing_id: str) -> schemas.Processing:
     rez = db.query(models.Processing).filter(models.Processing.id == processing_id).first()
     return rez
+
+
+def get_label(db: Session, label_id: int) -> schemas.Label:
+    rez = db.query(models.Label).filter(models.Label.id == label_id).first()
+    return schemas.Label(id=rez[0], name=rez[1])
+
+
+def get_labels(db: Session) -> List[schemas.Label]:
+    rez = db.query(models.Label).all()
+    return rez
+
+
+def create_label(db: Session, label: schemas.LabelCreate) -> schemas.Label:
+    db_label = models.Label(name=label.name)
+    db.add(db_label)
+    db.commit()
+    db.refresh(db_label)
+    return schemas.Label(id=db_label.id, name=db_label.name)

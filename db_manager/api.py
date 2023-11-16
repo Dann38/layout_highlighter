@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI, UploadFile, File
 from sqlalchemy.orm import Session
 import uvicorn
 import models, schemas, crud
-from typing import List
+from typing import List, Dict
 from database import get_db, engine
 
 models.Base.metadata.create_all(bind=engine)
@@ -51,3 +51,14 @@ async def read_processing(id_process: str, db: Session = Depends(get_db)):
     processing = crud.get_processing(db, id_process)
     return processing
 
+
+@app.post("/label_create/")
+async def create_label(label: schemas.LabelCreate, db: Session = Depends(get_db)) -> int:
+    label = crud.create_label(db, label)
+    return label.id
+
+
+@app.get("/labels/")
+async def read_labels(db: Session = Depends(get_db)) -> List[schemas.Label]:
+    labels = crud.get_labels(db)
+    return labels
