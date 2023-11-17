@@ -1,9 +1,14 @@
-const look_graph = document.getElementById('segment_graph');
-look_graph.onchange = function(){
-    functionSegmentStep();
-}
-$("#button_segment").click(function(){
+const type_segmentor = document.getElementById('type-segment-input');
+process.type_segmentor = 1;
+process.list_type_segmentor = [1, 2];
 
+type_segmentor.onchange = function(){
+    functionGraphStep();
+    process.type_segmentor = type_segmentor.value;
+    select_type_segmentor(process.type_segmentor);
+}
+
+var function_segmentor_1 = function(){
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     const edges = process.edges;
@@ -23,12 +28,35 @@ $("#button_segment").click(function(){
           alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
             var response_segment = $.parseJSON(xhr.response);
-            console.log(response_segment);
             process.segment = response_segment;
             process.exist_data_step["segment"] = true;
             functionSegmentStep();
         }
     };
+}
+
+var function_segmentor_2 = function(){
+
+}
+
+process.function_segmentor = {
+    1: function_segmentor_1,
+    2: function_segmentor_2,
+}
+
+var select_type_segmentor = function(num_type) {
+    $(".segment-subsegment").css("display", "none");
+    $("#type-segment-"+num_type).css("display" ,"block");
+}
+
+
+const look_graph = document.getElementById('segment_graph');
+look_graph.onchange = function(){
+    functionSegmentStep();
+}
+
+$("#button_segment").click(function(){
+    process.function_segmentor[process.type_segmentor]();
 });
 
 var functionSegmentStep = function(){

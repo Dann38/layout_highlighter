@@ -1,4 +1,4 @@
-var process = {};
+
 process.list_step = ["image", "tesseract", "graph", "segment"]
 process.indicator_step = {
     "image": "текущий",
@@ -47,8 +47,6 @@ var select = function(name_step) {
         $(".setting").css("display", "none");
         $("#"+name_step+"-setting").css("display" ,"block");
         drewMenuStep();
-
-
     }
 }
 

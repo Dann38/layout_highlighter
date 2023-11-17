@@ -1,5 +1,30 @@
-var writeImage = function (base64) {
+var setClickCanvas = function(canvas){
+    canvas.addEventListener('mousedown', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        if (process.type_segmentor == 2){
+            const c = process.coef_image;
+            const zpoint = process.points[0]
+            var min = (zpoint.x*c - x)**2 + (zpoint.y*c - y)**2;
+            var min_index = 0;
+            for(var i = 0; i < process.points.length; i++){
+                const point = process.points[i];
+                const len = (point.x*c - x)**2 + (point.y*c - y)**2;
+                if (len < min) {
+                    min = len;
+                    min_index = i;
+                }
 
+            }
+
+            console.log(process.points[min_index]);
+            writePointRed(process.points[min_index].x, process.points[min_index].y);
+        }
+    });
+}
+
+var writeImage = function (base64) {
   const canvas = document.getElementById("result-image");
   const ctx = canvas.getContext("2d");
   const img = new Image();
@@ -51,6 +76,24 @@ var writePoint = function(x, y) {
     ctx.fill();
 }
 
+var writePointRed = function(x, y) {
+    const canvas = document.getElementById("result-image");
+    const ctx = canvas.getContext("2d");
+    const coef = process.coef_image;
+
+    const x0 = x*coef;
+    const y0 = y*coef;
+
+    size = 4;
+
+    var pointX = Math.round(x0);
+    var pointY = Math.round(y0);
+    ctx.beginPath();
+    ctx.fillStyle = '#ff0000';
+    ctx.arc(pointX, pointY, size, 0 * Math.PI, 2 * Math.PI);
+    ctx.fill();
+}
+
 var writeLine = function(x0, y0, x1, y1, color) {
     const canvas = document.getElementById("result-image");
     const ctx = canvas.getContext("2d");
@@ -64,3 +107,11 @@ var writeLine = function(x0, y0, x1, y1, color) {
     ctx.lineTo(coef*x1, coef*y1);
     ctx.stroke();
 }
+
+var getLine = function(x0, y0){
+    console.log(process.points);
+}
+
+
+const canvas = document.getElementById("result-image");
+setClickCanvas(canvas)

@@ -17,3 +17,12 @@ html{
 #progress{
     display: none;
 }
+
+
+.segment-subsegment{
+    display: none;
+}
+
+#type-segment-1{
+    display: block
+}
