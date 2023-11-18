@@ -1,25 +1,28 @@
 var setClickCanvas = function(canvas){
     canvas.addEventListener('mousedown', function (e) {
-        var rect = canvas.getBoundingClientRect();
+        const canvas_now = document.getElementById("result-image");
+        const rect = canvas_now.getBoundingClientRect()
         var x = e.clientX - rect.left;
         var y = e.clientY - rect.top;
+        console.log(e);
+        console.log({"x": x, "y": y})
         if (process.type_segmentor == 2){
-            const c = process.coef_image;
-            const zpoint = process.points[0]
-            var min = (zpoint.x*c - x)**2 + (zpoint.y*c - y)**2;
-            var min_index = 0;
-            for(var i = 0; i < process.points.length; i++){
-                const point = process.points[i];
-                const len = (point.x*c - x)**2 + (point.y*c - y)**2;
-                if (len < min) {
-                    min = len;
-                    min_index = i;
-                }
+            const c = process.width_image/canvas_now.clientWidth;
 
-            }
-
-            console.log(process.points[min_index]);
-            writePointRed(process.points[min_index].x, process.points[min_index].y);
+//            const zpoint = process.points[0]
+//            var min = (zpoint.x- x*c)**2 + (zpoint.y - y*c)**2;
+//            var min_index = 0;
+//            for(var i = 0; i < process.points.length; i++){
+//                const point = process.points[i];
+//                const len = (point.x - x*c)**2 + (point.y - y*c)**2;
+//                if (len < min) {
+//                    min = len;
+//                    min_index = i;
+//                }
+//
+//            }
+//            console.log(min);
+            writePointRed(x*c, y*c);
         }
     });
 }
@@ -32,9 +35,14 @@ var writeImage = function (base64) {
 
   var width_image = img.width;
   var height_image = img.height;
-  canvas.height = canvas.width * img.height / img.width;
+  process.width_image = width_image;
+  process.height_image = height_image;
 
-  ctx.drawImage(img,  0, 0,  img.width, img.height,  0, 0,  canvas.width, canvas.height);
+  canvas.width = img.width;
+  canvas.height = img.height;
+  canvas.style.width = "100%";
+
+  ctx.drawImage(img,  0, 0,  img.width, img.height)
   process.coef_image =  canvas.width/img.width;
 }
 
@@ -79,10 +87,9 @@ var writePoint = function(x, y) {
 var writePointRed = function(x, y) {
     const canvas = document.getElementById("result-image");
     const ctx = canvas.getContext("2d");
-    const coef = process.coef_image;
 
-    const x0 = x*coef;
-    const y0 = y*coef;
+    const x0 = x;
+    const y0 = y;
 
     size = 4;
 
