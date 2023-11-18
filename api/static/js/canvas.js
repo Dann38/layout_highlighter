@@ -1,28 +1,79 @@
+var get_edges_point = function(index_point) {
+    var list_index_line = new Array();
+    for(var i = 0; i < process.edges.length; i++){
+        const edge = process.edges[i];
+
+        if (edge.node1 == index_point || edge.node2 == index_point){
+            list_index_line.push(i);
+        }
+    }
+    return list_index_line;
+}
+
+var get_nearby_point = function(x, y) {
+    const zpoint = process.points[0]
+    var min = (zpoint.x- x)**2 + (zpoint.y - y)**2;
+    var min_index = 0;
+    for(var i = 0; i < process.points.length; i++){
+        const point = process.points[i];
+        const len = (point.x - x)**2 + (point.y - y)**2;
+        if (len < min) {
+            min = len;
+            min_index = i;
+        }
+
+    }
+    return min_index;
+}
+
+var get_nearby_center_line = function(x, y) {
+    var edges = process.edges
+
+    console.log("edges", edges);
+
+    const edge = edges[0];
+
+    const point1 = process.points[edge.node1];
+    const point2 = process.points[edge.node2];
+
+    xc = (point1.x + point2.x)/2;
+    yc = (point1.y + point2.y)/2;
+
+    var min = (xc- x)**2 + (yc - y)**2;
+    var min_index = 0;
+    for(var i = 1; i < edges.length; i++){
+        const edge = edges[i];
+
+        const point1 = process.points[edge.node1];
+        const point2 = process.points[edge.node2];
+
+        xc = (point1.x + point2.x)/2;
+        yc = (point1.y + point2.y)/2;
+
+        var len = (xc- x)**2 + (yc - y)**2;
+        if (len < min) {
+            min = len;
+            min_index = i;
+        }
+
+    }
+    return min_index;
+}
+
 var setClickCanvas = function(canvas){
     canvas.addEventListener('mousedown', function (e) {
         const canvas_now = document.getElementById("result-image");
         const rect = canvas_now.getBoundingClientRect()
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        console.log(e);
-        console.log({"x": x, "y": y})
-        if (process.type_segmentor == 2){
-            const c = process.width_image/canvas_now.clientWidth;
+        const c = process.width_image/canvas_now.clientWidth;
+        var x = c*(e.clientX - rect.left);
+        var y = c*(e.clientY - rect.top);
 
-//            const zpoint = process.points[0]
-//            var min = (zpoint.x- x*c)**2 + (zpoint.y - y*c)**2;
-//            var min_index = 0;
-//            for(var i = 0; i < process.points.length; i++){
-//                const point = process.points[i];
-//                const len = (point.x - x*c)**2 + (point.y - y*c)**2;
-//                if (len < min) {
-//                    min = len;
-//                    min_index = i;
-//                }
-//
-//            }
-//            console.log(min);
-            writePointRed(x*c, y*c);
+        if (process.type_segmentor == 2){
+            index_line = get_nearby_center_line(x, y)
+            const edge = process.edges[index_line]
+            var point1 = process.points[edge.node1];
+            var point2 = process.points[edge.node2];
+            writeLine(point1.x, point1.y, point2.x, point2.y, "#00ff00");
         }
     });
 }
