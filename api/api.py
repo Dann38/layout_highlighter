@@ -118,7 +118,7 @@ def width_segments():
         "list_edge": edges,
         "list_point": points,
         "threshold": threshold,
-        "mandatory_links": mandatory_links
+        "mandatory_links": mandatory_links,
     }).content
     return content
 
@@ -134,6 +134,6 @@ def manual_segments():
         "list_edge": edges,
         "list_point": points,
         "delete_edges": delete_edges,
-        "mandatory_links": mandatory_links
+        "mandatory_links": mandatory_links,
     }).content
     return content

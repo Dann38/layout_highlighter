@@ -83,10 +83,6 @@ async def width_segments(related_graph: schemas.CreateGraphSegmentsWidth) -> Lis
     return [schemas.GraphSegment(
         list_edge=seg.list_edge,
         list_index_point=seg.list_index_point,
-        x_left=seg.x_left,
-        y_top=seg.y_top,
-        x_right=seg.x_right,
-        y_bottom=seg.y_bottom
         ) for seg in segments]
 
 
@@ -110,8 +106,4 @@ async def manual_segments(related_graph: schemas.CreateGraphSegmentsManual) -> L
     return [schemas.GraphSegment(
         list_edge=seg.list_edge,
         list_index_point=seg.list_index_point,
-        x_left=seg.x_left,
-        y_top=seg.y_top,
-        x_right=seg.x_right,
-        y_bottom=seg.y_bottom
         ) for seg in segments]

@@ -1,4 +1,5 @@
 from graph.related_graph import RelatedGraph
+from typing import List
 
 
 class Segment:
@@ -8,10 +9,5 @@ class Segment:
                           for edge in r.get_edges()]
         nodes = r.get_nodes()
         self.list_index_point = [index_and_id_node[node.index] for node in nodes]
-        x_array = [node.x for node in nodes]
-        y_array = [node.y for node in nodes]
-        self.x_left = round(min(x_array))
-        self.y_top = round(min(y_array))
-        self.x_right = round(max(x_array))
-        self.y_bottom = round(max(y_array))
+
 

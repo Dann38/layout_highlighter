@@ -90,7 +90,8 @@ var functionSegmentStep = function(){
         functionImageStep();
         for(var i = 0; i < process.segment.length; i++){
             const seg = process.segment[i];
-            writeRectangle(seg.x_left, seg.y_top, seg.x_right-seg.x_left, seg.y_bottom-seg.y_top);
+            const rect = graphToRectBboxes(seg);
+            writeRectangle(rect.x_left, rect.y_top, rect.x_right-rect.x_left, rect.y_bottom-rect.y_top);
 
             if (look_graph.checked){
                 for(var j = 0; j < seg.list_index_point.length; j++){
@@ -154,4 +155,36 @@ var plotWidthBar = function(){
 //    for(var i=0; i<count_bar; i++) {
 //      ctx.fillText(arr_label[i], canvas_step + i*canvas_step, canvas.height);
 //    }
+}
+
+var graphToRectBboxes = function(seg){
+    const c = process.points.length / process.bboxes.length; // ОШИБКА ТОЧЕК МОЖЕТ БЫТЬ В СПОСОБЕ ОПРЕДЕЛЕНИЯ КАКОМУ BBOX ПРИНАДЛЕЖИТ ТОЧКА;
+    const bbox = process.bboxes[Math.floor(seg.list_index_point[0]/c)];
+    const rect = {
+        "x_left": bbox.x_top_left,
+        "y_top": bbox.y_top_left,
+        "x_right": bbox.x_top_left + bbox.width,
+        "y_bottom": bbox.y_top_left + bbox.height,
+    };
+    for(var j = 1; j < seg.list_index_point.length; j++){
+
+        const bbox = process.bboxes[Math.floor(seg.list_index_point[j]/c)];
+        const x_left =  bbox.x_top_left;
+        const y_top = bbox.y_top_left;
+        const x_right = bbox.x_top_left + bbox.width;
+        const y_bottom = bbox.y_top_left + bbox.height;
+        if (rect.x_left > x_left){
+            rect.x_left = x_left;
+        }
+        if (rect.y_top > y_top){
+            rect.y_top = y_top;
+        }
+        if (rect.x_right < x_right){
+            rect.x_right = x_right;
+        }
+        if (rect.y_bottom < y_bottom){
+            rect.y_bottom = y_bottom;
+        }
+    }
+    return rect;
 }

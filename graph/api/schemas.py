@@ -37,7 +37,3 @@ class CreateGraphSegmentsManual(BaseModel):
 class GraphSegment(BaseModel):
     list_edge: List[Dict]
     list_index_point: List[int]
-    x_left: int
-    y_top: int
-    x_right: int
-    y_bottom: int
