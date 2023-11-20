@@ -1,3 +1,19 @@
+var addDeleteElement = function(elem, list_elem, delete_=true, add_=true) {
+     if (list_elem.includes(elem)) {
+        var index = list_elem.indexOf(elem);
+        if (index !== -1) {
+            if (delete_){
+                list_elem.splice(index, 1);
+            }
+
+        }
+    }else {
+        if (add_){
+            list_elem.push(elem);
+        }
+    }
+}
+
 var get_edges_point = function(index_point) {
     var list_index_line = new Array();
     for(var i = 0; i < process.edges.length; i++){
@@ -26,10 +42,27 @@ var get_nearby_point = function(x, y) {
     return min_index;
 }
 
+var is_into_rect = function(x, y, rx0, ry0, rx1, ry1) {
+    var x0 = Math.min(rx0, rx1);
+    var x1 = Math.max(rx0, rx1);
+    var y0 = Math.min(ry0, ry1);
+    var y1 = Math.max(ry0, ry1);
+    return x > x0 && x < x1 && y > y0 && y < y1;
+}
+
+var get_points_into_rect = function(x0, y0, x1, y1) {
+    var array_point = new Array();
+    for(var i = 0; i < process.points.length; i++){
+        const point = process.points[i];
+        if (is_into_rect(point.x, point.y, x0, y0, x1, y1)){
+            array_point.push(i);
+        }
+    }
+    return array_point;
+}
+
 var get_nearby_center_line = function(x, y) {
     var edges = process.edges
-
-    console.log("edges", edges);
 
     const edge = edges[0];
 
@@ -60,6 +93,54 @@ var get_nearby_center_line = function(x, y) {
     return min_index;
 }
 
+var type_segment_method_edge = function(x, y) {
+    index_line = get_nearby_center_line(x, y);
+    addDeleteElement(index_line, process.delete_edges);
+
+    for(var i=0; i <  process.delete_edges.length; i++){
+        const edge = process.edges[process.delete_edges[i]];
+        var point1 = process.points[edge.node1];
+        var point2 = process.points[edge.node2];
+        writeLine(point1.x, point1.y, point2.x, point2.y, "#ff0000");
+    }
+}
+
+var type_segment_method_rect = function(x, y) {
+    if (process.first_point.x  === undefined){
+        process.first_point.x = x;
+        process.first_point.y = y;
+        console.log(process.first_point);
+    }else {
+        const x0 = x;
+        const y0 = y;
+        const x1 = process.first_point.x;
+        const y1 = process.first_point.y
+        array_point = get_points_into_rect(x0, y0, x1, y1);
+
+        for(var i =0; i < process.edges.length; i++){
+            const edge = process.edges[i];
+            if (array_point.indexOf(edge.node1) != -1){
+                const point = process.points[edge.node2];
+                if (!is_into_rect(point.x, point.y, x0, y0, x1, y1)){
+                    addDeleteElement(i, process.delete_edges, delete_=false);
+                }
+            }else if (array_point.indexOf(edge.node2) != -1){
+                const point = process.points[edge.node1];
+                if (!is_into_rect(point.x, point.y, x0, y0, x1, y1)){
+                    addDeleteElement(i, process.delete_edges, delete_=false);
+                }
+            }
+        }
+        for(var i=0; i <  process.delete_edges.length; i++){
+            const edge = process.edges[process.delete_edges[i]];
+            var point1 = process.points[edge.node1];
+            var point2 = process.points[edge.node2];
+            writeLine(point1.x, point1.y, point2.x, point2.y, "#ff0000");
+        }
+        process.first_point = {};
+    }
+}
+
 var setClickCanvas = function(canvas){
     canvas.addEventListener('mousedown', function (e) {
         const canvas_now = document.getElementById("result-image");
@@ -69,11 +150,12 @@ var setClickCanvas = function(canvas){
         var y = c*(e.clientY - rect.top);
 
         if (process.type_segmentor == 2){
-            index_line = get_nearby_center_line(x, y)
-            const edge = process.edges[index_line]
-            var point1 = process.points[edge.node1];
-            var point2 = process.points[edge.node2];
-            writeLine(point1.x, point1.y, point2.x, point2.y, "#00ff00");
+            if (typeSegment2method1.checked == true) {
+                type_segment_method_edge(x, y);
+            }else if (typeSegment2method2.checked == true){
+                type_segment_method_rect(x, y);
+            }
+
         }
     });
 }

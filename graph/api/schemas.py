@@ -20,11 +20,18 @@ class Graph(BaseModel):
     list_edge: List[Dict]
 
 
-class CreateGraphSegments(BaseModel):
+class CreateGraphSegmentsWidth(BaseModel):
     list_edge: List[Dict]
     list_point: List[Dict]
     mandatory_links: List[Dict]
     threshold: float
+
+
+class CreateGraphSegmentsManual(BaseModel):
+    list_edge: List[Dict]
+    list_point: List[Dict]
+    mandatory_links: List[Dict]
+    delete_edges: List[int]
 
 
 class GraphSegment(BaseModel):

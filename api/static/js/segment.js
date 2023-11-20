@@ -4,6 +4,8 @@ process.list_type_segmentor = [1, 2];
 
 type_segmentor.onchange = function(){
     functionGraphStep();
+    process.delete_edges = new Array();
+    process.first_point = {};
     process.type_segmentor = type_segmentor.value;
     select_type_segmentor(process.type_segmentor);
 }
@@ -20,7 +22,7 @@ var function_segmentor_1 = function(){
     formData.append('threshold', threshold);
     formData.append('mandatory_links', JSON.stringify(mandatory_links));
 
-    xhr.open('POST', '/delone_to_segment');
+    xhr.open('POST', '/width_segments');
     xhr.send(formData);
 
     xhr.onload = function() {
@@ -36,7 +38,31 @@ var function_segmentor_1 = function(){
 }
 
 var function_segmentor_2 = function(){
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    const edges = process.edges;
+    const points = process.points;
+    const mandatory_links = process.bboxes_edge;
+    const delete_edges = process.delete_edges;
+    console.log("delete edges", delete_edges);
+    formData.append('edges', JSON.stringify(edges));
+    formData.append('points', JSON.stringify(points));
+    formData.append('delete_edges', JSON.stringify(delete_edges));
+    formData.append('mandatory_links', JSON.stringify(mandatory_links));
 
+    xhr.open('POST', '/manual_segments');
+    xhr.send(formData);
+
+    xhr.onload = function() {
+        if (xhr.status != 200) {
+          alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
+        } else {
+            var response_segment = $.parseJSON(xhr.response);
+            process.segment = response_segment;
+            process.exist_data_step["segment"] = true;
+            functionSegmentStep();
+        }
+    };
 }
 
 process.function_segmentor = {
@@ -64,7 +90,6 @@ var functionSegmentStep = function(){
         functionImageStep();
         for(var i = 0; i < process.segment.length; i++){
             const seg = process.segment[i];
-            console.log(seg.x_left, seg.y_top, seg.x_right, seg.y_bottom)
             writeRectangle(seg.x_left, seg.y_top, seg.x_right-seg.x_left, seg.y_bottom-seg.y_top);
 
             if (look_graph.checked){

@@ -106,18 +106,34 @@ def point_processing():
     return {"list_point": points, "list_edge": edges, "bboxes_edge": bboxes_edge}
 
 
-@app.route("/delone_to_segment/", methods=["POST"])
-def delone_to_graph_segments():
+@app.route("/width_segments/", methods=["POST"])
+def width_segments():
     edges = json.loads(request.form["edges"])
     points = json.loads(request.form["points"])
     threshold = float(request.form["threshold"])
 
     mandatory_links = json.loads(request.form["mandatory_links"])
 
-    content = requests.post(f'{host_graph}/delone_to_graph_segments/', json={
+    content = requests.post(f'{host_graph}/width_segments/', json={
         "list_edge": edges,
         "list_point": points,
         "threshold": threshold,
+        "mandatory_links": mandatory_links
+    }).content
+    return content
+
+
+@app.route("/manual_segments/", methods=["POST"])
+def manual_segments():
+    edges = json.loads(request.form["edges"])
+    points = json.loads(request.form["points"])
+    delete_edges = json.loads(request.form["delete_edges"])
+    mandatory_links = json.loads(request.form["mandatory_links"])
+
+    content = requests.post(f'{host_graph}/manual_segments/', json={
+        "list_edge": edges,
+        "list_point": points,
+        "delete_edges": delete_edges,
         "mandatory_links": mandatory_links
     }).content
     return content

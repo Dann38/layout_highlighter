@@ -63,8 +63,8 @@ async def point_to_delone(points: schemas.CreateGraph) -> schemas.Graph:
     return schemas.Graph(list_edge=edges_result)
 
 
-@app.post("/delone_to_graph_segments/")
-async def point_to_delone(related_graph: schemas.CreateGraphSegments) -> List[schemas.GraphSegment]:
+@app.post("/width_segments/")
+async def width_segments(related_graph: schemas.CreateGraphSegmentsWidth) -> List[schemas.GraphSegment]:
     graph = Graph()
     index_and_id_node = dict()
     id_list = []
@@ -75,6 +75,33 @@ async def point_to_delone(related_graph: schemas.CreateGraphSegments) -> List[sc
 
     new_edge = [edge for edge in related_graph.list_edge
                 if edge["width"] < related_graph.threshold] + related_graph.mandatory_links
+
+    for edge in new_edge:
+        graph.add_edge(id_list[edge["node1"]], id_list[edge["node2"]])
+
+    segments = [Segment(r, index_and_id_node) for r in graph.get_related_graphs()]
+    return [schemas.GraphSegment(
+        list_edge=seg.list_edge,
+        list_index_point=seg.list_index_point,
+        x_left=seg.x_left,
+        y_top=seg.y_top,
+        x_right=seg.x_right,
+        y_bottom=seg.y_bottom
+        ) for seg in segments]
+
+
+@app.post("/manual_segments/")
+async def manual_segments(related_graph: schemas.CreateGraphSegmentsManual) -> List[schemas.GraphSegment]:
+    graph = Graph()
+    index_and_id_node = dict()
+    id_list = []
+    for i, point in enumerate(related_graph.list_point):
+        id_ = graph.add_node(point["x"], point["y"])
+        index_and_id_node[id_] = i
+        id_list.append(id_)
+
+    new_edge = [edge for i, edge in enumerate(related_graph.list_edge)
+                if not (i in related_graph.delete_edges)] + related_graph.mandatory_links
 
     for edge in new_edge:
         graph.add_edge(id_list[edge["node1"]], id_list[edge["node2"]])
