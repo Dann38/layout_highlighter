@@ -96,20 +96,14 @@ var get_nearby_center_line = function(x, y) {
 var type_segment_method_edge = function(x, y) {
     index_line = get_nearby_center_line(x, y);
     addDeleteElement(index_line, process.delete_edges);
-
-    for(var i=0; i <  process.delete_edges.length; i++){
-        const edge = process.edges[process.delete_edges[i]];
-        var point1 = process.points[edge.node1];
-        var point2 = process.points[edge.node2];
-        writeLine(point1.x, point1.y, point2.x, point2.y, "#ff0000");
-    }
+    writeCurrentLayout();
 }
 
 var type_segment_method_rect = function(x, y) {
     if (process.first_point.x  === undefined){
         process.first_point.x = x;
         process.first_point.y = y;
-        console.log(process.first_point);
+
     }else {
         const x0 = x;
         const y0 = y;
@@ -131,12 +125,7 @@ var type_segment_method_rect = function(x, y) {
                 }
             }
         }
-        for(var i=0; i <  process.delete_edges.length; i++){
-            const edge = process.edges[process.delete_edges[i]];
-            var point1 = process.points[edge.node1];
-            var point2 = process.points[edge.node2];
-            writeLine(point1.x, point1.y, point2.x, point2.y, "#ff0000");
-        }
+        writeCurrentLayout();
         process.first_point = {};
     }
 }
@@ -158,6 +147,33 @@ var setClickCanvas = function(canvas){
 
         }
     });
+    canvas.addEventListener('mousemove', function (e) {
+        const canvas_now = document.getElementById("result-image");
+        const rect = canvas_now.getBoundingClientRect()
+        const c = process.width_image/canvas_now.clientWidth;
+        var x = c*(e.clientX - rect.left);
+        var y = c*(e.clientY - rect.top);
+
+        if (process.type_segmentor == 2 && typeSegment2method2.checked == true){
+            if (process.first_point.x  !== undefined) {
+                writeCurrentLayout();
+                w = x - process.first_point.x;
+                h = y - process.first_point.y;
+                writeRectangle(process.first_point.x, process.first_point.y, w, h);
+
+            }
+        }
+    });
+}
+
+var writeCurrentLayout = function(){
+    functionGraphStep();
+    for(var i=0; i <  process.delete_edges.length; i++){
+        const edge = process.edges[process.delete_edges[i]];
+        var point1 = process.points[edge.node1];
+        var point2 = process.points[edge.node2];
+        writeLine(point1.x, point1.y, point2.x, point2.y, "#ff0000");
+    }
 }
 
 var writeImage = function (base64) {

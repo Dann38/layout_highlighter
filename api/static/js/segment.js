@@ -3,11 +3,11 @@ process.type_segmentor = 1;
 process.list_type_segmentor = [1, 2];
 
 type_segmentor.onchange = function(){
-    functionGraphStep();
     process.delete_edges = new Array();
     process.first_point = {};
     process.type_segmentor = type_segmentor.value;
     select_type_segmentor(process.type_segmentor);
+    writeCurrentLayout();
 }
 
 var function_segmentor_1 = function(){
@@ -57,6 +57,7 @@ var function_segmentor_2 = function(){
         if (xhr.status != 200) {
           alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
+            console.log("SERVER SEGMENT MANUAL FINISH");
             var response_segment = $.parseJSON(xhr.response);
             process.segment = response_segment;
             process.exist_data_step["segment"] = true;
