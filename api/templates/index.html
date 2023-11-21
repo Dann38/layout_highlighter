@@ -42,6 +42,12 @@
                             </dib>
                             <span id="indicator-segment" class="badge bg-primary rounded-pill"></span>
                           </li>
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <dib id="a-indicator-segment-classifier"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                              Классификация сегментов
+                            </dib>
+                            <span id="indicator-segment-classifier" class="badge bg-primary rounded-pill"></span>
+                          </li>
                         </ul>
                     </div>
 
@@ -148,8 +154,25 @@
                              </div>
 
                     </div>
-               </div>
 
+                    <div id="segment-classifier-setting" class="row gy-5 setting">
+                        <p class="h1">Настройка связного графа</p>
+                          <form id="form-segment-classifier" method="POST" action="">
+                              <div class="form-context">
+                                   <div class="input-group">
+                                    <select id="segment-classifier-type-input" class="form-select form-select-sm" aria-label=".form-select-sm example">
+                                      <option value="1">MLP</option>
+<!--                                      <option value="2"></option>-->
+<!--                                      <option value="3"></option>-->
+                                    </select>
+                                   </div>
+                              </div>
+                          </form>
+                        <div class="col-6">
+                            <div id="button_segment_classifier" class="btn btn-primary">Классифицировать</div>
+                         </div>
+                    </div>
+              </div>
 
               <div class="col-6 image-block vh-100">
                   <canvas id="result-image" class="col-12">
@@ -176,6 +199,7 @@
      <script src="{{ url_for('static', filename='js/tesseract.js') }}"></script>
      <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
      <script src="{{ url_for('static', filename='js/segment.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/segment_classifier.js') }}"></script>
 
      <script src="{{ url_for('static', filename='js/progress.js') }}"></script>
 

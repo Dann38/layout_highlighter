@@ -107,8 +107,8 @@ var functionSegmentStep = function(){
             }
         }
     }
-//
-//    unlockStep("graph");
+
+    unlockStep("segment-classifier");
 }
 
 var plotWidthBar = function(){

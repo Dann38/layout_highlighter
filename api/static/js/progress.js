@@ -1,24 +1,27 @@
 
-process.list_step = ["image", "tesseract", "graph", "segment"]
+process.list_step = ["image", "tesseract", "graph", "segment", "segment-classifier"]
 process.indicator_step = {
     "image": "текущий",
     "tesseract": "",
     "graph": "",
-    "segment": ""
+    "segment": "",
+    "segment-classifier": "",
 }
 
 process.function_step = {
     "image": functionImageStep,
     "tesseract": functionTesseractStep,
     "graph": functionGraphStep,
-    "segment": functionSegmentStep
+    "segment": functionSegmentStep,
+    "segment-classifier": functionSegmentClassifierStep,
 }
 
 process.exist_data_step = {
     "image": false,
     "tesseract": false,
     "graph": false,
-    "segment": false
+    "segment": false,
+    "segment-classifier": false,
 }
 
 var select = function(name_step) {
