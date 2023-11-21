@@ -1,6 +1,6 @@
 const type_segment_classifier = document.getElementById('type-segment-classifier-input');
 process.type_segment_classifier = 1;
-process.type_segment_classifier = [1, 2];
+process.list_type_segment_classifier = [1, 2];
 
 type_segment_classifier.onchange = function(){
     process.segments = new Array();
@@ -90,20 +90,29 @@ var functionSegmentClassifierStep = function(){
 }
 
 var addSegmentLabel = function(id, text, pr=false) {
-
+    process.labels.push({"id": id, "name": text});
+    var radio = document.createElement('input');
+    radio.classList.add("form-check-input");
+    radio.type = "radio";
+    radio.name = "typeLabel";
+    radio.id = "typeLabel"+id;
+    var text_label = document.createElement('label');
+    text_label.classList.add("form-check-label");
+    text_label.for = "typeLabel"+id;
+    text_label.innerText = text + "(id: " + id + ")";
     var label = document.createElement('li');
     label.classList.add("label");
+    label.classList.add("form-check");
     label.dataset.rowId = id;
 
-    label.innerText = text + "(id: " + id + ")";
+    label.prepend(radio);
+    label.prepend(text_label);
 
     if (pr) {
         $("#label-group").prepend(label)
     }else{
         $("#label-group").append(label);
     }
-
-//    $(btn_id).on("click", btnClassClick);
  }
 
  var addLabels = function() {
@@ -114,6 +123,7 @@ var addSegmentLabel = function(id, text, pr=false) {
         if (xhr_labels.status == 200) {
             var array =  $.parseJSON(xhr_labels.response);
             $("#label-group")[0].innerText = "";
+            process.labels = new Array();
             for(var i=0; i < array.length ; i++){
                 addSegmentLabel(array[i].id, array[i].name);
             }
@@ -138,3 +148,13 @@ $("#button_new_label").click(function(){
         }
     }
 });
+
+var activeLabel = function(){
+    var list_label = $("#label-group")[0].children;
+    for (var i = 0; i < list_label.length; i++){
+        const label = list_label[i];
+        if (label.children[1].checked){
+            return label.dataset.rowId;
+        }
+    }
+}

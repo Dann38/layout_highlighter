@@ -130,6 +130,49 @@ var type_segment_method_rect = function(x, y) {
     }
 }
 
+var type_segment_mousedown = function(x, y){
+    if (process.type_segmentor == 2){
+        if (typeSegment2method1.checked == true) {
+            type_segment_method_edge(x, y);
+        }else if (typeSegment2method2.checked == true){
+            type_segment_method_rect(x, y);
+        }
+    }
+}
+
+var type_segment_mousemove = function(x, y){
+    if (process.type_segmentor == 2 && typeSegment2method2.checked == true){
+        if (process.first_point.x  !== undefined) {
+            writeCurrentLayout();
+            w = x - process.first_point.x;
+            h = y - process.first_point.y;
+            writeRectangle(process.first_point.x, process.first_point.y, w, h);
+
+        }
+    }
+}
+
+var type_segment_classifier_mousedown = function(x, y){
+    if (process.type_segment_classifier == 1) {
+        const id_label = activeLabel();
+        for (j = 0; j < process.labels.length; j++){
+            if (process.labels[j].id == id_label) {
+                process.text_label =  process.labels[j].name;
+                process.id_label = id_label;
+            }
+        }
+
+        for (var i = 0; i < process.segment.length; i++){
+            const seg = process.segment[i];
+            const rect = seg.rect;
+            if (is_into_rect(x, y, rect.x_left, rect.y_top, rect.x_right, rect.y_bottom)) {
+                seg.label = process.text_label;
+            }
+        }
+        writeSegmentAndLabel();
+    }
+}
+
 var setClickCanvas = function(canvas){
     canvas.addEventListener('mousedown', function (e) {
         const canvas_now = document.getElementById("result-image");
@@ -137,15 +180,12 @@ var setClickCanvas = function(canvas){
         const c = process.width_image/canvas_now.clientWidth;
         var x = c*(e.clientX - rect.left);
         var y = c*(e.clientY - rect.top);
-
-        if (process.type_segmentor == 2){
-            if (typeSegment2method1.checked == true) {
-                type_segment_method_edge(x, y);
-            }else if (typeSegment2method2.checked == true){
-                type_segment_method_rect(x, y);
-            }
-
+        if (process.indicator_step["segment"] == "текущий"){
+            type_segment_mousedown(x, y);
+        } else if (process.indicator_step["segment-classifier"] == "текущий"){
+            type_segment_classifier_mousedown(x, y);
         }
+
     });
     canvas.addEventListener('mousemove', function (e) {
         const canvas_now = document.getElementById("result-image");
@@ -153,26 +193,66 @@ var setClickCanvas = function(canvas){
         const c = process.width_image/canvas_now.clientWidth;
         var x = c*(e.clientX - rect.left);
         var y = c*(e.clientY - rect.top);
-
-        if (process.type_segmentor == 2 && typeSegment2method2.checked == true){
-            if (process.first_point.x  !== undefined) {
-                writeCurrentLayout();
-                w = x - process.first_point.x;
-                h = y - process.first_point.y;
-                writeRectangle(process.first_point.x, process.first_point.y, w, h);
-
-            }
+        if (process.indicator_step["segment"] == "текущий"){
+            type_segment_mousemove(x, y)
         }
     });
 }
 
+var writeGraph = function(){
+    functionImageStep();
+    for(var i = 0; i < process.points.length; i++){
+        const point = process.points[i];
+        writePoint(point.x, point.y);
+    }
+    for(var i = 0; i < process.edges.length; i++){
+        const point1 = process.points[process.edges[i].node1];
+        const point2 = process.points[process.edges[i].node2];
+        writeLine(point1.x, point1.y, point2.x, point2.y, "rgba(0, 0, 255, 0.5)");
+    }
+}
+
 var writeCurrentLayout = function(){
-    functionGraphStep();
+    writeGraph();
     for(var i=0; i <  process.delete_edges.length; i++){
         const edge = process.edges[process.delete_edges[i]];
         var point1 = process.points[edge.node1];
         var point2 = process.points[edge.node2];
         writeLine(point1.x, point1.y, point2.x, point2.y, "#ff0000");
+    }
+}
+
+var writeSegment = function(look_graph=false, rect_exist=false){
+    functionImageStep();
+    for(var i = 0; i < process.segment.length; i++){
+        const seg = process.segment[i];
+        if (!rect_exist){
+            seg.rect = graphToRectBboxes(seg);
+        }
+
+        writeRectangle(seg.rect.x_left, seg.rect.y_top, seg.rect.x_right-seg.rect.x_left, seg.rect.y_bottom-seg.rect.y_top);
+
+        if (look_graph){
+            for(var j = 0; j < seg.list_index_point.length; j++){
+                const point = process.points[seg.list_index_point[j]];
+                writePoint(point.x, point.y);
+            }
+            for(var j = 0; j < seg.list_edge.length; j++){
+                const point1 = process.points[seg.list_edge[j].node1];
+                const point2 = process.points[seg.list_edge[j].node2];
+                writeLine(point1.x, point1.y, point2.x, point2.y, "rgba(0, 0, 255, 0.5)");
+            }
+        }
+    }
+}
+
+var writeSegmentAndLabel = function(){
+    writeSegment(false, true);
+    for(var i=0; i< process.segment.length; i++){
+        const seg = process.segment[i];
+        if (seg.label !== undefined){
+            writeText(seg.rect.x_left, seg.rect.y_top, seg.label)
+        }
     }
 }
 
@@ -262,6 +342,14 @@ var writeLine = function(x0, y0, x1, y1, color) {
     ctx.moveTo(coef*x0, coef*y0);
     ctx.lineTo(coef*x1, coef*y1);
     ctx.stroke();
+}
+
+var writeText = function(x, y, text, pt=30, color="#00F") {
+    const canvas = document.getElementById("result-image");
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = color;
+    ctx.font = "italic "+pt+"pt Arial";
+    ctx.fillText(text, x, y);
 }
 
 var getLine = function(x0, y0){

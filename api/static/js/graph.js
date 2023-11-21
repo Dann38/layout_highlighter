@@ -30,16 +30,7 @@ var functionStartGraphStep = function() {}
 
 var functionGraphStep = function(){
     if (process.exist_data_step["graph"]){
-        functionImageStep();
-        for(var i = 0; i < process.points.length; i++){
-            const point = process.points[i];
-            writePoint(point.x, point.y);
-        }
-        for(var i = 0; i < process.edges.length; i++){
-            const point1 = process.points[process.edges[i].node1];
-            const point2 = process.points[process.edges[i].node2];
-            writeLine(point1.x, point1.y, point2.x, point2.y, "rgba(0, 0, 255, 0.5)");
-        }
+        writeGraph();
         unlockStep("segment");
         plotWidthBar();
     }

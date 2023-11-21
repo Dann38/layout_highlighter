@@ -90,25 +90,7 @@ var functionStartSegmentStep = function(){}
 
 var functionSegmentStep = function(){
     if (process.exist_data_step["segment"]){
-        functionImageStep();
-        for(var i = 0; i < process.segment.length; i++){
-            const seg = process.segment[i];
-            const rect = graphToRectBboxes(seg);
-            seg.rect = rect;
-            writeRectangle(rect.x_left, rect.y_top, rect.x_right-rect.x_left, rect.y_bottom-rect.y_top);
-
-            if (look_graph.checked){
-                for(var j = 0; j < seg.list_index_point.length; j++){
-                    const point = process.points[seg.list_index_point[j]];
-                    writePoint(point.x, point.y);
-                }
-                for(var j = 0; j < seg.list_edge.length; j++){
-                    const point1 = process.points[seg.list_edge[j].node1];
-                    const point2 = process.points[seg.list_edge[j].node2];
-                    writeLine(point1.x, point1.y, point2.x, point2.y, "rgba(0, 0, 255, 0.5)");
-                }
-            }
-        }
+        writeSegment(look_graph.checked);
     }
 
     unlockStep("segment-classifier");
