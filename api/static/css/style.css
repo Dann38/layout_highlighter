@@ -26,3 +26,11 @@ html{
 #type-segment-1{
     display: block
 }
+
+.segment-classifier-subsegment{
+    display: none;
+}
+
+#type-segment-classifier-1{
+    display: block
+}

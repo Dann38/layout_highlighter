@@ -92,6 +92,7 @@ var functionSegmentStep = function(){
         for(var i = 0; i < process.segment.length; i++){
             const seg = process.segment[i];
             const rect = graphToRectBboxes(seg);
+            seg.rect = rect;
             writeRectangle(rect.x_left, rect.y_top, rect.x_right-rect.x_left, rect.y_bottom-rect.y_top);
 
             if (look_graph.checked){
