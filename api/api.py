@@ -143,3 +143,10 @@ def manual_segments():
 def get_labels():
     content = requests.get(f'{host_db_manager}/labels/').content
     return content
+
+
+@app.route("/create_label", methods=["POST"])
+def create_label():
+    name = str(request.form["name"])
+    content = requests.post(f'{host_db_manager}/label_create/', json={"name": name}).content
+    return content

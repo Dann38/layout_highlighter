@@ -44,7 +44,7 @@ var function_segmentor_2 = function(){
     const points = process.points;
     const mandatory_links = process.bboxes_edge;
     const delete_edges = process.delete_edges;
-    console.log("delete edges", delete_edges);
+
     formData.append('edges', JSON.stringify(edges));
     formData.append('points', JSON.stringify(points));
     formData.append('delete_edges', JSON.stringify(delete_edges));

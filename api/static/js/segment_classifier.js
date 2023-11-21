@@ -121,3 +121,20 @@ var addSegmentLabel = function(id, text, pr=false) {
     }
 //    $(".button_id_send").on("click", btnClassClick);
 }
+
+$("#button_new_label").click(function(){
+    const xhr_create_label = new XMLHttpRequest();
+    const formData = new FormData();
+    const name = document.getElementById('nameNewLabel').value;
+    formData.append('name', name);
+    xhr_create_label.open("POST", "/create_label");
+    xhr_create_label.send(formData);
+    xhr_create_label.onload = function() {
+        if (xhr_create_label.status == 200) {
+            var new_id =  $.parseJSON(xhr_create_label.response);
+
+            addSegmentLabel(new_id, name);
+
+        }
+    }
+});
