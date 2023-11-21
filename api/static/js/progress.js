@@ -16,6 +16,14 @@ process.function_step = {
     "segment-classifier": functionSegmentClassifierStep,
 }
 
+process.function_start_step = {
+    "image": functionStartImageStep,
+    "tesseract": functionStartTesseractStep,
+    "graph": functionStartGraphStep,
+    "segment": functionStartSegmentStep,
+    "segment-classifier": functionStartSegmentClassifierStep,
+}
+
 process.exist_data_step = {
     "image": false,
     "tesseract": false,
@@ -49,6 +57,7 @@ var select = function(name_step) {
 
         $(".setting").css("display", "none");
         $("#"+name_step+"-setting").css("display" ,"block");
+        process.function_start_step[name_step]();
         drewMenuStep();
     }
 }

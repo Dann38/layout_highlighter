@@ -137,3 +137,9 @@ def manual_segments():
         "mandatory_links": mandatory_links,
     }).content
     return content
+
+
+@app.route("/get_labels", methods=["GET"])
+def get_labels():
+    content = requests.get(f'{host_db_manager}/labels/').content
+    return content

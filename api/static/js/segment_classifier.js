@@ -75,6 +75,11 @@ var select_type_segment_classifier = function(num_type) {
     $("#type-segment-classifier-"+num_type).css("display" ,"block");
 }
 
+var functionStartSegmentClassifierStep = function(){
+    console.log("start Segment classifier");
+    $("#segment-label-list").css("display" ,"block");
+    addLabels();
+}
 
 var functionSegmentClassifierStep = function(){
     if (process.exist_data_step["segment-classifier"]){
@@ -82,4 +87,37 @@ var functionSegmentClassifierStep = function(){
 //        unlockStep("segment");
 
     }
+}
+
+var addSegmentLabel = function(id, text, pr=false) {
+
+    var label = document.createElement('li');
+    label.classList.add("label");
+    label.dataset.rowId = id;
+
+    label.innerText = text + "(id: " + id + ")";
+
+    if (pr) {
+        $("#label-group").prepend(label)
+    }else{
+        $("#label-group").append(label);
+    }
+
+//    $(btn_id).on("click", btnClassClick);
+ }
+
+ var addLabels = function() {
+    const xhr_labels = new XMLHttpRequest();
+    xhr_labels.open("GET", "/get_labels");
+    xhr_labels.send();
+    xhr_labels.onload = function() {
+        if (xhr_labels.status == 200) {
+            var array =  $.parseJSON(xhr_labels.response);
+            $("#label-group")[0].innerText = "";
+            for(var i=0; i < array.length ; i++){
+                addSegmentLabel(array[i].id, array[i].name);
+            }
+        }
+    }
+//    $(".button_id_send").on("click", btnClassClick);
 }

@@ -3,8 +3,6 @@ $("#button_open_processing").click(
         $("#button_open_processing").text("Новое исследование");
         $("#progress").css("display" ,"block");
         select("image");
-        $("#history-list").css("display" ,"block");
-        addHistory();
     }
 );
 
@@ -35,9 +33,14 @@ var openImage = function(id_image){
     }
 }
 
+var functionStartImageStep = function() {
+    $("#history-list").css("display" ,"block");
+    addHistory();
+}
 
 var functionImageStep = function(){
     if (process.exist_data_step["image"]){
         writeImage(process.image_base64);
     }
 }
+

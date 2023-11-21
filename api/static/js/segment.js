@@ -86,6 +86,8 @@ $("#button_segment").click(function(){
     process.function_segmentor[process.type_segmentor]();
 });
 
+var functionStartSegmentStep = function(){}
+
 var functionSegmentStep = function(){
     if (process.exist_data_step["segment"]){
         functionImageStep();

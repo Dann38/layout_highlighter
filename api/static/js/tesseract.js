@@ -21,6 +21,8 @@ $("#button_tesseract").click(function(){
     };
 });
 
+var functionStartTesseractStep = function(){}
+
 var functionTesseractStep = function(){
     if (process.exist_data_step["tesseract"]){
         functionImageStep();

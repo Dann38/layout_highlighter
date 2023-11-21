@@ -25,6 +25,9 @@ $("#button_graph").click(function(){
         }
     };
 });
+
+var functionStartGraphStep = function() {}
+
 var functionGraphStep = function(){
     if (process.exist_data_step["graph"]){
         functionImageStep();
