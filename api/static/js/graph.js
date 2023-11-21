@@ -25,6 +25,7 @@ $("#button_graph").click(function(){
         }
     };
 });
+var functionResponseGraph = function(){}
 
 var functionStartGraphStep = function() {}
 

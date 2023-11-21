@@ -85,6 +85,7 @@ look_graph.onchange = function(){
 $("#button_segment").click(function(){
     process.function_segmentor[process.type_segmentor]();
 });
+var functionResponseSegment = function(){}
 
 var functionStartSegmentStep = function(){}
 

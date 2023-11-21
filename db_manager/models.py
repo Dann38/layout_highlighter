@@ -20,6 +20,8 @@ class Processing(Base):
     __tablename__ = "processing"
     id = Column(GUID, primary_key=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
     id_image = Column(GUID, ForeignKey('images.id'))
+    date_create = Column(DateTime, server_default=func.now())
+    date_update = Column(DateTime, server_default=func.now(), onupdate=func.now())
     # id_tesseract_processing = Column(GUID, ForeignKey('tesseract_processing.id'))
 
 

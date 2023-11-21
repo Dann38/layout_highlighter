@@ -36,24 +36,12 @@ def get_image(id_image: str):
     return requests_upload.content
 
 
-# @app.route("/classify_image/<int:id_image>", methods=["POST"])
-# def classifier(id_image):
-#     method = int(request.form["method_classifier"])
-#     coef = float(request.form["coef"])
-#     requests.post(f'{host_classifier}/file/classify/{id_image}', json={"method": method, "coef": coef})
-#     return {}
-#
-#
-# @app.route("/get_image_result/<int:id_image>", methods=["GET"])
-# def get_image_result(id_image):
-#     return requests.get(f'{host_classifier}/file/get_result/{id_image}').content
-#
-#
-# @app.route("/get_image_origin/<int:id_image>", methods=["GET"])
-# def get_image_origin(id_image):
-#     return requests.get(f'{host_classifier}/file/get_origin/{id_image}').content
-#
-#
+@app.route("/get_processes", methods=["GET"])
+def get_processes():
+    content = requests.get(f'{host_db_manager}/processes/?page=1&limit=10').content
+    return content
+
+
 @app.route("/get_history", methods=["GET"])
 def get_history():
     content = requests.get(f'{host_db_manager}/images/?page=1&limit=10').content

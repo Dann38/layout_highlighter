@@ -75,6 +75,8 @@ var select_type_segment_classifier = function(num_type) {
     $("#type-segment-classifier-"+num_type).css("display" ,"block");
 }
 
+var functionResponseSegmentClassifier = function(){}
+
 var functionStartSegmentClassifierStep = function(){
     console.log("start Segment classifier");
     $("#segment-label-list").css("display" ,"block");

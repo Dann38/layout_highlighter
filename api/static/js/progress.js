@@ -16,6 +16,14 @@ process.function_step = {
     "segment-classifier": functionSegmentClassifierStep,
 }
 
+process.function_response = {
+    "image": functionResponseImage,
+    "tesseract": functionResponseTesseract,
+    "graph": functionResponseGraph,
+    "segment": functionResponseSegment,
+    "segment-classifier": functionResponseSegmentClassifier,
+}
+
 process.function_start_step = {
     "image": functionStartImageStep,
     "tesseract": functionStartTesseractStep,

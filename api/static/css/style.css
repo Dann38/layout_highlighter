@@ -32,5 +32,9 @@ html{
 }
 
 #type-segment-classifier-1{
-    display: block
+    display: block;
+}
+
+#history-processing{
+    display: block;
 }

@@ -37,6 +37,12 @@ def get_processing(db: Session, processing_id: str) -> schemas.Processing:
     return rez
 
 
+def get_processes(db: Session, page: int = 1, limit: int = 10) -> List[schemas.Processing]:
+    skip = (1 - page) * limit
+    rez = db.query(models.Processing).order_by(desc(models.Processing.date_update)).offset(skip).limit(limit).all()
+    return [schemas.Processing(id=str(r.id), id_image=str(r.id_image)) for r in rez]
+
+
 def get_label(db: Session, label_id: int) -> schemas.Label:
     rez = db.query(models.Label).filter(models.Label.id == label_id).first()
     return schemas.Label(id=rez[0], name=rez[1])

@@ -199,6 +199,14 @@ var setClickCanvas = function(canvas){
     });
 }
 
+var writeTesseract = function(){
+    functionImageStep();
+    for(var i = 0; i < process.bboxes.length; i++){
+        const bbox = process.bboxes[i];
+        writeRectangle(bbox.x_top_left, bbox.y_top_left, bbox.width, bbox.height);
+    }
+}
+
 var writeGraph = function(){
     functionImageStep();
     for(var i = 0; i < process.points.length; i++){

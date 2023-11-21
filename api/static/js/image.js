@@ -1,8 +1,6 @@
 $("#button_open_processing").click(
     function(){
-        $("#button_open_processing").text("Новое исследование");
-        $("#progress").css("display" ,"block");
-        select("image");
+        openProcessing();
     }
 );
 
@@ -18,7 +16,6 @@ $("#start_processing").click(function(){
     unlockStep("tesseract");
 })
 
-
 var openImage = function(id_image){
     const get_img = new XMLHttpRequest();
 
@@ -33,9 +30,14 @@ var openImage = function(id_image){
     }
 }
 
+var functionResponseImage = function(){}
+
 var functionStartImageStep = function() {
     $("#history-list").css("display" ,"block");
     addHistory();
+    if (process.id_image !== undefined){
+        functionImageStep();
+    }
 }
 
 var functionImageStep = function(){

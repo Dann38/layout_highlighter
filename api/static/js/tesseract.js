@@ -13,23 +13,25 @@ $("#button_tesseract").click(function(){
           alert(`Ошибка ${xhr.status}: ${xhr.statusText}`);
         } else {
             var response_tesseract = $.parseJSON(xhr.response);
-            const bboxes = response_tesseract.list_bboxes;
-            process.bboxes = bboxes;
-            process.exist_data_step["tesseract"] = true;
+            functionResponseTesseract(response_tesseract);
             functionTesseractStep();
         }
     };
 });
 
-var functionStartTesseractStep = function(){}
+var functionResponseTesseract = function(response_tesseract){
+    const bboxes = response_tesseract.list_bboxes;
+    process.bboxes = bboxes;
+    process.exist_data_step["tesseract"] = true;
+}
+
+var functionStartTesseractStep = function(){
+
+}
 
 var functionTesseractStep = function(){
     if (process.exist_data_step["tesseract"]){
-        functionImageStep();
-        for(var i = 0; i < process.bboxes.length; i++){
-            const bbox = process.bboxes[i];
-            writeRectangle(bbox.x_top_left, bbox.y_top_left, bbox.width, bbox.height);
-        }
+        writeTesseract();
         unlockStep("graph");
     }
 }

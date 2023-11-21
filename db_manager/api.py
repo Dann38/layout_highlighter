@@ -46,6 +46,12 @@ async def create_processing(proc: schemas.ProcessingCreate, db: Session = Depend
     return processing.id
 
 
+@app.get("/processes/")
+async def read_processes(page: int = 1, limit: int = 10, db: Session = Depends(get_db)):
+    processes = crud.get_processes(db=db, page=page, limit=limit)
+    return processes
+
+
 @app.get("/processing/{id_process}/")
 async def read_processing(id_process: str, db: Session = Depends(get_db)):
     processing = crud.get_processing(db, id_process)
