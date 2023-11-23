@@ -13,174 +13,7 @@
      <div class="container main">
           <div class="row">
               <div class="col-3 classifier-block vh-100">
-                    <div class="row gy-5">
-                            <div id="button_open_processing" class="btn btn-primary">Исследовать</div>
-                    </div>
-                    <div id="progress">
-                        <ul class="list-group">
-                          <li id="image-id" class="list-group-item d-flex justify-content-between align-items-center">
-                            <div id="a-indicator-image" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                                Загрузка
-                            </div>
-                            <span id="indicator-image" class="badge bg-primary rounded-pill"></span>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <dib id="a-indicator-tesseract"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                              Обработка Tesseract
-                            </dib>
-                            <span id="indicator-tesseract" class="badge bg-primary rounded-pill"></span>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <dib id="a-indicator-graph"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                              Построение связного графа
-                            </dib>
-                            <span id="indicator-graph" class="badge bg-primary rounded-pill"></span>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <dib id="a-indicator-segment"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                              Выделение сегментов
-                            </dib>
-                            <span id="indicator-segment" class="badge bg-primary rounded-pill"></span>
-                          </li>
-                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <dib id="a-indicator-segment-classifier"  class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
-                              Классификация сегментов
-                            </dib>
-                            <span id="indicator-segment-classifier" class="badge bg-primary rounded-pill"></span>
-                          </li>
-                        </ul>
-                    </div>
-
-                    <div id="image-setting" class="row gy-5 setting">
-                        <p class="h1">Поле загрузки</p>
-                          <form id="form-upload" method="POST" action="">
-                              <div class="form-context">
-                                   <div class="input-group">
-                                        <label class="label-input input-group-text" for="file-input">Выберите файл</label>
-                                        <input class="input-file form-control" id="file-input" type="file" name="file" multiple>
-                                   </div>
-                              </div>
-                          </form>
-                        <div class="col-6">
-                            <div id="button_upload" class="btn btn-primary">Загрузить</div>
-                         </div>
-                        <div class="col-6">
-                            <div id="start_processing" class="btn btn-primary">Выбрать изображение</div>
-                         </div>
-                    </div>
-
-                    <div id="tesseract-setting" class="row gy-5 setting">
-                        <p class="h1">Настройка Tesseract</p>
-                          <form id="form-tesseract" method="POST" action="">
-                              <div class="form-context">
-                                   <div class="input-group">
-
-                                   </div>
-                              </div>
-                          </form>
-                        <div class="col-6">
-                            <div id="button_tesseract" class="btn btn-primary">Обработать</div>
-                         </div>
-                    </div>
-
-                    <div id="graph-setting" class="row gy-5 setting">
-                        <p class="h1">Настройка связного графа</p>
-                          <form id="form-graph" method="POST" action="">
-                              <div class="form-context">
-                                   <div class="input-group">
-                                    <select id="count-point-input" class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                      <option value="1">1 (посередине)</option>
-                                      <option value="2">2 (по краям)</option>
-                                      <option value="3">3 (одна посередине и две с краю)</option>
-                                    </select>
-                                   </div>
-                              </div>
-                          </form>
-                        <div class="col-6">
-                            <div id="button_graph" class="btn btn-primary">Построить</div>
-                         </div>
-                    </div>
-
-                    <div id="segment-setting" class="row gy-5 setting">
-                        <p class="h1">Настройка сегментации</p>
-                            <form id="form-type-segment" method="POST" action="">
-                              <div class="form-context">
-                                   <div class="input-group">
-                                    <select id="type-segment-input" class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                      <option value="1">Порог длины</option>
-                                      <option value="2">Ручная</option>
-                                    </select>
-                                   </div>
-                              </div>
-                            </form>
-
-                            <div id="type-segment-1" class="segment-subsegment">
-                                <form id="segment-graph" method="POST" action="" oninput="threshold_segment_range_value.value = threshold_segment_range.valueAsNumber">
-                                      <div class="form-context">
-                                           <div class="input-group">
-                                            <label for="threshold_segment_input" class="form-label">удалить ребра большие:</label>
-                                            <input type="range" class="form-range" min="0" max="150" step="1" id="threshold_segment_input" name="threshold_segment_range">
-                                            <output name="threshold_segment_range_value" for="threshold_segment_input" id="threshold_segment_input_text">50</output>
-                                           </div>
-                                      </div>
-                                </form>
-                                <canvas id="width-edge"></canvas>
-                            </div>
-
-                            <div id="type-segment-2" class="segment-subsegment">
-                                Красным выделите ребра, которые стоит удалить
-
-                                <div class="form-check">
-                                  <input class="form-check-input" type="radio" name="typeSegment2method" id="typeSegment2method1" checked>
-                                  <label class="form-check-label" for="typeSegment2method1">
-                                    Выделение ребер
-                                  </label>
-                                </div>
-                                <div class="form-check">
-                                  <input class="form-check-input" type="radio" name="typeSegment2method" id="typeSegment2method2">
-                                  <label class="form-check-label" for="typeSegment2method2">
-                                    Выделение прямоугольником
-                                  </label>
-                                </div>
-
-                            </div>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="segment_graph">
-                                <label class="form-check-label" for="segment_graph">Отображать графы</label>
-                            </div>
-                            <div class="col-6">
-                                <div id="button_segment" class="btn btn-primary">Выделить</div>
-                            </div>
-
-                    </div>
-
-                    <div id="segment-classifier-setting" class="row gy-5 setting">
-                        <p class="h1">Настройка связного графа</p>
-                            <form id="form-segment-classifier" method="POST" action="">
-                              <div class="form-context">
-                                   <div class="input-group">
-                                    <select id="type-segment-classifier-input" class="form-select form-select-sm" aria-label=".form-select-sm example">
-                                      <option value="1">Ручная</option>
-                                      <option value="2">MLP</option>
-<!--                                      <option value="3"></option>-->
-                                    </select>
-                                   </div>
-                              </div>
-                            </form>
-                            <div id="type-segment-classifier-1" class="segment-classifier-subsegment">
-                                Настройка ручной классификации
-                            </div>
-
-                            <div id="type-segment-classifier-2" class="segment-classifier-subsegment">
-                                Настройка классификации MLP
-                            </div>
-
-                        <div class="col-6">
-                            <div id="button_segment_classifier" class="btn btn-primary">Классифицировать</div>
-                            <div id="button_segment_classifier_save" class="btn btn-primary">Сохранить</div>
-                         </div>
-                    </div>
+                  {% include 'setting_process/setting_process.html' %}
               </div>
 
               <div class="col-6 image-block vh-100">
@@ -190,35 +23,7 @@
 
               </div>
               <div style="overflow-y:auto;" class="col-3 history-block vh-100">
-                  <div id="history-list" class="row gy-5 setting">
-                  <p class="h1">История</p>
-                    <ul id="history-group" class="list-group">
-                    </ul>
-                  </div>
-                  <div id="segment-label-list" class="row gy-5 setting">
-                  <p class="h1">Список классов</p>
-                  <ul id="label-group">
-                  </ul>
-                  <div class="form-group">
-                    <label for="nameNewLabel">Новый класс</label>
-                    <input type="text" class="form-control" id="nameNewLabel" aria-describedby="emailHelp" placeholder="name_label">
-                    <div id="button_new_label" class="btn btn-primary">Создать</div>
-                  </div>
-                  </div>
-                  <div id="history-processing" class="row gy-5 setting">
-                  <p class="h1">История процессов</p>
-                  <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th scope="col">id процесса</th>
-                          <th scope="col">id изображения</th>
-                        </tr>
-                      </thead>
-                      <tbody id="body-table-processing">
-                      </tbody>
-                  </table>
-                  </ul>
-                  </div>
+                  {% include 'second_setting_process/second_setting_process.html' %}
               </div>
 
           </div>
@@ -229,7 +34,9 @@
 
 
      <script src="{{ url_for('static', filename='js/select_image.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/image_new.js') }}"></script>
      <script src="{{ url_for('static', filename='js/image.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/tesseract_new.js') }}"></script>
      <script src="{{ url_for('static', filename='js/tesseract.js') }}"></script>
      <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
      <script src="{{ url_for('static', filename='js/segment.js') }}"></script>

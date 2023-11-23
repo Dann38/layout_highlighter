@@ -1,5 +1,6 @@
-
 process.list_step = ["image", "tesseract", "graph", "segment", "segment-classifier"]
+
+
 process.indicator_step = {
     "image": "текущий",
     "tesseract": "",

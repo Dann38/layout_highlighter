@@ -4,7 +4,6 @@ var process = {};
 var openProcessing = function(){
     $("#button_open_processing").text("Новое исследование");
     $("#progress").css("display" ,"block");
-    select("image");
 }
 
 var addProcess = function(proc){
@@ -42,11 +41,15 @@ var addProcesses = function(){
 
 var clickProcess = function(proc){
     openProcessing();
-    openImage(proc.id_image);
-    process.id = proc.id;
 
-    unlockStep("tesseract");
-    select("tesseract");
+    // Загрузка картинки
+    image.init(proc);
+    image.setting(proc);
+    image.run(proc);
+
+    tesseract.init(proc);
+    tesseract.setting(proc);
+    tesseract.run(proc);
 //
 //    unlockStep("graph");
 //    select("graph");
