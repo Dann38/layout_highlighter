@@ -52,3 +52,11 @@ class Segment(Base):
 
     image = relationship("Image", back_populates="segments")
     label = relationship("Label", back_populates="segments")
+
+
+
+class Document(Base):
+    __tablename__ = "documents"
+    id = Column(Integer, primary_key=True)
+    image64 = Column(LargeBinary, nullable=True)
+    name = Column(String, nullable=True)

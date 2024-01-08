@@ -68,3 +68,23 @@ async def create_label(label: schemas.LabelCreate, db: Session = Depends(get_db)
 async def read_labels(db: Session = Depends(get_db)) -> List[schemas.Label]:
     labels = crud.get_labels(db)
     return labels
+
+@app.post("/doc/create/")
+async def create_document(doc: schemas.CreateDocument, db: Session = Depends(get_db)) -> schemas.Document:
+    doc = crud.create_document(db=db, doc=doc)
+    return doc
+
+@app.delete("/doc/delete/{doc_id}/")
+async def delete_document(doc_id: int, db: Session = Depends(get_db)) -> bool:
+    is_delete = crud.delete_document(db=db, doc_id=doc_id)
+    return is_delete
+
+@app.get("/doc/read/{doc_id}/")
+async def read_document(doc_id: int, db: Session = Depends(get_db)) -> schemas.Document:
+    doc = crud.read_document(db=db, doc_id=doc_id)
+    return doc   
+
+@app.get("/doc/read/")
+async def read_documents(db: Session = Depends(get_db)) -> List[schemas.Document]:
+    docs= crud.read_documents(db=db)
+    return docs   

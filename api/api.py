@@ -24,6 +24,16 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/menu/")
+def menu():
+    return render_template("menu.html")
+
+
+@app.route("/doc/read/")
+def doc_read():
+    content = requests.get(f'{host_db_manager}/doc/read/').content
+    return content
+
 @app.route("/upload_image", methods=["POST"])
 def upload():
     requests_upload = requests.post(f'{host_db_manager}/upload_image', files=request.files)

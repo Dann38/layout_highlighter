@@ -59,3 +59,36 @@ def create_label(db: Session, label: schemas.LabelCreate) -> schemas.Label:
     db.commit()
     db.refresh(db_label)
     return schemas.Label(id=db_label.id, name=db_label.name)
+
+
+def create_document(db: Session, doc: schemas.CreateDocument) -> schemas.Document:
+    db_document = models.Document(name=doc.name, image64=doc.image64)
+    db.add(db_document)
+    db.commit()
+    db.refresh(db_document)
+    return schemas.Document(id=db_document.id,
+                            name=db_document.name,
+                            image64=db_document.image64 )
+
+
+def read_document(db: Session, doc_id: int) -> schemas.Document:
+    db_document = db.query(models.Document).get(doc_id)
+    return schemas.Document(id=db_document.id,
+                            name=db_document.name,
+                            image64=db_document.image64 )
+
+def read_documents(db: Session) -> List[schemas.Document]:
+    docs = db.query(models.Document).all()
+    return [schemas.Document(id=db_document.id,
+                            name=db_document.name,
+                            image64=db_document.image64 ) for db_document in docs]
+
+
+def delete_document(db: Session, doc_id: int) -> bool:
+    db_document = db.query(models.Document).get(doc_id)
+    if db_document:
+        db.delete(db_document)
+        db.commit()
+        return True
+    return False
+

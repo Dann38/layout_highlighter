@@ -50,3 +50,15 @@ class SegmentCreate(BaseModel):
 class Segment(SegmentCreate):
     id: str
     image: bytes
+
+
+class BaseDocument(BaseModel):
+    name: str
+    image64: bytes
+
+class CreateDocument(BaseDocument):
+    pass
+
+class Document(BaseDocument):
+    id: int
+
