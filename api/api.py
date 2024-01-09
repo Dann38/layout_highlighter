@@ -34,6 +34,16 @@ def doc_read():
     content = requests.get(f'{host_db_manager}/doc/read/').content
     return content
 
+@app.route("/doc/create/", methods=["POST"])
+def doc_create():
+    image = str(request.form["file"])
+    name = str(request.form["name"])
+    content = requests.post(f'{host_db_manager}/doc/create/', json={
+        "image64": image,
+        "name": name}).content
+    return content
+    
+
 @app.route("/upload_image", methods=["POST"])
 def upload():
     requests_upload = requests.post(f'{host_db_manager}/upload_image', files=request.files)

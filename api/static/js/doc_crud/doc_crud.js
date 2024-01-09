@@ -7,7 +7,7 @@ var add_row_doc = function(doc){
 
   var name = document.createElement("td");
   var image = document.createElement("td");
-
+  image.className = "w-60";
 
   name.innerText = doc.name
   var image64 =  document.createElement("img");
@@ -52,4 +52,39 @@ var view_table = function() {
   }
 }
 
+
+var addDocument = function() {
+  const xml = new XMLHttpRequest();
+  const formData = new FormData();
+  
+
+  const fileInput = document.getElementById('doc-create-file');
+  const nameInput = document.getElementById('doc-create-name');
+
+  var reader = new FileReader();
+  
+  reader.onload = function () {
+      base64String = reader.result.replace("data:", "")
+          .replace(/^.+,/, "");
+
+      const name = nameInput.value;
+    
+      formData.append('file', base64String);
+      formData.append('name', name);
+    
+      xml.open('POST', '/doc/create/');
+      xml.send(formData);
+      console.log("next");
+      xml.onload = function() {
+    
+      }
+
+  }
+  reader.readAsDataURL(fileInput.files[0]);
+}
+
 view_table();
+
+$("#doc-create-button").click(function(){
+  addDocument();
+})
