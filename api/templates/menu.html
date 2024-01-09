@@ -2,88 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Upload Files</title>
-    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    {% include 'import/head.html' %}
+    <title>ImgDoc</title>
 </head>
 <body>
-    
-      
-    <!-- Modal -->
-    <div class="modal fade" id="doc-create-window" tabindex="-1" aria-labelledby="doc-create-window-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="doc-create-window-label">Добавление документа</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="row gy-5">
-                <p class="h1">Поле загрузки</p>
-                  <form id="form-doc-create" method="POST" action="">
-                      <input type="text" name="name-file" id="doc-create-name">
-                      <div class="form-context">
-                           <div class="input-group">
-                                <label class="label-input input-group-text" for="doc-create-file">Выберите файл</label>
-                                <input class="input-file form-control" id="doc-create-file" type="file" name="file" multiple>
-                           </div>
-                      </div>
-                  </form>
-                
-              </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            <div id="doc-create-button" class="btn btn-primary">Выбрать изображение</div>
-        </div>
-        </div>
-    </div>
-    </div>
-
-
-
-
-
     <div class="container">
-    <div class="row mt-4">
-        <div class="col-lg-12 d-flex justify-content-between align-items-center">
-        <div>
-            <h4 class="text-primary">Документы </h4>
-        </div>
-        <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#doc-create-window">
-                Добавить документ
-            </button>
-        </div>
-        </div>
-    </div>
-    <hr>
-    <div class="row">
-        <div class="col-lg-12">
-        <div id="showAlert"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered text-center" id="table-docs">
-            <thead>
-                <tr>
-                <th>name</th>
-                <th>image</th>
-                </tr>
-            </thead>
-            <tbody>
-
-            </tbody>
-            </table>
-        </div>
-        </div>
-    </div>
+        {% include 'menu/model_add.html' %}
+        {% include 'menu/nav.html' %}
+        {% include 'menu/table.html' %}
     </div>
     
 </body>
-<script src="{{ url_for('static', filename='js/doc_crud/doc_crud.js') }}"></script>
+{% include 'import/menu_js.html' %}
 </html>
