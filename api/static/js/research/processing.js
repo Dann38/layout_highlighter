@@ -11,6 +11,7 @@ var processingImage = function(){
       if (xml.status == 200) {
         var rez =  $.parseJSON($.parseJSON(xml.response));
         proc.rez = rez;
+        view_btn_steps();
       }
     }
 }

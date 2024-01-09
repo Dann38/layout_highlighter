@@ -11,11 +11,14 @@
     </script>
 </head>
 <body>
+    
     <div class="container">
+        <a href="/menu/" class="btn btn-outline-dark">Меню</a>
         {% include 'research/model_add_research.html' %}
         <div class="row">
             <div class="col-lg-4">
                 {% include 'research/setting_process.html' %}
+                {% include 'research/processing_steps.html' %}
             </div>
             <div class="col-lg-8">
                 {% include 'research/image_rez.html' %}
