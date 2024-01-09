@@ -1,0 +1,1 @@
+from .base_word_extractor import BaseWordExtractor

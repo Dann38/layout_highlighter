@@ -1,9 +1,3 @@
-var set_btn = function(btn, text_btn, class_btn, fun){
-  btn.className = class_btn;
-  btn.innerHTML = text_btn;
-  btn.addEventListener("click", fun);
-}
-
 var add_row_doc = function(doc){
 
   const table = document.getElementById('table-docs');
@@ -120,7 +114,7 @@ var deleteDocument = function(id) {
 }
 
 var openDocument = function(id) {
-  console.log("Открыть "+id);
+  window.open("/research/"+id)
 }
 
 view_table();

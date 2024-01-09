@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include 'import/head.html' %}
+    <title>ImgDoc Исследование</title>
+    <script>
+        var doc = {}
+        var proc = {}
+        doc.id = {{context.doc_id}}
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% include 'research/model_add_research.html' %}
+        <div class="row">
+            <div class="col-lg-4">
+                {% include 'research/setting_process.html' %}
+            </div>
+            <div class="col-lg-8">
+                {% include 'research/image_rez.html' %}
+            </div>
+        </div>
+        
+    </div>
+    
+</body>
+{% include 'import/research_js.html' %}
+</html>

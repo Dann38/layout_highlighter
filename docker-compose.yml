@@ -46,6 +46,14 @@ services:
       - tesseract
     networks:
       my-network:
+  doc_img:
+    build: imgDoc/
+    ports:
+      - "1285:1238"
+    depends_on:
+      - db
+    networks:
+      my-network:
 
 networks:
   my-network:
