@@ -10,6 +10,7 @@ var add_btn_li = function(text_btn, fun){
 }
 
 var view_btn_steps = function(){
+    document.getElementById("ul-processing-steps").innerHTML = "";
     const list_rez = Object.keys(proc.rez);
     if (list_rez.includes("words")){
         add_btn_li("Выделить слова", function(){
@@ -27,6 +28,12 @@ var view_btn_steps = function(){
         add_btn_li("Выделить блоки до объединения", function(){
             drawImage(doc.base_image64);
             drawSegment(proc.rez.no_join_blocks);
+        })
+    }
+    if (list_rez.includes("neighbors") && list_rez.includes("words")){
+        add_btn_li("Ближайшие соседи", function(){
+            drawImage(doc.base_image64);
+            drawNeighbordGraphWords(proc.rez.neighbors, proc.rez.words);
         })
     }
 }
