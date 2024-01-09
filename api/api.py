@@ -42,7 +42,11 @@ def doc_create():
         "image64": image,
         "name": name}).content
     return content
-    
+
+@app.route("/doc/delete/<int:doc_id>")
+def doc_delete(doc_id: int):
+    content = requests.delete(f'{host_db_manager}/doc/delete/{doc_id}').content
+    return content    
 
 @app.route("/upload_image", methods=["POST"])
 def upload():

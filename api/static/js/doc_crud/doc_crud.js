@@ -1,15 +1,39 @@
+var set_btn = function(btn, text_btn, class_btn, fun){
+  btn.className = class_btn;
+  btn.innerHTML = text_btn;
+  btn.addEventListener("click", fun);
+}
+
 var add_row_doc = function(doc){
 
   const table = document.getElementById('table-docs');
   const body_table = table.children[1];
 
   var row = document.createElement("tr");
+  
+  var name_block = document.createElement("td");
 
-  var name = document.createElement("td");
+  var name = document.createElement("p");
+  var delete_btn = document.createElement("button");
+  var open_btn = document.createElement("button");
+  name.innerText = doc.name
+  set_btn(delete_btn, "Удалить", "btn btn-danger", function(){
+    deleteDocument(doc.id);
+    row.remove();
+  })
+  set_btn(open_btn, "Исследовать", "btn btn-success", function(){
+    openDocument(doc.id);
+  })
+
+  name_block.append(name);
+  name_block.append(delete_btn);
+  name_block.append(open_btn);
+
   var image = document.createElement("td");
   image.className = "w-60";
-
-  name.innerText = doc.name
+  
+  
+  
   var image64 =  document.createElement("img");
 
   image64.setAttribute("src", "data:image/jpeg;base64,"+doc.image64)
@@ -17,7 +41,8 @@ var add_row_doc = function(doc){
   image.append(image64);
 
 
-  row.append(name);
+  row.append(name_block);
+  row.append(document.createElement("hr"));
   row.append(image);
 
   row.className = "doc-row";
@@ -78,11 +103,24 @@ var addDocument = function() {
       xml.onload = function() {
         rez = $.parseJSON(xml.response);
         add_row_doc(rez);
-        
+
       }
 
   }
   reader.readAsDataURL(fileInput.files[0]);
+}
+
+var deleteDocument = function(id) {
+  const xml = new XMLHttpRequest();
+  xml.open('GET', '/doc/delete/'+id);
+  xml.send();
+  xml.onload = function() {
+
+  }
+}
+
+var openDocument = function(id) {
+  console.log("Открыть "+id);
 }
 
 view_table();
