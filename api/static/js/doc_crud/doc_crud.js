@@ -76,7 +76,9 @@ var addDocument = function() {
       xml.send(formData);
       console.log("next");
       xml.onload = function() {
-    
+        rez = $.parseJSON(xml.response);
+        add_row_doc(rez);
+        
       }
 
   }
