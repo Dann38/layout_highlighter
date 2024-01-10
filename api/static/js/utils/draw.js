@@ -75,16 +75,23 @@ var writeLine = function(x0, y0, x1, y1, color) {
 
 var drawPointRed = function(x, y) {
     const coef = doc.coef_image;
+    var size = 4;
 
-    const x0 = coef*x;
-    const y0 = coef*y;
-
-    size = 4;
-
-    var pointX = Math.round(x0);
-    var pointY = Math.round(y0);
+    var pointX = Math.round(coef*x);
+    var pointY = Math.round(coef*y);
     ctx.beginPath();
     ctx.fillStyle = '#ff0000';
     ctx.arc(pointX, pointY, size, 0 * Math.PI, 2 * Math.PI);
     ctx.fill();
+}
+
+var drawText = function(x, y, text, pt=30, color="#00F") {
+    const coef = doc.coef_image;
+
+    var pointX = Math.round(coef*x);
+    var pointY = Math.round(coef*y);
+
+    ctx.fillStyle = color;
+    ctx.font = "italic "+pt+"pt Arial";
+    ctx.fillText(text, pointX, pointY);
 }

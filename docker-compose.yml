@@ -8,7 +8,7 @@ services:
     depends_on:
       - db
       - db_manager
-      - tesseract
+      - doc_img
     networks:
       my-network:
   db:
@@ -28,22 +28,6 @@ services:
       - "1282:1235"
     depends_on:
       - db
-    networks:
-      my-network:
-  tesseract:
-    build: tesseract/
-    ports:
-      - "1283:1236"
-    depends_on:
-      - db
-    networks:
-      my-network:
-  graph:
-    build: graph/
-    ports:
-      - "1284:1237"
-    depends_on:
-      - tesseract
     networks:
       my-network:
   doc_img:
