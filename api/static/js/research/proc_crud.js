@@ -1,33 +1,37 @@
 var add_row_proc = function(proc){
-    const ul = document.getElementById('ul-proc');
-    var li = document.createElement("li");
-    li.className = "list-group-item";
-    var a = document.createElement("a")
-    a.setAttribute("href", "#");
-    a.innerHTML = proc.name + " ";   
-    
-    var btn = $('<button type="button" class="btn btn-outline-danger">Del</button>');
+  const table = document.getElementById('table-proc');
+  const body_table = table.children[1];
 
-    a.addEventListener("click", function(){
-        document.getElementById("form-proc-set").value = proc.json_processing;   
-    });
-    btn[0].addEventListener("click", function(){
-        deleteProc(proc.id);
-        li.remove();
-    });
-    li.append(a);
-    $(li).append(btn);
-    
-    
+  var row = document.createElement("tr");
+  
+  var name = document.createElement("td");
+  var name_btn = document.createElement("button");
+  var btn = document.createElement("td");
+  var delete_btn = document.createElement("button");
+  
+  
+  set_btn(name_btn, proc.name, "btn btn-outline-primary", function(){
+    openProc(proc)
+  })
+  set_btn(delete_btn, "Del", "btn btn-danger", function(){
+    deleteProc(proc.id);
+    row.remove();
+  })
+  btn.append(delete_btn);
+  name.append(name_btn)
 
-    console.log("add_row_proc");
-    document.getElementById('ul-proc').append(li);    
+  row.append(name);
+  row.append(btn);
+
+  row.className = "proc-row";
+  row.dataset.id=proc.id
+  body_table.append(row);   
 }
 
 var view_proc = function() {
-    const ul = document.getElementById('ul-proc');
-    ul.innerText = "";
-    console.log("VIEW PROC")
+    const table = document.getElementById('table-proc');
+    const body_table = table.children[1];
+    body_table.innerText = "";
     const xml= new XMLHttpRequest();
     xml.open("GET", "/proc/read/");
     xml.send();
@@ -70,6 +74,11 @@ var deleteProc = function(id) {
     }
   }
 
+
+var openProc = function(proc) {
+    document.getElementById("form-proc-set").value = proc.json_processing;
+    document.getElementById("name-proc").innerHTML = proc.name;
+}
 view_proc();
 
 $("#proc-create-button").click(function(){

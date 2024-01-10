@@ -20,7 +20,9 @@ var add_row_doc = function(doc){
   })
 
   name_block.append(name);
+  name_block.append(document.createElement("hr"));
   name_block.append(delete_btn);
+  name_block.append(document.createElement("hr"));
   name_block.append(open_btn);
 
   var image = document.createElement("td");
@@ -36,7 +38,7 @@ var add_row_doc = function(doc){
 
 
   row.append(name_block);
-  row.append(document.createElement("hr"));
+  
   row.append(image);
 
   row.className = "doc-row";
