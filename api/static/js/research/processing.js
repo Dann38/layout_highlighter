@@ -4,6 +4,7 @@ var processingImage = function(){
     const json_set = document.getElementById("form-proc-set").value
     formData.append("doc_id", doc.id);
     formData.append("proc_set", json_set);
+    console.log(json_set);
     xml.open("POST", "/doc/research/");
     xml.send(formData);
 
