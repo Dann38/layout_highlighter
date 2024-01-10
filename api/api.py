@@ -78,6 +78,30 @@ def doc_research():
 
 
 
+@app.route("/proc/read/")
+def proc_read():
+    content = requests.get(f'{host_db_manager}/proc/read/').content
+    return content
+
+@app.route("/proc/read/<int:proc_id>")
+def proc_read_one(proc_id: int):
+    content = requests.get(f'{host_db_manager}/proc/read/{proc_id}').content
+    return content
+
+@app.route("/proc/create/", methods=["POST"])
+def proc_create():
+    json_processing = str(request.form["json_processing"])
+    name = str(request.form["name"])
+    content = requests.post(f'{host_db_manager}/proc/create/', json={
+        "json_processing": json_processing,
+        "name": name}).content
+    return content
+
+@app.route("/proc/delete/<int:proc_id>")
+def proc_delete(proc_id: int):
+    content = requests.delete(f'{host_db_manager}/proc/delete/{proc_id}').content
+    return content  
+
 
 
 
