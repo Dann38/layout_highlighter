@@ -14,7 +14,7 @@ var add_doc = function(doc){
   var manual_marking_btn = document.createElement("button");
   set_btn(delete_btn, "Удалить", "btn btn-outline-danger", function(){
     deleteDocument(doc.id);
-    row.remove();
+    card.remove();
   })
   set_btn(open_btn, "Исследовать", "btn btn-outline-success", function(){
     openDocument(doc.id);
