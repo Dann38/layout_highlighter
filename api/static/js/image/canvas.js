@@ -42,13 +42,7 @@ var get_nearby_point = function(x, y) {
     return min_index;
 }
 
-var is_into_rect = function(x, y, rx0, ry0, rx1, ry1) {
-    var x0 = Math.min(rx0, rx1);
-    var x1 = Math.max(rx0, rx1);
-    var y0 = Math.min(ry0, ry1);
-    var y1 = Math.max(ry0, ry1);
-    return x > x0 && x < x1 && y > y0 && y < y1;
-}
+
 
 var get_points_into_rect = function(x0, y0, x1, y1) {
     var array_point = new Array();
@@ -173,31 +167,7 @@ var type_segment_classifier_mousedown = function(x, y){
     }
 }
 
-var setClickCanvas = function(canvas){
-    canvas.addEventListener('mousedown', function (e) {
-        const canvas_now = document.getElementById("result-image");
-        const rect = canvas_now.getBoundingClientRect()
-        const c = process.width_image/canvas_now.clientWidth;
-        var x = c*(e.clientX - rect.left);
-        var y = c*(e.clientY - rect.top);
-        if (process.indicator_step["segment"] == "текущий"){
-            type_segment_mousedown(x, y);
-        } else if (process.indicator_step["segment-classifier"] == "текущий"){
-            type_segment_classifier_mousedown(x, y);
-        }
 
-    });
-    canvas.addEventListener('mousemove', function (e) {
-        const canvas_now = document.getElementById("result-image");
-        const rect = canvas_now.getBoundingClientRect()
-        const c = process.width_image/canvas_now.clientWidth;
-        var x = c*(e.clientX - rect.left);
-        var y = c*(e.clientY - rect.top);
-        if (process.indicator_step["segment"] == "текущий"){
-            type_segment_mousemove(x, y)
-        }
-    });
-}
 
 var writeTesseract = function(){
     functionImageStep();

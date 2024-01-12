@@ -1,55 +1,36 @@
-var add_row_doc = function(doc){
+var add_doc = function(doc){
+  var card = $('\
+    <div class="card card-doc col-sm-3">\
+      <img class="card-img-top" src="data:image/jpeg;base64,'+doc.image64+'" alt="doc">\
+      <div class="card-body">\
+        <h5 class="card-title">'+doc.name+'</h5>\
+      </div>\
+    </div>\
+    ')
+  $("#menu-docs").append(card);
 
-  const table = document.getElementById('table-docs');
-  const body_table = table.children[1];
-
-  var row = document.createElement("tr");
-  
-  var name_block = document.createElement("td");
-
-  var name = document.createElement("p");
   var delete_btn = document.createElement("button");
   var open_btn = document.createElement("button");
-  name.innerText = doc.name
-  set_btn(delete_btn, "Удалить", "btn btn-danger", function(){
+  var manual_marking_btn = document.createElement("button");
+  set_btn(delete_btn, "Удалить", "btn btn-outline-danger", function(){
     deleteDocument(doc.id);
     row.remove();
   })
-  set_btn(open_btn, "Исследовать", "btn btn-success", function(){
+  set_btn(open_btn, "Исследовать", "btn btn-outline-success", function(){
     openDocument(doc.id);
   })
+  set_btn(manual_marking_btn, "Ручная разметка", "btn btn-outline-success", function(){
+    openManualMarking(doc.id);
+  })
 
-  name_block.append(name);
-  name_block.append(document.createElement("hr"));
-  name_block.append(delete_btn);
-  name_block.append(document.createElement("hr"));
-  name_block.append(open_btn);
-
-  var image = document.createElement("td");
-  image.className = "w-60";
-  
-  
-  
-  var image64 =  document.createElement("img");
-
-  image64.setAttribute("src", "data:image/jpeg;base64,"+doc.image64)
-  image64.className = "d-block w-100";
-  image.append(image64);
-
-
-  row.append(name_block);
-  
-  row.append(image);
-
-  row.className = "doc-row";
-  row.dataset.id=doc.id
-  body_table.append(row);
+  card.append(delete_btn)
+  card.append(open_btn)
+  card.append(manual_marking_btn)
 }
 
-var view_table = function() {
-  const table = document.getElementById('table-docs');
-  const body_table = table.children[1];
-  body_table.innerText = "";
+var view_menu = function() {
+  const menu_docs = document.getElementById('menu-docs');
+  menu_docs.innerText = "";
 
   const xhr_docs = new XMLHttpRequest();
   xhr_docs.open("GET", "/doc/read/");
@@ -58,17 +39,9 @@ var view_table = function() {
       if (xhr_docs.status == 200) {
           var array =  $.parseJSON(xhr_docs.response);
           for(var i=0; i < array.length ; i++){
-              add_row_doc(array[i]);
+              add_doc(array[i]);
           }
           rows = $(".doc-row");
-          for(var i=0; i < array.length; i++){
-
-              // rows[i].onclick = function(e){
-              //     open_cow.status= "old"
-              //     open_cow.id = this.dataset.id
-              //     open_cow_menu();
-              // };
-          }
       }
   }
 }
@@ -98,7 +71,7 @@ var addDocument = function() {
       console.log("next");
       xml.onload = function() {
         rez = $.parseJSON(xml.response);
-        add_row_doc(rez);
+        add_doc(rez);
 
       }
 
@@ -119,7 +92,11 @@ var openDocument = function(id) {
   window.open("/research/"+id)
 }
 
-view_table();
+var openManualMarking = function(id) {
+  window.open("/manual_marking/"+id)
+}
+
+view_menu();
 
 $("#doc-create-button").click(function(){
   addDocument();
