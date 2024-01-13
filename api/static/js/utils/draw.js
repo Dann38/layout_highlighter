@@ -24,7 +24,7 @@ var drawSegment = function (segments) {
         drawRectangle(segments[i].x_top_left, 
             segments[i].y_top_left, 
             segments[i].x_bottom_right, 
-            segments[i].y_bottom_right); 
+            segments[i].y_bottom_right, "rgba(255, 0, 0, 0.5)"); 
     }
 }
 
@@ -38,21 +38,20 @@ var drawNeighbordGraphWords = function(neighbors, words) {
             const w2 = words[neighbors[i][j]];
             x2 = (w2.x_top_left+ w2.x_bottom_right)/2;
             y2 = (w2.y_top_left + w2.y_bottom_right)/2;
-            writeLine(x1, y1, x2, y2, "rgba(0, 0, 255, 0.5)")
+            drawLine(x1, y1, x2, y2, "rgba(0, 0, 255, 0.5)")
         }
     }
 }
 
-var drawRectangle = function(x_top_left, y_top_left, x_bottom_right, y_bottom_right) {
+var drawRectangle = function(x_top_left, y_top_left, x_bottom_right, y_bottom_right, color) {
     const coef = doc.coef_image
 
     const x0 = coef*x_top_left;
     const x1 = coef*x_bottom_right;
     const y0 = coef*y_top_left;
     const y1 = coef*y_bottom_right;
-    console.log(x0, x1, y0, y1);
     ctx.beginPath();
-    ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+    ctx.strokeStyle = color;
     ctx.lineWidth = 5;
     ctx.moveTo(x0, y0);
     ctx.lineTo(x0, y1);
@@ -61,7 +60,7 @@ var drawRectangle = function(x_top_left, y_top_left, x_bottom_right, y_bottom_ri
     ctx.closePath();
     ctx.stroke();
 }
-var writeLine = function(x0, y0, x1, y1, color) {
+var drawLine = function(x0, y0, x1, y1, color) {
     const coef = doc.coef_image;
 
     ctx.strokeStyle = color;

@@ -11,13 +11,13 @@
     </script>
 </head>
 <body>
+    
     <div class="container">
         {% include 'nav/main_menu.html' %}
         {% include 'research/model_add_research.html' %}
         <div class="row">
             <div class="col-lg-4">
-                {% include 'research/setting_process.html' %}
-                {% include 'research/processing_steps.html' %}
+                {% include 'manual_marking/tools.html'%}
             </div>
             <div class="col-lg-8">
                 {% include 'research/image_rez.html' %}
@@ -27,5 +27,5 @@
     </div>
     
 </body>
-{% include 'import/research_js.html' %}
+{% include 'import/manual_marking_js.html' %}
 </html>

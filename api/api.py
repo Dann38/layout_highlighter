@@ -29,6 +29,12 @@ def research(doc_id: int):
     }
     return render_template("research.html", context=context)
 
+@app.route("/manual_marking/<int:doc_id>")
+def manual_marking(doc_id: int):
+    context = {
+        "doc_id": doc_id
+    }
+    return render_template("manual_marking.html", context=context)
 
 
 
