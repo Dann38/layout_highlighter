@@ -36,7 +36,9 @@ def manual_marking(doc_id: int):
     }
     return render_template("manual_marking.html", context=context)
 
-
+@app.route("/dataset/")
+def dataset():
+    return render_template("dataset_menu.html")
 
 @app.route("/doc/read/")
 def doc_read():
@@ -101,3 +103,42 @@ def proc_create():
 def proc_delete(proc_id: int):
     content = requests.delete(f'{host_db_manager}/proc/delete/{proc_id}').content
     return content  
+
+@app.route("/dataset/create/", methods=["POST"])
+def dataset_create():
+    discription = str(request.form["discription"])
+    name = str(request.form["name"])
+    content = requests.post(f'{host_db_manager}/dataset/create/', json={
+        "discription": discription,
+        "name": name}).content
+    return content
+
+
+@app.route("/dataset/read/")
+def dataset_read():
+    content = requests.get(f'{host_db_manager}/dataset/read/').content
+    return content
+
+@app.route("/dataset/delete/<int:dataset_id>", methods=["POST"])
+def dataset_delete(dataset_id: int):
+    content = requests.delete(f'{host_db_manager}/dataset/delete/{dataset_id}').content
+    return content  
+
+@app.route("/dataset/<int:dataset_id>/markingsegment/read/")
+def marking_read(dataset_id: int):
+    content = requests.get(f'{host_db_manager}/dataset/{dataset_id}/markingsegment/read/').content
+    return content
+
+@app.route("/markingsegment/delete/<int:marking_id>", methods=["POST"])
+def marking_delete(marking_id: int):
+    content = requests.delete(f"{host_db_manager}/markingsegment/delete/{marking_id}/").content
+    return content
+
+@app.route("/markingsegment/create/", methods=["POST"])
+def marking_create():
+    dataset_id = int(request.form["dataset_id"])
+    name = str(request.form["name"])
+    content = requests.post(f'{host_db_manager}/markingsegment/create/', json={
+        "dataset_id": dataset_id,
+        "name": name}).content
+    return content

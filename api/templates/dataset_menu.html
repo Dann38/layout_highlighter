@@ -8,14 +8,14 @@
 <body>
     
     <div class="container">
-        {% include 'nav/main_menu.html' %}
-        {% include 'research/model_add_research.html' %}
+        {% include 'nav/dataset_menu.html' %}
+        
         <div class="row">
-            <div class="col-lg-4">
-                {% include 'manual_marking/tools.html'%}
-            </div>
             <div class="col-lg-8">
-                {% include 'research/image_rez.html' %}
+                {% include 'dataset_menu/datasets.html' %}
+            </div>
+            <div class="col-lg-4">
+                {% include 'dataset_menu/dataset_marking.html' %}
             </div>
         </div>
         

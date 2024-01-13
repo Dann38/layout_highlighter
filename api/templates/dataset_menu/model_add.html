@@ -1,0 +1,27 @@
+<div class="modal fade" id="dataset-create-window" tabindex="-1" aria-labelledby="dataset-create-window-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="dataset-create-window-label">Создать набор данных</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row gy-5">
+                
+                  <form id="form-dataset-create" method="POST" action="">
+                      <p>Название набора</p>
+                      <input type="text" name="name-dataset" id="dataset-create-name">
+                      <p>Описание</p>
+                      <textarea id="dataset-create-discription" name="textarea-dataset" rows="4" cols="30">
+                      </textarea>
+                  </form>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <div id="dataset-create-button" class="btn btn-primary">Создать набор</div>
+        </div>
+        </div>
+    </div>
+</div>
