@@ -16,3 +16,10 @@ class Processing(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=True)
     json_processing = Column(String, nullable=True)
+
+
+class Dataset(Base):
+    __tablename__ = "datasets"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True)
+    discription = Column(String, nullable=True)

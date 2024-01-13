@@ -36,6 +36,7 @@ def delete_document(db: Session, doc_id: int) -> bool:
         return True
     return False
 
+#------------------------------------------------------------------------------------------------------------
 
 def create_processing(db: Session, proc: schemas.CreateProcessing) -> schemas.Processing:
     db_processing = models.Processing(name=proc.name, json_processing=proc.json_processing)
@@ -64,6 +65,39 @@ def delete_processing(db: Session, proc_id: int) -> bool:
     db_processing = db.query(models.Processing).get(proc_id)
     if db_processing:
         db.delete(db_processing)
+        db.commit()
+        return True
+    return False
+
+#------------------------------------------------------------------------------------------------------------
+
+def create_dataset(db: Session, dataset: schemas.CreateDataset) -> schemas.Dataset:
+    db_dataset = models.Dataset(name=dataset.name, discription=dataset.discription)
+    db.add(db_dataset)
+    db.commit()
+    db.refresh(db_dataset)
+    return schemas.Dataset(id=db_dataset.id,
+                            name=db_dataset.name,
+                            discription=db_dataset.discription)
+
+
+def read_dataset(db: Session, dataset_id: int) -> schemas.Dataset:
+    db_dataset = db.query(models.Dataset).get(dataset_id)
+    return schemas.Dataset(id=db_dataset.id,
+                            name=db_dataset.name,
+                            discription=db_dataset.discription)
+
+def read_datasets(db: Session) -> List[schemas.Dataset]:
+    db_datasets = db.query(models.Dataset).all()
+    return [schemas.Dataset(id=db_dataset.id,
+                            name=db_dataset.name,
+                            discription=db_dataset.discription) for db_dataset in db_datasets]
+
+
+def delete_dataset(db: Session, dataset_id: int) -> bool:
+    db_dataset = db.query(models.Dataset).get(dataset_id)
+    if db_dataset:
+        db.delete(db_dataset)
         db.commit()
         return True
     return False
