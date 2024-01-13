@@ -69,7 +69,7 @@ def delete_processing(db: Session, proc_id: int) -> bool:
         return True
     return False
 
-#------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------
 
 def create_dataset(db: Session, dataset: schemas.CreateDataset) -> schemas.Dataset:
     db_dataset = models.Dataset(name=dataset.name, discription=dataset.discription)
@@ -98,6 +98,40 @@ def delete_dataset(db: Session, dataset_id: int) -> bool:
     db_dataset = db.query(models.Dataset).get(dataset_id)
     if db_dataset:
         db.delete(db_dataset)
+        db.commit()
+        return True
+    return False
+
+
+# ------------------------------------------------------------------------------------------------------------
+def create_marking(db: Session, mark: schemas.CreateMarkingSegment) -> schemas.MarkingSegment:
+    db_mark = models.MarkingSegment(name=mark.name, dataset_id=mark.dataset_id)
+    db.add(db_mark)
+    db.commit()
+    db.refresh(db_mark)
+    return schemas.MarkingSegment(id=db_mark.id,
+                                 name=db_mark.name,
+                                 dataset_id=db_mark.dataset_id)
+
+
+def read_marking(db: Session, mark_id: int) -> schemas.MarkingSegment:
+    db_mark = db.query(models.MarkingSegment).get(mark_id)
+    return schemas.MarkingSegment(id=db_mark.id,
+                                 name=db_mark.name,
+                                 dataset_id=db_mark.dataset_id)
+
+def read_markings(db: Session, dataset_id: int) -> List[schemas.MarkingSegment]:
+    db_datasets = db.query(models.Dataset).get(dataset_id)
+    if db_datasets:
+        return [schemas.MarkingSegment(id=db_mark.id,
+                                      name=db_mark.name,
+                                      dataset_id=db_mark.dataset_id) for db_mark in db_datasets.markings]
+
+
+def delete_marking(db: Session, mark_id: int) -> bool:
+    db_mark = db.query(models.MarkingSegment).get(mark_id)
+    if db_mark:
+        db.delete(db_mark)
         db.commit()
         return True
     return False

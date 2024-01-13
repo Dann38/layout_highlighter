@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, LargeBinary, Integer, String
+from sqlalchemy import Column, LargeBinary, Integer, String, ForeignKey
 
 from sqlalchemy.orm import relationship, backref
 
@@ -23,3 +23,14 @@ class Dataset(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=True)
     discription = Column(String, nullable=True)
+    markings = relationship("MarkingSegment", cascade='all, delete')
+
+
+class MarkingSegment(Base):
+    __tablename__ = "markingsegments"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True)
+    dataset_id = Column(Integer, ForeignKey('datasets.id'))
+    # Не обязательно для связи, но позволяет упростить запросы
+    dataset = relationship("Dataset")
+    

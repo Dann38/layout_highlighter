@@ -80,3 +80,25 @@ async def read_dataset(dataset_id: int, db: Session = Depends(get_db)) -> schema
 async def read_datasets(db: Session = Depends(get_db)) -> List[schemas.Dataset]:
     datasets= crud.read_datasets(db=db)
     return datasets  
+
+# -----------------------------------------------------------------------------------------------------------
+
+@app.post("/markingsegment/create/")
+async def create_marking(mark: schemas.CreateMarkingSegment, db: Session = Depends(get_db)) -> schemas.MarkingSegment:
+    mark = crud.create_marking(db=db, mark=mark)
+    return mark
+
+@app.delete("/markingsegment/delete/{mark_id}/")
+async def delete_marking(mark_id: int, db: Session = Depends(get_db)) -> bool:
+    is_delete = crud.delete_marking(db=db, mark_id=mark_id)
+    return is_delete
+
+@app.get("/markingsegment/read/{mark_id}/")
+async def read_marking(mark_id: int, db: Session = Depends(get_db)) -> schemas.MarkingSegment:
+    mark = crud.read_marking(db=db, mark_id=mark_id)
+    return mark   
+
+@app.get("/dataset/{dataset_id}/markingsegment/read/")
+async def read_markings(dataset_id: int, db: Session = Depends(get_db)) -> List[schemas.MarkingSegment]:
+    marks= crud.read_markings(db=db, dataset_id=dataset_id)
+    return marks  

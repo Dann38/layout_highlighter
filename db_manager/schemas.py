@@ -41,3 +41,18 @@ class CreateDataset(BaseDataset):
 
 class Dataset(BaseDataset):
     id: int
+
+# -------------------------------------------------
+  
+class BaseMarkingSegment(BaseModel):
+    name: str
+    dataset_id: int
+
+
+class CreateMarkingSegment(BaseMarkingSegment):
+    pass
+
+
+class MarkingSegment(BaseMarkingSegment):
+    id: int
+  
