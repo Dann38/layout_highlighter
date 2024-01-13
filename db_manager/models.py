@@ -9,6 +9,7 @@ class Document(Base):
     id = Column(Integer, primary_key=True)
     image64 = Column(LargeBinary, nullable=True)
     name = Column(String, nullable=True)
+    segment_data = relationship("SegmentData", cascade='all, delete')
 
 
 class Processing(Base):
@@ -33,4 +34,14 @@ class MarkingSegment(Base):
     dataset_id = Column(Integer, ForeignKey('datasets.id'))
     # Не обязательно для связи, но позволяет упростить запросы
     dataset = relationship("Dataset")
-    
+    segment_data = relationship("SegmentData", cascade='all, delete')
+
+
+class SegmentData(Base):
+    __tablename__ = "segmentdatas"
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer,  ForeignKey('documents.id'))
+    document = relationship("Document")
+    marking_id = Column(Integer, ForeignKey('markingsegments.id'))
+    marking = relationship("MarkingSegment")
+    json_data = Column(String, nullable=True)

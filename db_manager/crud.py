@@ -135,3 +135,64 @@ def delete_marking(db: Session, mark_id: int) -> bool:
         db.commit()
         return True
     return False
+
+# ------------------------------------------------------------------------------------------------------------
+def create_segment_data(db: Session, sd: schemas.CreateSegmentData) -> schemas.SegmentData:
+    db_sd = models.SegmentData(document_id=sd.document_id, marking_id=sd.marking_id, json_data=sd.json_data)
+    db.add(db_sd)
+    db.commit()
+    db.refresh(db_sd)
+    return schemas.SegmentData(id=db_sd.id,
+                               document_id=db_sd.document_id,
+                               marking_id=db_sd.marking_id,
+                               json_data=db_sd.json_data)
+
+
+def read_segment_data(db: Session, sd_id: int) -> schemas.SegmentData:
+    db_sd = db.query(models.SegmentData).get(sd_id)
+    return schemas.SegmentData(id=db_sd.id,
+                               document_id=db_sd.document_id,
+                               marking_id=db_sd.marking_id,
+                               json_data=db_sd.json_data)
+
+
+
+def read_document_segment_datas(db: Session, doc_id: int) -> List[schemas.SegmentData]:
+    db_doc = db.query(models.Document).get(doc_id)
+    if db_doc:
+        return [schemas.SegmentData(id=db_sd.id,
+                                    document_id=db_sd.document_id,
+                                    marking_id=db_sd.marking_id,
+                                    json_data=db_sd.json_data) for db_sd in db_doc.segment_data]
+    
+
+def read_marking_segment_datas(db: Session, mark_id: int) -> List[schemas.SegmentData]:
+    db_mark = db.query(models.MarkingSegment).get(mark_id)
+    if db_mark:
+        return [schemas.SegmentData(id=db_sd.id,
+                                    document_id=db_sd.document_id,
+                                    marking_id=db_sd.marking_id,
+                                    json_data=db_sd.json_data) for db_sd in db_mark.segment_data]
+    
+
+def read_dataset_segment_datas(db: Session, dataset_id: int) -> List[schemas.SegmentData]:
+    db_dataset = db.query(models.Dataset).get(dataset_id)
+    if not db_dataset:
+        return 
+    
+    marks = [m.id for m in db_dataset.markings]
+    db_sds = db.query(models.SegmentData).filter(models.SegmentData.marking_id.in_(marks)).all()
+    if db_sds:
+        return [schemas.SegmentData(id=db_sd.id,
+                                    document_id=db_sd.document_id,
+                                    marking_id=db_sd.marking_id,
+                                    json_data=db_sd.json_data) for db_sd in db_sds]
+
+
+def delete_segment_data(db: Session, sd_id: int) -> bool:
+    db_sd = db.query(models.SegmentData).get(sd_id)
+    if db_sd:
+        db.delete(db_sd)
+        db.commit()
+        return True
+    return False

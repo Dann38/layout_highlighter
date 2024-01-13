@@ -55,4 +55,18 @@ class CreateMarkingSegment(BaseMarkingSegment):
 
 class MarkingSegment(BaseMarkingSegment):
     id: int
-  
+
+ # ------------------------------------------------- 
+
+class BaseSegmentData(BaseModel):
+    json_data: str
+    document_id: int
+    marking_id: int
+
+
+class CreateSegmentData(BaseSegmentData):
+    pass
+
+
+class SegmentData(BaseSegmentData):
+    id: int

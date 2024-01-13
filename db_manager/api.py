@@ -102,3 +102,35 @@ async def read_marking(mark_id: int, db: Session = Depends(get_db)) -> schemas.M
 async def read_markings(dataset_id: int, db: Session = Depends(get_db)) -> List[schemas.MarkingSegment]:
     marks= crud.read_markings(db=db, dataset_id=dataset_id)
     return marks  
+
+# -----------------------------------------------------------------------------------------------------------
+
+@app.post("/segmentdata/create/")
+async def create_segment_data(sd: schemas.CreateSegmentData, db: Session = Depends(get_db)) -> schemas.SegmentData:
+    sd = crud.create_segment_data(db=db, sd=sd)
+    return sd
+
+@app.delete("/segmentdata/delete/{sd_id}/")
+async def delete_marking(sd_id: int, db: Session = Depends(get_db)) -> bool:
+    is_delete = crud.delete_segment_data(db=db, sd_id=sd_id)
+    return is_delete
+
+@app.get("/segmentdata/read/{sd_id}/")
+async def read_segment_data(sd_id: int, db: Session = Depends(get_db)) -> schemas.SegmentData:
+    sd = crud.read_segment_data(db=db, sd_id=sd_id)
+    return sd   
+
+@app.get("/dataset/{dataset_id}/segmentdata/read/")
+async def read_dataset_segment_datas(dataset_id: int, db: Session = Depends(get_db)) -> List[schemas.SegmentData]:
+    sds= crud.read_dataset_segment_datas(db=db, dataset_id=dataset_id)
+    return sds  
+
+@app.get("/doc/{doc_id}/segmentdata/read/")
+async def read_document_segment_datas(doc_id: int, db: Session = Depends(get_db)) -> List[schemas.SegmentData]:
+    sds= crud.read_document_segment_datas(db=db, doc_id=doc_id)
+    return sds  
+
+@app.get("/markingsegment/{mark_id}/segmentdata/read/")
+async def read_marking_segment_datas(mark_id: int, db: Session = Depends(get_db)) -> List[schemas.SegmentData]:
+    sds= crud.read_marking_segment_datas(db=db, mark_id=mark_id)
+    return sds  
