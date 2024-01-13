@@ -162,12 +162,13 @@ var joinBlock = function(){
     
   };
 }
+$("#tool-select-dataset")[0].addEventListener('change', function (e) {
+  setSelectMarking($("#tool-select-dataset")[0].value);
+});
 
 var setSelectDataset = function(){
-    $("#tool-select-dataset")[0].innerText = "";
-    $("#tool-select-dataset")[0].addEventListener('change', function (e) {
-      setSelectMarking($("#tool-select-dataset")[0].value);
-    });
+    $("#tool-select-dataset")[0].innerHTML = "";
+    
     const xml = new XMLHttpRequest();
     xml.open("GET", "/dataset/read/");
     xml.send();
@@ -184,8 +185,8 @@ var setSelectDataset = function(){
 }
 
 var setSelectMarking= function(dataset_id){
-  $("#tool-select-marking")[0].innerText = "";
-  console.log(dataset_id);
+  $("#tool-select-marking")[0].innerHTML = "";
+  
     const xml = new XMLHttpRequest();
     xml.open("GET", "/dataset/"+dataset_id+"/markingsegment/read/");
     xml.send();
