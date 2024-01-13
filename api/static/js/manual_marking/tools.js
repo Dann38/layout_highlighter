@@ -1,3 +1,5 @@
+const tools = {}
+
 var autoBlock = function(){
     const xml = new XMLHttpRequest();
     const formData = new FormData();
@@ -161,25 +163,107 @@ var joinBlock = function(){
   };
 }
 
+var setSelectDataset = function(){
+    $("#tool-select-dataset")[0].innerText = "";
+    $("#tool-select-dataset")[0].addEventListener('change', function (e) {
+      setSelectMarking($("#tool-select-dataset")[0].value);
+    });
+    const xml = new XMLHttpRequest();
+    xml.open("GET", "/dataset/read/");
+    xml.send();
+    xml.onload = function() {
+        if (xml.status == 200) {
+            var array =  $.parseJSON(xml.response);
+            for(var i=0; i < array.length ; i++){
+                var new_elem = $('<option value="'+array[i].id+'">'+array[i].name+'</option>')
+                $("#tool-select-dataset").append(new_elem)
+            }
+            
+        }
+    }
+}
+
+var setSelectMarking= function(dataset_id){
+  $("#tool-select-marking")[0].innerText = "";
+  console.log(dataset_id);
+    const xml = new XMLHttpRequest();
+    xml.open("GET", "/dataset/"+dataset_id+"/markingsegment/read/");
+    xml.send();
+    xml.onload = function() {
+        if (xml.status == 200) {
+            var array =  $.parseJSON(xml.response);
+            for(var i=0; i < array.length ; i++){
+                var new_elem = $('<option value="'+array[i].id+'">'+array[i].name+'</option>')
+                $("#tool-select-marking").append(new_elem)
+            }
+            
+        }
+    }
+}
+
+var markBlock = function(){
+    $("#submenu-mark-segment").removeClass("close-submenu");
+    setSelectDataset();
+    drawImage(doc.base_image64);
+    drawSegment(marking.blocks);
+
+    doc.mousedown.fun = function(x, y){
+      marking.blocks[marking.action_block].marking_id = $("#tool-select-marking")[0].value;
+      // drawText()
+      console.log(marking.blocks[marking.action_block])
+      
+    };
+    doc.mousemove.fun = function(x, y){
+      drawImage(doc.base_image64);
+      action_block(x, y);
+      for(var i = 0; i < marking.blocks.length; i++){
+        const block = marking.blocks[i];
+        if(i == marking.action_block){
+          drawRectangle(block.x_top_left, block.y_top_left, block.x_bottom_right, block.y_bottom_right, "rgba(255, 255, 0, 0.5)");
+        }else{
+          drawRectangle(block.x_top_left, block.y_top_left, block.x_bottom_right, block.y_bottom_right, "rgba(255, 0, 0, 0.5)");
+        }
+        
+      }
+      
+    };
+}
+
 set_mouse_canvas(canvas);
 
 
 $("#tool-auto-block").click(function(){
+    tools.action = "auto-block";
+    close_submenu();
     autoBlock();
 })
 
 $("#tool-horizontal-scissors").click(function(){
+    tools.action = "horizontal-scissors";
+    close_submenu();
     horizontalScissors();
 })
 
 $("#tool-vertical-scissors").click(function(){
-  verticalScissors();
+    tools.action = "vertical-scissors";
+    close_submenu();
+    verticalScissors();
 })
 
 $('#tool-delete-block').click(function(){
-  deleteBlock();
+    tools.action = "delete-block";
+    close_submenu();
+    deleteBlock();
 })
 
 $('#tool-join-block').click(function(){
-  joinBlock();
+    tools.action = "join-block";
+    close_submenu();
+    joinBlock();
+})
+
+$('#tool-mark-block').click(function(){
+    tools.action = "mark-block";
+    close_submenu();
+    markBlock();
 })
