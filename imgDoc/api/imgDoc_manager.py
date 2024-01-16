@@ -3,6 +3,7 @@ import cv2
 import base64
 from img_doc.extractors.word_extractors import BaseWordExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
+from img_doc.extractors.block_extractors.block_label_extractor import AngleLengthExtractor
 from img_doc.data_structures import Word, Block
 from img_doc.data_structures import Image
 import numpy as np
@@ -19,25 +20,27 @@ class TesseractWordExtractor(BaseWordExtractor):
             if level == 5:
                 word = Word(text = tesseract_bboxes["text"][index_bbox])
                 word.set_point_and_size({
-                    "x_top_left":tesseract_bboxes["left"][index_bbox],
-                    "y_top_left":tesseract_bboxes["top"][index_bbox],
-                    "width":tesseract_bboxes["width"][index_bbox],
+                    "x_top_left": tesseract_bboxes["left"][index_bbox],
+                    "y_top_left": tesseract_bboxes["top"][index_bbox],
+                    "width": tesseract_bboxes["width"][index_bbox],
                     "height": tesseract_bboxes["height"][index_bbox],
                 })
                 word_list.append(word)
         return word_list
-    
+
+
 class ImgDocManager:
     def __init__(self):
         self.word_ext = TesseractWordExtractor()
-        self.kmeanext =  KMeanBlockExtractor()
+        self.kmeanext = KMeanBlockExtractor()
+        self.classifier = AngleLengthExtractor()
 
     def get_rez_proc(self, image64, proc):
         data = np.frombuffer(base64.b64decode(image64), np.uint8)
         image_np = cv2.imdecode(data, cv2.IMREAD_COLOR)
         image = Image(img=image_np)
 
-        history = {"no_join_blocks":[], "dist_word": 0, "dist_row": 0, "join_blocks": None,
+        history = {"no_join_blocks": [], "dist_word": 0, "dist_row": 0, "join_blocks": None,
         "neighbors": None, "distans": None}
 
         dist_row = None
@@ -48,7 +51,6 @@ class ImgDocManager:
         if "dist_word" in proc: 
             if proc["dist_word"] != "auto":
                 dist_word = proc["dist_word"]
-
         
         words = self.word_ext.extract_from_img(image.img)
         self.proccessing(dist_row, dist_word, history, words)
@@ -56,8 +58,8 @@ class ImgDocManager:
         if "save_words" in proc:
             if proc["save_words"] == True:
                 history["words"] = [word.segment.get_segment_2p() for word in words]
-        history["no_join_blocks"] = [block.segment.get_segment_2p() for block in history["no_join_blocks"]]
-        history["join_blocks"] = [block.segment.get_segment_2p() for block in history["join_blocks"]]
+        history["no_join_blocks"] = [block.to_dict() for block in history["no_join_blocks"]]
+        history["join_blocks"] = [block.to_dict() for block in history["join_blocks"]]
            
         if "save_blocks" in proc:
             if proc["save_blocks"] == False:
@@ -68,14 +70,14 @@ class ImgDocManager:
     def proccessing(self, dist_row, dist_word, history, words):
         neighbors = self.kmeanext.get_index_neighbors_word(words)
         distans = self.kmeanext.get_distans(neighbors, words)
-        dist_word_, dist_row_ =  self.kmeanext.get_standart_distant(distans)
+        dist_word_, dist_row_ = self.kmeanext.get_standart_distant(distans)
         if dist_row is None:
             dist_row = dist_row_
         if dist_word is None:
             dist_word = dist_word_
 
-        graph =  self.kmeanext.get_graph_words(words, neighbors, dist_word, dist_row, distans)
-        blocks =  self.kmeanext.extract_from_word(words, history)
+        graph = self.kmeanext.get_graph_words(words, neighbors, dist_word, dist_row, distans)
+        blocks = self.kmeanext.extract_from_word(words, history)
         
         list_block = []
         for r in graph.get_related_graphs():
@@ -84,6 +86,7 @@ class ImgDocManager:
             block.set_words(words_r)
             list_block.append(block)
 
+        self.classifier.extract(list_block)
         join_intersect_block = self.kmeanext.join_intersect_blocks(list_block)
 
         if "join_blocks" in history.keys():

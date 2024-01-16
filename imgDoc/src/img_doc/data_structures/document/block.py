@@ -1,12 +1,30 @@
 from . import Word, Row
 from ..image import ImageSegment
-from typing import List
+from typing import List, Dict
 
+LABEL = {
+    "no_struct": 0,
+    "multiple_blocks": 1,
+    "text": 2,
+    "header": 3,
+    "list": 4,
+    "table": 5,
+}
+
+INT_LABEL = {
+    0: "no_struct",
+    1: "multiple_blocks",
+    2: "text",
+    3: "header",
+    4: "list",
+    5: "table",
+}
 class Block:
-    def __init__(self, rows: List[Row] = [], words: List[Word] = [],
+    def __init__(self, rows: List[Row] = [], words: List[Word] = [], label: int = LABEL["text"],
                  x0: int = 0, y0: int = 0, x1: int = 0, y1: int = 0):
         self.rows = rows
         self.words = words
+        self.label: int = label
         self.segment = ImageSegment(x0, y0, x1, y1)
 
     def set_words(self, words):
@@ -48,3 +66,12 @@ class Block:
             "y_top_left": min(self.segment.y_top_left, c2["y_top_left"]),
             "y_bottom_right": max(self.segment.y_bottom_right, c2["y_bottom_right"]),
         })
+
+    def to_dict(self) -> Dict:
+        any_date = {
+            "label_int": self.label,
+            "label": INT_LABEL[self.label]
+        }
+        segment = self.segment.get_segment_2p()
+        dict_block = dict(list(segment.items()) + list(any_date.items()))
+        return dict_block
