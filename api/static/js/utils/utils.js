@@ -40,3 +40,7 @@ var is_into_rect = function(x, y, rx0, ry0, rx1, ry1) {
   var y1 = Math.max(ry0, ry1);
   return x > x0 && x < x1 && y > y0 && y < y1;
 }
+
+var close_submenu = function(){
+  $(".submenu").addClass("close-submenu");
+}

@@ -6,3 +6,16 @@ html{
 .card-doc{
     margin: 10px;
 }
+
+.card-dataset{
+  margin: 10px;
+}
+
+.add_segment_block{
+  margin-top: 40px;
+  padding: 10px;
+}
+
+.close-submenu{
+  display: none;
+}

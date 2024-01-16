@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include 'import/head.html' %}
+    <title>ImgDoc Dataset</title>
+</head>
+<body>
+    
+    <div class="container">
+        {% include 'nav/dataset_menu.html' %}
+        
+        <div class="row">
+            <div class="col-lg-8">
+                {% include 'dataset_menu/datasets.html' %}
+            </div>
+            <div class="col-lg-4">
+                {% include 'dataset_menu/dataset_marking.html' %}
+            </div>
+        </div>
+        
+    </div>
+    
+</body>
+{% include 'import/dataset_js.html' %}
+</html>
