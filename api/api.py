@@ -142,3 +142,15 @@ def marking_create():
         "dataset_id": dataset_id,
         "name": name}).content
     return content
+
+
+@app.route("/segmentdata/create/", methods=["POST"])
+def marking_create():
+    document_id = int(request.form["document_id"])
+    marking_id = int(request.form["marking_id"])
+    json_data = str(request.form["json_data"])
+    content = requests.post(f'{host_db_manager}/segmentdata/create/', json={
+          "json_data": json_data,
+          "document_id": document_id,
+          "marking_id": marking_id}).content
+    return content
