@@ -1,4 +1,5 @@
-const tools = {}
+const tools = {};
+tools.font_size = 20;
 
 var autoBlock = function(){
     const xml = new XMLHttpRequest();
@@ -162,13 +163,13 @@ var joinBlock = function(){
     
   };
 }
-$("#tool-select-dataset")[0].addEventListener('change', function (e) {
-  setSelectMarking($("#tool-select-dataset")[0].value);
-});
+
 
 var setSelectDataset = function(){
     $("#tool-select-dataset")[0].innerHTML = "";
-    
+    $("#tool-select-dataset")[0].addEventListener('change', function (e) {
+        setSelectMarking($("#tool-select-dataset")[0].value);
+    });
     const xml = new XMLHttpRequest();
     xml.open("GET", "/dataset/read/");
     xml.send();
@@ -179,7 +180,7 @@ var setSelectDataset = function(){
                 var new_elem = $('<option value="'+array[i].id+'">'+array[i].name+'</option>')
                 $("#tool-select-dataset").append(new_elem)
             }
-            
+            setSelectMarking($("#tool-select-dataset")[0].value);
         }
     }
 }
@@ -190,12 +191,14 @@ var setSelectMarking= function(dataset_id){
     const xml = new XMLHttpRequest();
     xml.open("GET", "/dataset/"+dataset_id+"/markingsegment/read/");
     xml.send();
+    marking.markings = {};
     xml.onload = function() {
         if (xml.status == 200) {
             var array =  $.parseJSON(xml.response);
             for(var i=0; i < array.length ; i++){
                 var new_elem = $('<option value="'+array[i].id+'">'+array[i].name+'</option>')
                 $("#tool-select-marking").append(new_elem)
+                marking.markings[array[i].id] = array[i].name
             }
             
         }
@@ -210,9 +213,6 @@ var markBlock = function(){
 
     doc.mousedown.fun = function(x, y){
       marking.blocks[marking.action_block].marking_id = $("#tool-select-marking")[0].value;
-      // drawText()
-      console.log(marking.blocks[marking.action_block])
-      
     };
     doc.mousemove.fun = function(x, y){
       drawImage(doc.base_image64);
@@ -220,9 +220,14 @@ var markBlock = function(){
       for(var i = 0; i < marking.blocks.length; i++){
         const block = marking.blocks[i];
         if(i == marking.action_block){
-          drawRectangle(block.x_top_left, block.y_top_left, block.x_bottom_right, block.y_bottom_right, "rgba(255, 255, 0, 0.5)");
-        }else{
+          drawRectangle(block.x_top_left, block.y_top_left, block.x_bottom_right, block.y_bottom_right, "rgba(0, 0, 255, 0.5)");
+          drawText(block.x_top_left, block.y_top_left, marking.markings[block.marking_id], pt=tools.font_size, color="rgba(0, 0, 255, 0.5)");
+        }else if (block.marking_id == undefined){
           drawRectangle(block.x_top_left, block.y_top_left, block.x_bottom_right, block.y_bottom_right, "rgba(255, 0, 0, 0.5)");
+          drawText(block.x_top_left, block.y_top_left, marking.markings[block.marking_id], pt=tools.font_size, color="rgba(255, 0, 0, 0.5)");
+        }else{
+          drawRectangle(block.x_top_left, block.y_top_left, block.x_bottom_right, block.y_bottom_right, "rgba(0, 255, 0, 0.5)");
+          drawText(block.x_top_left, block.y_top_left, marking.markings[block.marking_id], pt=tools.font_size, color="rgba(0, 255, 0, 0.5)");
         }
         
       }
@@ -232,6 +237,32 @@ var markBlock = function(){
 
 set_mouse_canvas(canvas);
 
+$("#save-manual-marking-block").click(function(){
+    for (var i = 0; i < marking.blocks.length; i++){
+        if (marking.blocks[i].marking_id == undefined){
+            alert("Не все блоки размечены");
+            return;
+        }
+    }
+    for (var i = 0; i < marking.blocks.length; i++){
+        const block = marking.blocks[i];
+        const xml = new XMLHttpRequest();
+        const formData = new FormData();
+
+        formData.append('document_id', doc.id);
+        formData.append('marking_id', block.marking_id);
+        formData.append('json_data', JSON.stringify(block));
+
+        xml.open('POST', '/segmentdata/create/');
+        xml.send(formData);
+        xml.onload = function() {
+            rez = $.parseJSON(xml.response);
+            console.log(rez);
+        }
+    }
+
+
+})
 
 $("#tool-auto-block").click(function(){
     tools.action = "auto-block";

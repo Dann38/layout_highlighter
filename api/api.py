@@ -145,7 +145,7 @@ def marking_create():
 
 
 @app.route("/segmentdata/create/", methods=["POST"])
-def marking_create():
+def segmentdata_create():
     document_id = int(request.form["document_id"])
     marking_id = int(request.form["marking_id"])
     json_data = str(request.form["json_data"])
