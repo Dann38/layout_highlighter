@@ -183,6 +183,11 @@ def segmentdata_create():
           "marking_id": marking_id}).content
     return content
 
+@app.route("/segmentdata/delete/<int:segment_id>", methods=["POST"])
+def segmentdata_delete(segment_id):
+    content = requests.delete(f"{host_db_manager}/segmentdata/delete/{segment_id}/").content
+    return content
+
 
 @app.route("/segmentdata/read/<int:segment_id>")
 def segmentdata_read(segment_id: int):

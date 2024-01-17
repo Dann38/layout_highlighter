@@ -1,8 +1,9 @@
 const menu_segment = document.getElementById('menu-segment');
+doc.segment = {}
 
 var add_segment = function(segment){
     var card = $('\
-    <div class="card card-dataset col-sm-2">\
+    <div id="card-segment-'+segment.id+'" class="card card-dataset col-sm-2">\
         <div class="card-body">\
         </div>\
         <h5 class="card-title">'+segment.id+'(doc:'+segment.document_id + ' mark: '+segment.marking_id+')</h5>\
@@ -20,11 +21,23 @@ var openSegment = function(segment_id){
     xml.onload = function() {
         if (xml.status == 200) {
             var rez =  $.parseJSON($.parseJSON(xml.response));
-            console.log(rez);
+            doc.segment.id = segment_id
+            drawImage(rez.image64);
         }
     }
 
 }
+
+var deleteSegment = function(segment_id){
+      const xml = new XMLHttpRequest();
+      xml.open('POST', '/segmentdata/delete/'+segment_id);
+      xml.send();
+      xml.onload = function() {
+         drawImage("")
+         $("#card-segment-"+segment_id).remove();
+      }
+}
+
 var view_segment_menu = function(){
     menu_segment.innerText = "";
 
@@ -42,3 +55,7 @@ var view_segment_menu = function(){
 }
 
 view_segment_menu();
+
+$("#segment-delete").click(function(){
+    deleteSegment(doc.segment.id)
+})

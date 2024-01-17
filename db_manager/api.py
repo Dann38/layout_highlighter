@@ -133,4 +133,4 @@ async def read_document_segment_datas(doc_id: int, db: Session = Depends(get_db)
 @app.get("/markingsegment/{mark_id}/segmentdata/read/")
 async def read_marking_segment_datas(mark_id: int, db: Session = Depends(get_db)) -> List[schemas.SegmentData]:
     sds= crud.read_marking_segment_datas(db=db, mark_id=mark_id)
-    return sds  
+    return sds

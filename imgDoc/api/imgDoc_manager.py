@@ -44,7 +44,7 @@ class ImgDocManager:
         segment_img = segment.get_segment_from_img(image.img)
         segment_image = Image(img=segment_img)
         rez = {
-            "image64": str(segment_image.get_base64())
+            "image64": segment_image.get_base64().decode('utf-8')
         }
         return rez
 
