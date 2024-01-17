@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include 'import/head.html' %}
+    <title>Dataset</title>
+    <script>
+        var dataset = {}
+        dataset.id = {{context.dataset_id}}
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% include 'nav/main_menu.html' %}
+        <div class="row">
+            <div class="col-lg-8">
+                {% include 'segment_menu/view_segment.html' %}
+            </div>
+            <div class="col-lg-4">
+                {% include 'segment_menu/segment_info.html' %}
+            </div>
+        </div>
+
+    </div>
+
+</body>
+{% include 'import/segment_menu_js.html' %}
+</html>

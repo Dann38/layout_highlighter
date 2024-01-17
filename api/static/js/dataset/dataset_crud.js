@@ -16,6 +16,7 @@ var add_dataset = function(dataset){
 
     var delete_btn = document.createElement("button");
     var info_btn = document.createElement("button");
+    var open_btn = document.createElement("button");
     set_btn(delete_btn, "Удалить", "btn btn-outline-danger", function(){
         deleteDataset(dataset.id);
         card.remove();
@@ -23,8 +24,12 @@ var add_dataset = function(dataset){
     set_btn(info_btn, "Метки", "btn btn-outline-secondary", function(){
         openSetDataset(dataset);
     })
-    
+    set_btn(open_btn, "Просмотреть", "btn btn-outline-secondary", function(){
+        openDataset(dataset.id);
+    })
+
     card.append(info_btn);
+    card.append(open_btn);
     card.append(delete_btn);
     
 }
@@ -59,6 +64,10 @@ var openSetDataset = function(dataset){
     $("#dataset-info-discription")[0].innerText = dataset.discription;
     view_marking(dataset.id);
     
+}
+
+var openDataset = function(dataset_id){
+    window.location.replace("/dataset/"+dataset_id+"/segments/");
 }
 
 var addDataset = function(){
