@@ -150,6 +150,12 @@ def marking_read(dataset_id: int):
     return content
 
 
+@app.route("/dataset/<int:dataset_id>/segments/read/")
+def dataset_segment_read(dataset_id: int):
+    content = requests.get(f'{host_db_manager}/dataset/{dataset_id}/segmentdata/read/').content
+    return content
+
+
 @app.route("/markingsegment/delete/<int:marking_id>", methods=["POST"])
 def marking_delete(marking_id: int):
     content = requests.delete(f"{host_db_manager}/markingsegment/delete/{marking_id}/").content
