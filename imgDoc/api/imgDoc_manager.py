@@ -5,7 +5,7 @@ from img_doc.extractors.word_extractors import BaseWordExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import AngleLengthExtractor
 from img_doc.data_structures import Word, Block
-from img_doc.data_structures import Image
+from img_doc.data_structures import Image, ImageSegment
 import numpy as np
 from typing import List
 
@@ -35,10 +35,21 @@ class ImgDocManager:
         self.kmeanext = KMeanBlockExtractor()
         self.classifier = AngleLengthExtractor()
 
+    def get_segment_from_image(self, image64, proc):
+        image = self.base64image(image64)
+        segment = ImageSegment(x_top_left=proc["x_top_left"],
+                               y_top_left=proc["y_top_left"],
+                               x_bottom_right=proc["x_bottom_right"],
+                               y_bottom_right=proc["y_bottom_right"])
+        segment_img = segment.get_segment_from_img(image.img)
+        segment_image = Image(img=segment_img)
+        rez = {
+            "image64": str(segment_image.get_base64())
+        }
+        return rez
+
     def get_rez_proc(self, image64, proc):
-        data = np.frombuffer(base64.b64decode(image64), np.uint8)
-        image_np = cv2.imdecode(data, cv2.IMREAD_COLOR)
-        image = Image(img=image_np)
+        image = self.base64image(image64)
 
         history = {"no_join_blocks": [], "dist_word": 0, "dist_row": 0, "join_blocks": None,
         "neighbors": None, "distans": None}
@@ -103,4 +114,8 @@ class ImgDocManager:
             history["graph"] = graph
         if "no_join_blocks" in history.keys():
             history["no_join_blocks"] = list_block
-        
+
+    def base64image(self, image64) -> Image:
+        data = np.frombuffer(base64.b64decode(image64), np.uint8)
+        image_np = cv2.imdecode(data, cv2.IMREAD_COLOR)
+        return Image(img=image_np)

@@ -182,3 +182,15 @@ def segmentdata_create():
           "document_id": document_id,
           "marking_id": marking_id}).content
     return content
+
+
+@app.route("/segmentdata/read/<int:segment_id>")
+def segmentdata_read(segment_id: int):
+    segment = requests.get(f'{host_db_manager}/segmentdata/read/{segment_id}').json()
+    rez = requests.get(f'{host_db_manager}/doc/read/{segment["document_id"]}').json()
+    image = rez["image64"]
+    content = requests.post(f'{host_img_doc}/segment_from_image/', json={
+        "image64": image,
+        "process": segment["json_data"]}).content
+
+    return content

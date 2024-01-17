@@ -10,9 +10,21 @@ var add_segment = function(segment){
     ')
 
     $("#menu-segment").append(card);
+    card.click(function(){openSegment(segment.id)})
 }
 
+var openSegment = function(segment_id){
+    const xml = new XMLHttpRequest();
+    xml.open("GET", "/segmentdata/read/"+segment_id)
+    xml.send();
+    xml.onload = function() {
+        if (xml.status == 200) {
+            var rez =  $.parseJSON($.parseJSON(xml.response));
+            console.log(rez);
+        }
+    }
 
+}
 var view_segment_menu = function(){
     menu_segment.innerText = "";
 

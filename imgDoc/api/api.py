@@ -17,3 +17,11 @@ async def read_images(img_and_set_process: schemas.ImgAndSetProcess):
     process = json.loads(img_and_set_process.process)
     rez = img_doc_manager.get_rez_proc(image64, process)
     return json.dumps(rez)
+
+
+@app.post("/segment_from_image/")
+async def segment_from_image(img_and_set_process: schemas.ImgAndSetProcess):
+    image64 = img_and_set_process.image64
+    process = json.loads(img_and_set_process.process)
+    rez = img_doc_manager.get_segment_from_image(image64, process)
+    return json.dumps(rez)
