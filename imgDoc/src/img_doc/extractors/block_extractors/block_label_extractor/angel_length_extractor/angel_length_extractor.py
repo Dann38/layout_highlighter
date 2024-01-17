@@ -21,7 +21,7 @@ class AngleLengthExtractor(BaseBlockLabelExtractor):
                 is_exist_col = dist_word > mean_word_w
                 is_exist_row = dist_row > mean_word_h
 
-                is_homogeneous_col = gity < mean_word_w + std_word_w
+                is_homogeneous_col = std_word < mean_word_w + std_word_w
                 is_homogeneous_row = std_row < mean_word_h + std_word_h
 
                 if is_homogeneous_row or is_homogeneous_col:
