@@ -22,3 +22,10 @@ class Word:
     def set_text(self, text: str):
         self.text = text
 
+    def to_dict(self) -> Dict:
+        any_date = {
+            "text": self.text
+        }
+        segment = self.segment.get_segment_2p()
+        dict_word = dict(list(segment.items()) + list(any_date.items()))
+        return dict_word

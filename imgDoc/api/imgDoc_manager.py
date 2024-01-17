@@ -12,7 +12,7 @@ from typing import List
 class TesseractWordExtractor(BaseWordExtractor):
     def extract_from_img(self, img: np) -> List[Word]:
         tesseract_bboxes = pytesseract.image_to_data(
-            config="-l rus",
+            config="-l eng+rus",
             image=img,
             output_type=pytesseract.Output.DICT)
         word_list = []
@@ -43,16 +43,23 @@ class ImgDocManager:
                                y_bottom_right=proc["y_bottom_right"])
         segment_img = segment.get_segment_from_img(image.img)
         segment_image = Image(img=segment_img)
+
+        def is_into_segment(point):
+            return (proc["x_top_left"] < point[0] < proc["x_bottom_right"] and
+                    proc["y_top_left"] < point[1] and proc["y_bottom_right"] > point[1])
+
         rez = {
             "image64": segment_image.get_base64().decode('utf-8')
         }
+        words = self.word_ext.extract_from_img(image.img)
+        rez["words"] = [word.to_dict() for word in words if is_into_segment(word.segment.get_center())]
         return rez
 
     def get_rez_proc(self, image64, proc):
         image = self.base64image(image64)
 
-        history = {"no_join_blocks": [], "dist_word": 0, "dist_row": 0, "join_blocks": None,
-        "neighbors": None, "distans": None}
+        history = {"no_join_blocks": [], "dist_word": 0, "dist_row": 0, "join_blocks": [],
+        "neighbors": [], "distans": []}
 
         dist_row = None
         dist_word = None
@@ -64,14 +71,21 @@ class ImgDocManager:
                 dist_word = proc["dist_word"]
         
         words = self.word_ext.extract_from_img(image.img)
-        self.proccessing(dist_row, dist_word, history, words)
+        if len(words) > 1:
+            self.proccessing(dist_row, dist_word, history, words)
+        elif len(words) == 1:
+            block = Block()
+            block.set_words(words)
+            history["no_join_blocks"] = [block]
 
-        if "save_words" in proc:
-            if proc["save_words"] == True:
-                history["words"] = [word.segment.get_segment_2p() for word in words]
+        history["words"] = [word.to_dict() for word in words]
         history["no_join_blocks"] = [block.to_dict() for block in history["no_join_blocks"]]
         history["join_blocks"] = [block.to_dict() for block in history["join_blocks"]]
-           
+
+        if "save_words" in proc:
+            if proc["save_words"] == False:
+                del history["words"]
+
         if "save_blocks" in proc:
             if proc["save_blocks"] == False:
                 del history["no_join_blocks"]

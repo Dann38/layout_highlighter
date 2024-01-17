@@ -14,6 +14,13 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
         graph,
         no_join_blocks
         """
+        if len(words) == 0:
+            return []
+        elif len(words) == 1:
+            block = Block()
+            block.set_words(words)
+            return [block]
+
         neighbors = self.get_index_neighbors_word(words)
         distans = self.get_distans(neighbors, words)
         dist_word, dist_row = self.get_standart_distant(distans)
