@@ -15,18 +15,25 @@ var add_segment = function(segment){
 }
 
 var openSegment = function(segment_id){
+    selectSegment(doc.segment.id, segment_id);
     const xml = new XMLHttpRequest();
     xml.open("GET", "/segmentdata/read/"+segment_id)
     xml.send();
     xml.onload = function() {
         if (xml.status == 200) {
             var rez =  $.parseJSON($.parseJSON(xml.response));
+            console.log(rez)
             doc.segment = rez;
             doc.segment.id = segment_id;
-            drawImage(rez.image64);
+            miniDrawImage(rez.image64);
         }
     }
 
+}
+
+var selectSegment = function(old_id, new_id){
+    $("#card-segment-"+old_id).removeClass("bg-primary");
+    $("#card-segment-"+new_id).addClass("bg-primary");
 }
 
 var deleteSegment = function(segment_id){
@@ -34,7 +41,7 @@ var deleteSegment = function(segment_id){
       xml.open('POST', '/segmentdata/delete/'+segment_id);
       xml.send();
       xml.onload = function() {
-         drawImage("")
+         miniDrawImage("")
          $("#card-segment-"+segment_id).remove();
       }
 }
