@@ -74,8 +74,8 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
 
         coef = w / h
 
-        m_width = round((n * coef) ** 0.5)
-        m_height = round(m_width / coef)
+        m_width = int(np.ceil((n * coef) ** 0.5))
+        m_height = int(np.ceil(m_width / coef))
 
         dh = h / m_height
         dw = w / m_width

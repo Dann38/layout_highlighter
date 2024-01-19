@@ -39,9 +39,15 @@ class ImgDocManager:
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
         neighbors = self.kmeanext.get_index_neighbors_word(words)
         distans = self.kmeanext.get_distans(neighbors, words)
+        vec = np.ravel(np.array(distans))
+        vec = vec/vec.max()
+        vec, _ = np.histogram(vec, np.linspace(0, 1, 51))
+        normal = np.linalg.norm(vec)
+        vec = vec/normal if normal > 0 else vec
         rez = {
             "neighbors": neighbors,
-            "distans": distans
+            "distans": distans,
+            "vec": vec.tolist(),
         }
         return rez
 
