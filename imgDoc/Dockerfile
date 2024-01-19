@@ -20,6 +20,7 @@ RUN python3 -m pip install setuptools-scm && pip install --upgrade setuptools
 # VOLUME /build
 
 COPY . /build/
+COPY ./api/model-1.sav /build/model-1.sav
 
 WORKDIR /build
 RUN python3 -m pip install .

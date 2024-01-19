@@ -3,7 +3,7 @@ import cv2
 import base64
 from img_doc.extractors.word_extractors import BaseWordExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
-from img_doc.extractors.block_extractors.block_label_extractor import AngleLengthExtractor
+from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, AngleLengthExtractor
 from img_doc.data_structures import Word, Block
 from img_doc.data_structures import Image, ImageSegment
 import numpy as np
@@ -36,7 +36,10 @@ class ImgDocManager:
     def __init__(self):
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
-        self.classifier = AngleLengthExtractor()
+        try:
+            self.classifier = MLPExtractor("/build/model-1.sav")
+        except:
+            self.classifier = AngleLengthExtractor()
 
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
@@ -167,6 +170,8 @@ class ImgDocManager:
         return {"x": list_vec, "y": list_y}
     
     def get_vec_from_words(self, words, len_vec):
+        if len(words) == 0:
+            return [0 for i in range(len_vec)]
         neighbors = self.kmeanext.get_index_neighbors_word(words)
         distans = self.kmeanext.get_distans(neighbors, words)
         vec = np.ravel(np.array(distans))
