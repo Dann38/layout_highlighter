@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from imgDoc_manager import ImgDocManager
 import json
 import uvicorn
@@ -32,4 +32,12 @@ async def segment2vec_distribution(img_and_set_process: schemas.ImgAndSetProcess
     image64 = img_and_set_process.image64
     process = json.loads(img_and_set_process.process)
     rez = img_doc_manager.segment2vec_distribution(image64, process)
+    return json.dumps(rez)
+
+
+@app.post("/create_dataset/")
+async def segment2vec_distribution(dataset_and_parametr: schemas.DatasetAndParametr):
+    dataset = json.loads(dataset_and_parametr.dataset)
+    parametr = json.loads(dataset_and_parametr.parametr)
+    rez = img_doc_manager.get_file_dataset(dataset, parametr)
     return json.dumps(rez)

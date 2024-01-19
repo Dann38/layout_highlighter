@@ -8,6 +8,9 @@ from img_doc.data_structures import Word, Block
 from img_doc.data_structures import Image, ImageSegment
 import numpy as np
 from typing import List
+from io import StringIO
+import json
+
 
 class TesseractWordExtractor(BaseWordExtractor):
     def extract_from_img(self, img: np) -> List[Word]:
@@ -37,20 +40,10 @@ class ImgDocManager:
 
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
-        neighbors = self.kmeanext.get_index_neighbors_word(words)
-        distans = self.kmeanext.get_distans(neighbors, words)
-        vec = np.ravel(np.array(distans))
-        vec = vec/vec.max()
-        vec, _ = np.histogram(vec, np.linspace(0, 1, 51))
-        normal = np.linalg.norm(vec)
-        vec = vec/normal if normal > 0 else vec
         rez = {
-            "neighbors": neighbors,
-            "distans": distans,
-            "vec": vec.tolist(),
+            "vec": self.get_vec_from_words(words, 50),
         }
         return rez
-
 
     def get_segment_from_image(self, image64, proc):
         _, segment_image, words = self.get_segment_img_word_from_image64(image64, proc)
@@ -60,7 +53,6 @@ class ImgDocManager:
         }
         return rez
         
-
     def get_rez_proc(self, image64, proc):
         image = self.base64image(image64)
 
@@ -155,4 +147,31 @@ class ImgDocManager:
         words = self.word_ext.extract_from_img(image.img)
         words = [word for word in words if is_into_segment(word.segment.get_center())]
         return segment, segment_image, words
+    
+    def get_file_dataset(self, dataset, parametr):
+        list_vec = []
+        list_y = []
+        vec_len = parametr["vec_len"]
+        is_into_segment = lambda point, json_seg: (json_seg["x_top_left"] < point[0] and json_seg["x_bottom_right"] > point[0] and
+                                                   json_seg["y_top_left"] < point[1] and json_seg["y_bottom_right"] > point[1])
+        for doc in dataset["documents"]:
+            image = self.base64image(doc["image64"])
+            words = self.word_ext.extract_from_img(image.img)
+
+            list_seg = [seg for seg in dataset["segments"] if seg["document_id"] == doc["id"]]
+            for seg in list_seg:
+                seg_words = [word for word in words if is_into_segment(word.segment.get_center(), json.loads(seg["json_data"]))]
+                list_vec.append(self.get_vec_from_words(seg_words, vec_len))
+                list_y.append(seg["marking_id"])
         
+        return {"x": list_vec, "y": list_y}
+    
+    def get_vec_from_words(self, words, len_vec):
+        neighbors = self.kmeanext.get_index_neighbors_word(words)
+        distans = self.kmeanext.get_distans(neighbors, words)
+        vec = np.ravel(np.array(distans))
+        vec = vec/vec.max()
+        vec, _ = np.histogram(vec, np.linspace(0, 1, len_vec+1))
+        normal = np.linalg.norm(vec)
+        vec = vec/normal if normal > 0 else vec
+        return vec.tolist()

@@ -210,3 +210,12 @@ def segment2vec(segment_id: int):
         "process": segment["json_data"]}).content
 
     return content
+
+@app.route("/files/np_dataset/<int:dataset_id>", methods=["POST"])
+def get_np_dataset(dataset_id: int):
+    parm = str(request.form["parm"])
+    dataset = requests.get(f'{host_db_manager}/dataset/{dataset_id}/all/').json()
+    content = requests.post(f'{host_img_doc}/create_dataset/', json={
+        "parametr": parm,
+        "dataset": json.dumps(dataset)}).content
+    return content

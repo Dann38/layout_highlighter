@@ -6,7 +6,7 @@ var getDistributionVec = function(){
     xml.onload = function() {
         if (xml.status == 200) {
             var rez =  $.parseJSON($.parseJSON(xml.response));
-            console.log(rez);
+            $("#segment-info-vec").val(rez.vec);
         }
     }
 }
@@ -18,6 +18,29 @@ var getVec = function(){
     }
 }
 
+var createJsonDataset = function(){
+    const parm = $("#np-dataset-create-setting").val();
+    
+    const xml = new XMLHttpRequest();
+    const formData = new FormData();
+
+    xml.open("POST", "/files/np_dataset/"+open_dataset.id);
+    
+    formData.append('parm', parm);
+    xml.send(formData);
+    
+    xml.onload = function() {
+        if (xml.status == 200) {
+            download($.parseJSON(xml.response), "data.json");
+        }
+    }
+}
+
 $("#segment-get-vec").click(function(){
     getVec();
+})
+
+
+$("#np-dataset-create-button").click(function(){
+    createJsonDataset();
 })

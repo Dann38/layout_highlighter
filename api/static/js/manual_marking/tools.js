@@ -260,7 +260,8 @@ $("#save-manual-marking-block").click(function(){
         xml.send(formData);
         xml.onload = function() {
             rez = $.parseJSON(xml.response);
-            console.log(rez);
+            $('#save-alert').addClass('show');
+            setTimeout(() => {$("#save-alert").removeClass("show");}, 2000);
         }
     }
 

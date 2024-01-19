@@ -22,7 +22,6 @@ var openSegment = function(segment_id){
     xml.onload = function() {
         if (xml.status == 200) {
             var rez =  $.parseJSON($.parseJSON(xml.response));
-            console.log(rez)
             doc.segment = rez;
             doc.segment.id = segment_id;
             miniDrawImage(rez.image64);
