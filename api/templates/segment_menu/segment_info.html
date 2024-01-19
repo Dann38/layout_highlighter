@@ -1,6 +1,12 @@
 <div class="container border border-primary">
     <h4 id="segment-info-name"></h4>
     <button type="button" class="btn btn-outline-danger" id="segment-delete">Удалить</button>
+    <div>
+        <select id="segment-select-type-vec" class="form-select">
+            <option selected value="1">Распределение</option>
+        </select>
+        <button type="button" class="btn btn-outline-primary" id="segment-get-vec">Получить вектор</button>
+    </div>
     <hr>
     {% include 'research/image_rez.html' %}
     <hr>

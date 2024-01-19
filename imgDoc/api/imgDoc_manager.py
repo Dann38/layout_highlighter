@@ -35,29 +35,25 @@ class ImgDocManager:
         self.kmeanext = KMeanBlockExtractor()
         self.classifier = AngleLengthExtractor()
 
+    def segment2vec_distribution(self, image64, proc):
+        _, _, words = self.get_segment_img_word_from_image64(image64, proc)
+        neighbors = self.kmeanext.get_index_neighbors_word(words)
+        distans = self.kmeanext.get_distans(neighbors, words)
+        rez = {
+            "neighbors": neighbors,
+            "distans": distans
+        }
+        return rez
+
+
     def get_segment_from_image(self, image64, proc):
-        image = self.base64image(image64)
-        segment = ImageSegment(x_top_left=proc["x_top_left"],
-                               y_top_left=proc["y_top_left"],
-                               x_bottom_right=proc["x_bottom_right"],
-                               y_bottom_right=proc["y_bottom_right"])
-        try:
-            segment_img = segment.get_segment_from_img(image.img)
-            segment_image = Image(img=segment_img)
-
-            def is_into_segment(point):
-                return (proc["x_top_left"] < point[0] < proc["x_bottom_right"] and
-                        proc["y_top_left"] < point[1] and proc["y_bottom_right"] > point[1])
-
-            rez = {
-                "image64": segment_image.get_base64().decode('utf-8')
-            }
-            words = self.word_ext.extract_from_img(image.img)
-            rez["words"] = [word.to_dict() for word in words if is_into_segment(word.segment.get_center())]
-
-            return rez
-        except:
-            return proc
+        _, segment_image, words = self.get_segment_img_word_from_image64(image64, proc)
+        rez = {
+            "image64": segment_image.get_base64().decode('utf-8'),
+            "words": [word.to_dict() for word in words]
+        }
+        return rez
+        
 
     def get_rez_proc(self, image64, proc):
         image = self.base64image(image64)
@@ -137,3 +133,20 @@ class ImgDocManager:
         data = np.frombuffer(base64.b64decode(image64), np.uint8)
         image_np = cv2.imdecode(data, cv2.IMREAD_COLOR)
         return Image(img=image_np)
+    
+    def get_segment_img_word_from_image64(self, image64, proc):
+        image = self.base64image(image64)
+        segment = ImageSegment(x_top_left=proc["x_top_left"],
+                               y_top_left=proc["y_top_left"],
+                               x_bottom_right=proc["x_bottom_right"],
+                               y_bottom_right=proc["y_bottom_right"])
+        segment_img = segment.get_segment_from_img(image.img)
+        segment_image = Image(img=segment_img)
+
+        is_into_segment = lambda point: (proc["x_top_left"] < point[0] and proc["x_bottom_right"] > point[0]and
+                                         proc["y_top_left"] < point[1] and proc["y_bottom_right"] > point[1])
+        
+        words = self.word_ext.extract_from_img(image.img)
+        words = [word for word in words if is_into_segment(word.segment.get_center())]
+        return segment, segment_image, words
+        

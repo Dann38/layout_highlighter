@@ -194,10 +194,10 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
         distans = []
 
         for i, ed_k in enumerate(neighbors):
-            top_dist = words[i].segment.y_top_left - words[ed_k[0]].segment.y_bottom_right
-            right_dist = words[ed_k[1]].segment.x_top_left - words[i].segment.x_bottom_right
-            bottom_dist = words[ed_k[2]].segment.y_top_left - words[i].segment.y_bottom_right
-            left_dist = words[i].segment.x_top_left - words[ed_k[3]].segment.x_bottom_right
+            top_dist = words[i].segment.y_top_left - words[ed_k[0]].segment.y_bottom_right if i!=ed_k[0] else 0
+            right_dist = words[ed_k[1]].segment.x_top_left - words[i].segment.x_bottom_right if i!=ed_k[1] else 0
+            bottom_dist = words[ed_k[2]].segment.y_top_left - words[i].segment.y_bottom_right if i!=ed_k[2] else 0
+            left_dist = words[i].segment.x_top_left - words[ed_k[3]].segment.x_bottom_right if i!=ed_k[3] else 0
             distans.append([top_dist, right_dist, bottom_dist, left_dist])
 
         return distans

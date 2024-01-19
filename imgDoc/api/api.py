@@ -25,3 +25,11 @@ async def segment_from_image(img_and_set_process: schemas.ImgAndSetProcess):
     process = json.loads(img_and_set_process.process)
     rez = img_doc_manager.get_segment_from_image(image64, process)
     return json.dumps(rez)
+
+
+@app.post("/segment2vec/distribution/")
+async def segment2vec_distribution(img_and_set_process: schemas.ImgAndSetProcess):
+    image64 = img_and_set_process.image64
+    process = json.loads(img_and_set_process.process)
+    rez = img_doc_manager.segment2vec_distribution(image64, process)
+    return json.dumps(rez)

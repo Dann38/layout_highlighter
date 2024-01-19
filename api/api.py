@@ -199,3 +199,14 @@ def segmentdata_read(segment_id: int):
         "process": segment["json_data"]}).content
 
     return content
+
+@app.route("/segment2vec/distribution/<int:segment_id>")
+def segment2vec(segment_id: int):
+    segment = requests.get(f'{host_db_manager}/segmentdata/read/{segment_id}').json()
+    rez = requests.get(f'{host_db_manager}/doc/read/{segment["document_id"]}').json()
+    image = rez["image64"]
+    content = requests.post(f'{host_img_doc}/segment2vec/distribution/', json={
+        "image64": image,
+        "process": segment["json_data"]}).content
+
+    return content
