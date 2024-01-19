@@ -1,0 +1,27 @@
+<div class="modal fade" id="np-dataset-create-window" tabindex="-1" aria-labelledby="np-dataset-create-window-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="np-dataset-create-window-label">Создать набор данных</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row gy-5">
+                
+                  <form id="form-np-dataset-create" method="POST" action="">
+                      <p>Настройки</p>
+<textarea id="np-dataset-create-setting" name="textarea-np-dataset" rows="4" cols="30">{
+    "vec_type": "distribution",
+    "vec_len": 50
+}</textarea>
+                  </form>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <div id="np-dataset-create-button" class="btn btn-primary">Создать json file</div>
+        </div>
+        </div>
+    </div>
+</div>

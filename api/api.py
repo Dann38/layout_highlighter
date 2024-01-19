@@ -8,6 +8,7 @@ from flask import Flask, render_template, request
 host_db_manager = "http://db_manager:1235"
 host_img_doc = "http://doc_img:1238"
 
+
 class File:
     def __init__(self):
         self.name = ""
@@ -17,10 +18,10 @@ app = Flask(__name__)
 img = File()
 
 
-
 @app.route("/")
 def menu():
     return render_template("menu.html")
+
 
 @app.route("/research/<int:doc_id>")
 def research(doc_id: int):
@@ -29,6 +30,7 @@ def research(doc_id: int):
     }
     return render_template("research.html", context=context)
 
+
 @app.route("/manual_marking/<int:doc_id>")
 def manual_marking(doc_id: int):
     context = {
@@ -36,19 +38,32 @@ def manual_marking(doc_id: int):
     }
     return render_template("manual_marking.html", context=context)
 
+
 @app.route("/dataset/")
 def dataset():
     return render_template("dataset_menu.html")
+
+
+@app.route("/dataset/<int:dataset_id>/segments/")
+def dataset_read_one(dataset_id: int):
+    # content = requests.get(f'{host_db_manager}/dataset/read/{dataset_id}').content
+    context = {
+        "dataset_id": dataset_id
+    }
+    return render_template("segment_menu.html", context=context)
+
 
 @app.route("/doc/read/")
 def doc_read():
     content = requests.get(f'{host_db_manager}/doc/read/').content
     return content
 
+
 @app.route("/doc/read/<int:doc_id>")
 def doc_read_one(doc_id: int):
     content = requests.get(f'{host_db_manager}/doc/read/{doc_id}').content
     return content
+
 
 @app.route("/doc/create/", methods=["POST"])
 def doc_create():
@@ -59,11 +74,11 @@ def doc_create():
         "name": name}).content
     return content
 
+
 @app.route("/doc/delete/<int:doc_id>")
 def doc_delete(doc_id: int):
     content = requests.delete(f'{host_db_manager}/doc/delete/{doc_id}').content
     return content    
-
 
 
 @app.route("/doc/research/", methods=["POST"])
@@ -79,16 +94,17 @@ def doc_research():
     return content
 
 
-
 @app.route("/proc/read/")
 def proc_read():
     content = requests.get(f'{host_db_manager}/proc/read/').content
     return content
 
+
 @app.route("/proc/read/<int:proc_id>")
 def proc_read_one(proc_id: int):
     content = requests.get(f'{host_db_manager}/proc/read/{proc_id}').content
     return content
+
 
 @app.route("/proc/create/", methods=["POST"])
 def proc_create():
@@ -99,10 +115,12 @@ def proc_create():
         "name": name}).content
     return content
 
+
 @app.route("/proc/delete/<int:proc_id>")
 def proc_delete(proc_id: int):
     content = requests.delete(f'{host_db_manager}/proc/delete/{proc_id}').content
     return content  
+
 
 @app.route("/dataset/create/", methods=["POST"])
 def dataset_create():
@@ -119,20 +137,30 @@ def dataset_read():
     content = requests.get(f'{host_db_manager}/dataset/read/').content
     return content
 
+
 @app.route("/dataset/delete/<int:dataset_id>", methods=["POST"])
 def dataset_delete(dataset_id: int):
     content = requests.delete(f'{host_db_manager}/dataset/delete/{dataset_id}').content
     return content  
+
 
 @app.route("/dataset/<int:dataset_id>/markingsegment/read/")
 def marking_read(dataset_id: int):
     content = requests.get(f'{host_db_manager}/dataset/{dataset_id}/markingsegment/read/').content
     return content
 
+
+@app.route("/dataset/<int:dataset_id>/segments/read/")
+def dataset_segment_read(dataset_id: int):
+    content = requests.get(f'{host_db_manager}/dataset/{dataset_id}/segmentdata/read/').content
+    return content
+
+
 @app.route("/markingsegment/delete/<int:marking_id>", methods=["POST"])
 def marking_delete(marking_id: int):
     content = requests.delete(f"{host_db_manager}/markingsegment/delete/{marking_id}/").content
     return content
+
 
 @app.route("/markingsegment/create/", methods=["POST"])
 def marking_create():
@@ -153,4 +181,41 @@ def segmentdata_create():
           "json_data": json_data,
           "document_id": document_id,
           "marking_id": marking_id}).content
+    return content
+
+@app.route("/segmentdata/delete/<int:segment_id>", methods=["POST"])
+def segmentdata_delete(segment_id):
+    content = requests.delete(f"{host_db_manager}/segmentdata/delete/{segment_id}/").content
+    return content
+
+
+@app.route("/segmentdata/read/<int:segment_id>")
+def segmentdata_read(segment_id: int):
+    segment = requests.get(f'{host_db_manager}/segmentdata/read/{segment_id}').json()
+    rez = requests.get(f'{host_db_manager}/doc/read/{segment["document_id"]}').json()
+    image = rez["image64"]
+    content = requests.post(f'{host_img_doc}/segment_from_image/', json={
+        "image64": image,
+        "process": segment["json_data"]}).content
+
+    return content
+
+@app.route("/segment2vec/distribution/<int:segment_id>")
+def segment2vec(segment_id: int):
+    segment = requests.get(f'{host_db_manager}/segmentdata/read/{segment_id}').json()
+    rez = requests.get(f'{host_db_manager}/doc/read/{segment["document_id"]}').json()
+    image = rez["image64"]
+    content = requests.post(f'{host_img_doc}/segment2vec/distribution/', json={
+        "image64": image,
+        "process": segment["json_data"]}).content
+
+    return content
+
+@app.route("/files/np_dataset/<int:dataset_id>", methods=["POST"])
+def get_np_dataset(dataset_id: int):
+    parm = str(request.form["parm"])
+    dataset = requests.get(f'{host_db_manager}/dataset/{dataset_id}/all/').json()
+    content = requests.post(f'{host_img_doc}/create_dataset/', json={
+        "parametr": parm,
+        "dataset": json.dumps(dataset)}).content
     return content

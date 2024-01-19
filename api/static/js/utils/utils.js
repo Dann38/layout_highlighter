@@ -44,3 +44,18 @@ var is_into_rect = function(x, y, rx0, ry0, rx1, ry1) {
 var close_submenu = function(){
   $(".submenu").addClass("close-submenu");
 }
+
+var download = function(file_data, filename){
+  const data = JSON.stringify(file_data)
+  const link = document.createElement('a')
+
+  link.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(file_data))
+  link.setAttribute('download', filename || 'data.json')
+  link.style.display = 'none'
+
+  document.body.appendChild(link)
+
+  link.click()
+
+  document.body.removeChild(link)
+}

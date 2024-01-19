@@ -70,3 +70,12 @@ class CreateSegmentData(BaseSegmentData):
 
 class SegmentData(BaseSegmentData):
     id: int
+
+
+#
+    
+class DatasetAll(BaseModel):
+    documents: List[Document]
+    segments: List[SegmentData]
+    marking: List[MarkingSegment]
+    

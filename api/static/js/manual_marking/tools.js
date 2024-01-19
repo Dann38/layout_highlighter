@@ -248,7 +248,10 @@ $("#save-manual-marking-block").click(function(){
         const block = marking.blocks[i];
         const xml = new XMLHttpRequest();
         const formData = new FormData();
-
+        block.x_top_left = Math.round(block.x_top_left);
+        block.y_top_left = Math.round(block.y_top_left);
+        block.x_bottom_right = Math.round(block.x_bottom_right); 
+        block.y_bottom_right = Math.round(block.y_bottom_right);
         formData.append('document_id', doc.id);
         formData.append('marking_id', block.marking_id);
         formData.append('json_data', JSON.stringify(block));
@@ -257,7 +260,8 @@ $("#save-manual-marking-block").click(function(){
         xml.send(formData);
         xml.onload = function() {
             rez = $.parseJSON(xml.response);
-            console.log(rez);
+            $('#save-alert').addClass('show');
+            setTimeout(() => {$("#save-alert").removeClass("show");}, 2000);
         }
     }
 

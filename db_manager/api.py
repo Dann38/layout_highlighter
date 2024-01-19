@@ -133,4 +133,13 @@ async def read_document_segment_datas(doc_id: int, db: Session = Depends(get_db)
 @app.get("/markingsegment/{mark_id}/segmentdata/read/")
 async def read_marking_segment_datas(mark_id: int, db: Session = Depends(get_db)) -> List[schemas.SegmentData]:
     sds= crud.read_marking_segment_datas(db=db, mark_id=mark_id)
-    return sds  
+    return sds
+
+@app.get("/dataset/{dataset_id}/all/")
+async def dataset_all(dataset_id: int, db: Session = Depends(get_db)) -> schemas.DatasetAll:
+    sds = crud.read_dataset_segment_datas(db=db, dataset_id=dataset_id)
+    marks = crud.read_markings(db=db, dataset_id=dataset_id)
+    docs_id = list(set([sd.document_id for sd in sds]))
+    return schemas.DatasetAll(documents=[crud.read_document(db=db, doc_id=doc_id) for doc_id in docs_id],
+                              segments=sds,
+                              marking=marks)
