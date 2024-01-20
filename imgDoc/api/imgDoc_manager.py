@@ -36,10 +36,10 @@ class ImgDocManager:
     def __init__(self):
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
-        try:
-            self.classifier = MLPExtractor("/build/model-1.sav")
-        except:
-            self.classifier = AngleLengthExtractor()
+        # try:
+        self.classifier = MLPExtractor("/build/models/model-1.sav")
+        # except:
+        #     self.classifier = AngleLengthExtractor()
 
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
@@ -180,3 +180,8 @@ class ImgDocManager:
         normal = np.linalg.norm(vec)
         vec = vec/normal if normal > 0 else vec
         return vec.tolist()
+    
+    def get_dir(self):
+        import os
+        return os.getcwd()
+    
