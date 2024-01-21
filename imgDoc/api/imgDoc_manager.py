@@ -37,7 +37,7 @@ class ImgDocManager:
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
         # try:
-        self.classifier = MLPExtractor("/build/models/model-1.sav")
+        self.classifier = MLPExtractor("/build/models/model-2.sav", {"len_vec": 5})
         # except:
         #     self.classifier = AngleLengthExtractor()
 
