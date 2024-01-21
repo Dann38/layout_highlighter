@@ -1,5 +1,6 @@
 const menu_segment = document.getElementById('menu-segment');
 doc.segment = {}
+desc_markings = new Array()
 
 var add_segment = function(segment){
     var card = $('\
@@ -9,7 +10,7 @@ var add_segment = function(segment){
         <h5 class="card-title">'+segment.id+'(doc:'+segment.document_id + ' mark: '+segment.marking_id+')</h5>\
     </div>\
     ')
-
+    desc_markings.push(segment.marking_id);
     $("#menu-segment").append(card);
     card.click(function(){openSegment(segment.id)})
 }
@@ -44,7 +45,20 @@ var deleteSegment = function(segment_id){
          $("#card-segment-"+segment_id).remove();
       }
 }
-
+var view_info_dataset = function(){
+    var set_ = new Set(desc_markings)
+    unic_desc_markings = Array.from(set_)
+    rez = {}
+    for(var i = 0; i < unic_desc_markings.length; i++){
+        rez[unic_desc_markings[i]] = 0;
+        for(var j = 0; j < desc_markings.length; j++){
+            if (desc_markings[j] == unic_desc_markings[i]){
+                rez[unic_desc_markings[i]] += 1;
+            }
+        }
+    }
+    console.log(rez);
+}
 var view_segment_menu = function(){
     menu_segment.innerText = "";
 
@@ -57,6 +71,7 @@ var view_segment_menu = function(){
             for(var i=0; i < array.length ; i++){
                 add_segment(array[i]);
             }
+            view_info_dataset();
         }
     }
 }

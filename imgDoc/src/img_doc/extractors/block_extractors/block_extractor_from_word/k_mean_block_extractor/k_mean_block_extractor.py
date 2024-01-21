@@ -52,6 +52,10 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
         return join_intersect_block
 
     def get_index_neighbors_word(self, words, max_level=3):
+        if len(words) == 1:
+            return [[0,0,0,0]]
+        if len(words) == 0:
+            return []
         hash_matrix, fun_hashkey = self.get_hash_matrix(words)
         neighbors = []
         for k in range(len(words)):

@@ -20,6 +20,7 @@ RUN python3 -m pip install setuptools-scm && pip install --upgrade setuptools
 # VOLUME /build
 
 COPY . /build/
+COPY ./model_training/models /build/models
 
 WORKDIR /build
 RUN python3 -m pip install .
