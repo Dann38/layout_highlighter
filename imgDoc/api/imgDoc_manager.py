@@ -1,7 +1,9 @@
 import pytesseract
 import cv2
 import base64
+from img_doc.editors.binarizer import ValleyEmphasisBinarizer
 from img_doc.extractors.word_extractors import BaseWordExtractor
+from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, AngleLengthExtractor
 from img_doc.data_structures import Word, Block
@@ -36,10 +38,10 @@ class ImgDocManager:
     def __init__(self):
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
-        # try:
         self.classifier = MLPExtractor("/build/models/model-2.sav", {"len_vec": 5})
-        # except:
-        #     self.classifier = AngleLengthExtractor()
+        self.bold_extractor = PsBoldExtractor()
+        self.binarizer = ValleyEmphasisBinarizer()
+        
 
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
@@ -72,6 +74,11 @@ class ImgDocManager:
                 dist_word = proc["dist_word"]
         
         words = self.word_ext.extract_from_img(image.img)
+        if "bold" in proc:
+            if proc["bold"]:
+                gray_image = self.binarizer.binarize(image.img)
+                self.bold_extractor.extract(words, gray_image)
+
         if len(words) > 1:
             self.proccessing(dist_row, dist_word, history, words)
         elif len(words) == 1:
