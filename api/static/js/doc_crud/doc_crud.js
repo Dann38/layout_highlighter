@@ -89,11 +89,11 @@ var deleteDocument = function(id) {
 }
 
 var openDocument = function(id) {
-  window.open("/research/"+id)
+  window.location.replace("/research/"+id)
 }
 
 var openManualMarking = function(id) {
-  window.open("/manual_marking/"+id)
+  window.location.replace("/manual_marking/"+id)
 }
 
 view_menu();
