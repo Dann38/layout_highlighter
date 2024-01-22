@@ -23,6 +23,13 @@ var view_btn_steps = function(){
                 drawImage(doc.base_image64);
                 for(var i =0; i< proc.rez.words.length; i++){
                     proc.rez.words[i].label = proc.rez.words[i].bold;
+                    if (proc.rez.words[i].bold > 0.6){
+                        proc.rez.words[i].color = "rgba(0, 255, 0, 0.5)";
+                    }else if (proc.rez.words[i].bold < 0.4){
+                        proc.rez.words[i].color = "rgba(0, 0, 255, 0.5)";
+                    }else{
+                        proc.rez.words[i].color = "rgba(255, 0, 0, 0.5)";
+                    }
                 }
                 drawSegment(proc.rez.words);
             })

@@ -45,7 +45,11 @@ var drawSegment = function (segments) {
         var y1 = segments[i].y_top_left
         var x2 = segments[i].x_bottom_right
         var y2 = segments[i].y_bottom_right
-        drawRectangle(x1, y1, x2, y2, "rgba(255, 0, 0, 0.5)");
+        var color = "rgba(255, 0, 0, 0.5)"
+        if (segments[i].color !=undefined){
+            color = segments[i].color
+        }
+        drawRectangle(x1, y1, x2, y2, color);
         if (segments[i].label != undefined){
             pt = Math.max(15, Math.round((x2-x1)/30));
             drawText(segments[i].x_top_left, segments[i].y_top_left, segments[i].label, pt=pt, color="rgba(255, 0, 0, 0.5)");

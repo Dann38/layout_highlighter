@@ -20,10 +20,11 @@ class PsBoldExtractor(BaseWordExtractor):
         p_img = base_line_image[:, :-1] - base_line_image[:, 1:]
         p_img[abs(p_img) > 0] = 1.
         p_img[p_img < 0] = 0.
-        p = p_img.mean()
-
-        s = 1 - base_line_image_without_sparces.mean()
-
+        p = p_img.mean() if p_img.shape[0] > 1 and p_img.shape[1] > 1  else 1
+        
+        word_mean = base_line_image_without_sparces.mean() if base_line_image_without_sparces.shape[0] > 1 and base_line_image_without_sparces.shape[1] > 1 else 0
+        s = 1 - word_mean
+        
         if p > s or s == 0:
             evaluation = 1.
         else:
