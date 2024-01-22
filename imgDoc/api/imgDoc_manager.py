@@ -46,7 +46,7 @@ class ImgDocManager:
         }
         self.LABEL_BLOCK_EXTRACTOR = {
             "mlp_len": MLPExtractor("/build/models/model-2.sav", {"len_vec": 5}),
-            "mlp_len_ang": MLPAngLenExtractor("/build/models/model-1.sav", {"len_vec": 5})
+            "mlp_len_ang": MLPAngLenExtractor("/build/models/model-3.sav", {"len_vec": 5})
         }
         self.binarizer = ValleyEmphasisBinarizer()
         
