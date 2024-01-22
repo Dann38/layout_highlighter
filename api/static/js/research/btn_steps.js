@@ -17,6 +17,23 @@ var view_btn_steps = function(){
             drawImage(doc.base_image64);
             drawSegment(proc.rez.words);
         })
+        list_rez_words = Object.keys(proc.rez.words[0])
+        if (list_rez_words.includes("bold")){
+            add_btn_li("Выделить начертание слов", function(){
+                drawImage(proc.rez.image64_binary);
+                for(var i =0; i< proc.rez.words.length; i++){
+                    proc.rez.words[i].label = proc.rez.words[i].bold;
+                    if (proc.rez.words[i].bold > 0.6){
+                        proc.rez.words[i].color = "rgba(0, 255, 0, 0.5)";
+                    }else if (proc.rez.words[i].bold < 0.4){
+                        proc.rez.words[i].color = "rgba(0, 0, 255, 0.5)";
+                    }else{
+                        proc.rez.words[i].color = "rgba(255, 0, 0, 0.5)";
+                    }
+                }
+                drawSegment(proc.rez.words);
+            })
+        }
     }
     if (list_rez.includes("join_blocks")){
         add_btn_li("Выделить блоки", function(){

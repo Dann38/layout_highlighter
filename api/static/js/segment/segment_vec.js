@@ -1,22 +1,22 @@
-var getDistributionVec = function(){
-    const xml = new XMLHttpRequest();
-    xml.open("GET", "/segment2vec/distribution/"+doc.segment.id);
-    xml.send();
+// var getDistributionVec = function(){
+//     const xml = new XMLHttpRequest();
+//     xml.open("GET", "/segment2vec/distribution/"+doc.segment.id);
+//     xml.send();
     
-    xml.onload = function() {
-        if (xml.status == 200) {
-            var rez =  $.parseJSON($.parseJSON(xml.response));
-            $("#segment-info-vec").val(rez.vec);
-        }
-    }
-}
+//     xml.onload = function() {
+//         if (xml.status == 200) {
+//             var rez =  $.parseJSON($.parseJSON(xml.response));
+//             $("#segment-info-vec").val(rez.vec);
+//         }
+//     }
+// }
 
-var getVec = function(){
-    const type_vec = $("#segment-select-type-vec").val();
-    if (type_vec == 1){ //Распределение
-        getDistributionVec();
-    }
-}
+// var getVec = function(){
+//     const type_vec = $("#segment-select-type-vec").val();
+//     if (type_vec == 1){ //Распределение
+//         getDistributionVec();
+//     }
+// }
 
 var createJsonDataset = function(){
     const parm = $("#np-dataset-create-setting").val();
@@ -36,9 +36,9 @@ var createJsonDataset = function(){
     }
 }
 
-$("#segment-get-vec").click(function(){
-    getVec();
-})
+// $("#segment-get-vec").click(function(){
+//     getVec();
+// })
 
 
 $("#np-dataset-create-button").click(function(){
