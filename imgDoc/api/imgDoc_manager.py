@@ -3,7 +3,7 @@ import cv2
 import base64
 from img_doc.editors.binarizer import ValleyEmphasisBinarizer
 from img_doc.extractors.word_extractors import BaseWordExtractor
-from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor
+from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor, ISPBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, AngleLengthExtractor
 from img_doc.data_structures import Word, Block
@@ -12,6 +12,7 @@ import numpy as np
 from typing import List
 from io import StringIO
 import json
+
 
 
 class TesseractWordExtractor(BaseWordExtractor):
@@ -39,7 +40,11 @@ class ImgDocManager:
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
         self.classifier = MLPExtractor("/build/models/model-2.sav", {"len_vec": 5})
-        self.bold_extractor = WidthBoldExtractor()
+        self.BOLD_EXTRACTORS = {
+            "isp": ISPBoldExtractor(),
+            "width": WidthBoldExtractor(),
+            "ps":PsBoldExtractor(),
+        }
         self.binarizer = ValleyEmphasisBinarizer()
         
 
@@ -61,43 +66,44 @@ class ImgDocManager:
     def get_rez_proc(self, image64, proc):
         image = self.base64image(image64)
 
-        history = {"no_join_blocks": [], "dist_word": 0, "dist_row": 0, "join_blocks": [],
-        "neighbors": [], "distans": []}
+        history = dict()
 
-        dist_row = None
-        dist_word = None
-        if "dist_row" in proc:
-            if proc["dist_row"] != "auto":
-                dist_row = proc["dist_row"]
-        if "dist_word" in proc: 
-            if proc["dist_word"] != "auto":
-                dist_word = proc["dist_word"]
-        
         words = self.word_ext.extract_from_img(image.img)
-        if "bold" in proc:
+        
+        if ("bold" in proc) and ("bold_type" in proc):
             if proc["bold"]:
-                gray_image = self.binarizer.binarize(image.img)
-                self.bold_extractor.extract(words, gray_image)
+                gray_img = self.binarizer.binarize(image.img)
+                self.BOLD_EXTRACTORS[proc["bold_type"]].extract(words, gray_img)
+                gray_image = Image(cv2.cvtColor(gray_img*255, cv2.COLOR_GRAY2BGR))
+                history["image64_binary"] = gray_image.get_base64().decode('utf-8')
+        if "research_block" in proc:
+            if proc["research_block"]:
+                dist_row = None
+                dist_word = None
+                if "dist_row" in proc:
+                    if proc["dist_row"] != "auto":
+                        dist_row = proc["dist_row"]
+                if "dist_word" in proc: 
+                    if proc["dist_word"] != "auto":
+                        dist_word = proc["dist_word"]
+                history["dist_word"] = 0
+                history["dist_row"] = 0
+                history["join_blocks"] = []
+                history["no_join_blocks"] = []
+                history["distans"] = []
+                history["neighbors"] = []
+                if len(words) > 1:
+                    self.proccessing(dist_row, dist_word, history, words)
+                elif len(words) == 1:
+                    block = Block()
+                    block.set_words(words)
+                    history["no_join_blocks"] = [block]
 
-        if len(words) > 1:
-            self.proccessing(dist_row, dist_word, history, words)
-        elif len(words) == 1:
-            block = Block()
-            block.set_words(words)
-            history["no_join_blocks"] = [block]
-
+                
+                history["no_join_blocks"] = [block.to_dict() for block in history["no_join_blocks"]]
+                history["join_blocks"] = [block.to_dict() for block in history["join_blocks"]]
+            
         history["words"] = [word.to_dict() for word in words]
-        history["no_join_blocks"] = [block.to_dict() for block in history["no_join_blocks"]]
-        history["join_blocks"] = [block.to_dict() for block in history["join_blocks"]]
-
-        if "save_words" in proc:
-            if proc["save_words"] == False:
-                del history["words"]
-
-        if "save_blocks" in proc:
-            if proc["save_blocks"] == False:
-                del history["no_join_blocks"]
-                del history["join_blocks"]
         return history
     
     def proccessing(self, dist_row, dist_word, history, words):

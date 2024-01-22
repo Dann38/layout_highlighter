@@ -20,7 +20,7 @@ var view_btn_steps = function(){
         list_rez_words = Object.keys(proc.rez.words[0])
         if (list_rez_words.includes("bold")){
             add_btn_li("Выделить начертание слов", function(){
-                drawImage(doc.base_image64);
+                drawImage(proc.rez.image64_binary);
                 for(var i =0; i< proc.rez.words.length; i++){
                     proc.rez.words[i].label = proc.rez.words[i].bold;
                     if (proc.rez.words[i].bold > 0.6){

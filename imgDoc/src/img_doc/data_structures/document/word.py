@@ -30,8 +30,7 @@ class Word:
         any_date = {
             "text": self.text
         }
-        if self.bold:
-            any_date["bold"] = round(self.bold, 4)
+        any_date["bold"] = round(self.bold, 4) 
         segment = self.segment.get_segment_2p()
         dict_word = dict(list(segment.items()) + list(any_date.items()))
         return dict_word
