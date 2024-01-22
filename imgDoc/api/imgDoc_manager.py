@@ -3,7 +3,7 @@ import cv2
 import base64
 from img_doc.editors.binarizer import ValleyEmphasisBinarizer
 from img_doc.extractors.word_extractors import BaseWordExtractor
-from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor
+from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, AngleLengthExtractor
 from img_doc.data_structures import Word, Block
@@ -39,7 +39,7 @@ class ImgDocManager:
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
         self.classifier = MLPExtractor("/build/models/model-2.sav", {"len_vec": 5})
-        self.bold_extractor = PsBoldExtractor()
+        self.bold_extractor = WidthBoldExtractor()
         self.binarizer = ValleyEmphasisBinarizer()
         
 
