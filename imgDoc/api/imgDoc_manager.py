@@ -5,7 +5,7 @@ from img_doc.editors.binarizer import ValleyEmphasisBinarizer
 from img_doc.extractors.word_extractors import BaseWordExtractor
 from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor, ISPBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
-from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, AngleLengthExtractor
+from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, MLPAngLenExtractor, AngleLengthExtractor
 from img_doc.data_structures import Word, Block
 from img_doc.data_structures import Image, ImageSegment
 import numpy as np
@@ -39,11 +39,14 @@ class ImgDocManager:
     def __init__(self):
         self.word_ext = TesseractWordExtractor()
         self.kmeanext = KMeanBlockExtractor()
-        self.classifier = MLPExtractor("/build/models/model-2.sav", {"len_vec": 5})
         self.BOLD_EXTRACTORS = {
             "isp": ISPBoldExtractor(),
             "width": WidthBoldExtractor(),
             "ps":PsBoldExtractor(),
+        }
+        self.LABEL_BLOCK_EXTRACTOR = {
+            "mlp_len": MLPExtractor("/build/models/model-2.sav", {"len_vec": 5}),
+            "mlp_len_ang": MLPAngLenExtractor("/build/models/model-1.sav", {"len_vec": 5})
         }
         self.binarizer = ValleyEmphasisBinarizer()
         
@@ -51,7 +54,7 @@ class ImgDocManager:
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
         rez = {
-            "vec": self.get_vec_from_words(words, 50),
+            "vec": self.LABEL_BLOCK_EXTRACTOR[proc["model_type"]].get_vec_from_words(words, proc["vec_len"]),
         }
         return rez
 
@@ -76,16 +79,18 @@ class ImgDocManager:
                 self.BOLD_EXTRACTORS[proc["bold_type"]].extract(words, gray_img)
                 gray_image = Image(cv2.cvtColor(gray_img*255, cv2.COLOR_GRAY2BGR))
                 history["image64_binary"] = gray_image.get_base64().decode('utf-8')
-        if "research_block" in proc:
-            if proc["research_block"]:
+        if "research_block" in proc and proc["research_block"]:
                 dist_row = None
                 dist_word = None
+                model_type = None
                 if "dist_row" in proc:
                     if proc["dist_row"] != "auto":
                         dist_row = proc["dist_row"]
                 if "dist_word" in proc: 
                     if proc["dist_word"] != "auto":
                         dist_word = proc["dist_word"]
+                if "model_type" in proc:
+                    model_type = proc["model_type"]
                 history["dist_word"] = 0
                 history["dist_row"] = 0
                 history["join_blocks"] = []
@@ -93,7 +98,7 @@ class ImgDocManager:
                 history["distans"] = []
                 history["neighbors"] = []
                 if len(words) > 1:
-                    self.proccessing(dist_row, dist_word, history, words)
+                    self.proccessing(dist_row, dist_word, history, words, model_type)
                 elif len(words) == 1:
                     block = Block()
                     block.set_words(words)
@@ -106,7 +111,7 @@ class ImgDocManager:
         history["words"] = [word.to_dict() for word in words]
         return history
     
-    def proccessing(self, dist_row, dist_word, history, words):
+    def proccessing(self, dist_row, dist_word, history, words, model_type):
         neighbors = self.kmeanext.get_index_neighbors_word(words)
         distans = self.kmeanext.get_distans(neighbors, words)
         dist_word_, dist_row_ = self.kmeanext.get_standart_distant(distans)
@@ -124,8 +129,9 @@ class ImgDocManager:
             words_r = [words[n.index-1] for n in r.get_nodes()]
             block.set_words(words_r)
             list_block.append(block)
-
-        self.classifier.extract(list_block)
+        if model_type is None:
+            model_type = "mlp_len"
+        self.LABEL_BLOCK_EXTRACTOR[model_type].extract(list_block)
         join_intersect_block = self.kmeanext.join_intersect_blocks(list_block)
 
         if "join_blocks" in history.keys():
@@ -168,6 +174,7 @@ class ImgDocManager:
         list_vec = []
         list_y = []
         vec_len = parametr["vec_len"]
+        model_type = parametr["model_type"]
         is_into_segment = lambda point, json_seg: (json_seg["x_top_left"] < point[0] and json_seg["x_bottom_right"] > point[0] and
                                                    json_seg["y_top_left"] < point[1] and json_seg["y_bottom_right"] > point[1])
         for doc in dataset["documents"]:
@@ -177,22 +184,22 @@ class ImgDocManager:
             list_seg = [seg for seg in dataset["segments"] if seg["document_id"] == doc["id"]]
             for seg in list_seg:
                 seg_words = [word for word in words if is_into_segment(word.segment.get_center(), json.loads(seg["json_data"]))]
-                list_vec.append(self.get_vec_from_words(seg_words, vec_len))
+                list_vec.append(self.LABEL_BLOCK_EXTRACTOR[model_type].get_vec_from_words(seg_words, vec_len).tolist())
                 list_y.append(seg["marking_id"])
         
         return {"x": list_vec, "y": list_y}
     
-    def get_vec_from_words(self, words, len_vec):
-        if len(words) == 0:
-            return [0 for i in range(len_vec)]
-        neighbors = self.kmeanext.get_index_neighbors_word(words)
-        distans = self.kmeanext.get_distans(neighbors, words)
-        vec = np.ravel(np.array(distans))
-        vec = vec/vec.max()
-        vec, _ = np.histogram(vec, np.linspace(0, 1, len_vec+1))
-        normal = np.linalg.norm(vec)
-        vec = vec/normal if normal > 0 else vec
-        return vec.tolist()
+    # def get_vec_from_words(self, words, len_vec):
+    #     if len(words) == 0:
+    #         return [0 for i in range(len_vec)]
+    #     neighbors = self.kmeanext.get_index_neighbors_word(words)
+    #     distans = self.kmeanext.get_distans(neighbors, words)
+    #     vec = np.ravel(np.array(distans))
+    #     vec = vec/vec.max()
+    #     vec, _ = np.histogram(vec, np.linspace(0, 1, len_vec+1))
+    #     normal = np.linalg.norm(vec)
+    #     vec = vec/normal if normal > 0 else vec
+    #     return vec.tolist()
     
     def get_dir(self):
         import os

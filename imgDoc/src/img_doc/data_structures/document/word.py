@@ -30,7 +30,8 @@ class Word:
         any_date = {
             "text": self.text
         }
-        any_date["bold"] = round(self.bold, 4) 
+        if self.bold is not None:
+            any_date["bold"] = round(self.bold, 4) 
         segment = self.segment.get_segment_2p()
         dict_word = dict(list(segment.items()) + list(any_date.items()))
         return dict_word
