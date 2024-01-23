@@ -169,7 +169,7 @@ async def move_folder(doc_id: int, folder_parent_id: int, db: Session = Depends(
     return crud.move_document(db=db, doc_id=doc_id, folder_parent_id=folder_parent_id)
 
 
-@app.get("/folder/{folder_id}/contents")
+@app.get("/folder/{folder_id}/contents/")
 async def read_folder_content(folder_id: int, db: Session = Depends(get_db)) -> schemas.Folder:
     folder = crud.read_folder_content(db=db, folder_id=folder_id)
     return folder

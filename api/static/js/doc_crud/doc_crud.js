@@ -1,3 +1,4 @@
+const menu_docs = document.getElementById('menu-docs');
 var add_doc = function(doc){
   var card = $('\
     <div class="card card-doc col-sm-3">\
@@ -29,23 +30,34 @@ var add_doc = function(doc){
 }
 
 var view_menu = function() {
-  const menu_docs = document.getElementById('menu-docs');
   menu_docs.innerText = "";
-
-  const xhr_docs = new XMLHttpRequest();
-  xhr_docs.open("GET", "/doc/read/");
-  xhr_docs.send();
-  xhr_docs.onload = function() {
-      if (xhr_docs.status == 200) {
-          var array =  $.parseJSON(xhr_docs.response);
-          for(var i=0; i < array.length ; i++){
-              add_doc(array[i]);
+  const xml = new XMLHttpRequest();
+  xml.open("GET", "/folder/0/contents/");
+  xml.send();
+  xml.onload = function() {
+      if (xml.status == 200) {
+          var rez =  $.parseJSON(xml.response);
+          var docs_id = rez.documents_id;
+          for(var i = 0; i < docs_id.length; i++){
+              view_doc_id(docs_id[i]);
           }
-          rows = $(".doc-row");
+          console.log(rez.folders_id);
       }
   }
 }
 
+var view_doc_id = function(doc_id) {
+  const xml = new XMLHttpRequest();
+  xml.open("GET", "/doc/read/"+doc_id);
+  xml.send();
+  xml.onload = function() {
+      if (xml.status == 200) {
+          var doc =  $.parseJSON(xml.response);
+          add_doc(doc);
+          
+      }
+  }
+}
 
 var addDocument = function() {
   const xml = new XMLHttpRequest();

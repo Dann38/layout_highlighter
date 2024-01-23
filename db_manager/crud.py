@@ -11,6 +11,16 @@ def create_document(db: Session, doc: schemas.CreateDocument) -> schemas.Documen
     db.add(db_document)
     db.commit()
     db.refresh(db_document)
+
+    db_content = models.Content(document_id = db_document.id)
+    db.add(db_content)
+    db.commit()
+    db.refresh(db_content)
+    db_folder_content = models.FolderContent(content_id=db_content.id, 
+                                             folder_parent_id=doc.folder_parent_id if doc.folder_parent_id != 0 else null())
+    
+    db.add(db_folder_content)
+    db.commit()
     return schemas.Document(id=db_document.id,
                             name=db_document.name,
                             image64=db_document.image64 )
@@ -204,6 +214,17 @@ def create_folder(db: Session, folder: schemas.CreateFolder) -> schemas.Folder:
     db.add(db_folder)
     db.commit()
     db.refresh(db_folder)
+
+    db_content = models.Content(folder_id = db_folder.id)
+    db.add(db_content)
+    db.commit()
+    db.refresh(db_content)
+    db_folder_content = models.FolderContent(content_id=db_content.id, 
+                                             folder_parent_id=folder.folder_parent_id if folder.folder_parent_id != 0 else null())
+    
+    db.add(db_folder_content)
+    db.commit()
+
     return schemas.Folder(id=db_folder.id,
                           name=db_folder.name, 
                           folders_id=[],
@@ -254,9 +275,22 @@ def move_document(db: Session, doc_id: int, folder_parent_id) -> bool:
 
 
 def read_folder_content(db: Session, folder_id: int) -> schemas.Folder:
+    if folder_id == 0:
+        db_folder_content = db.query(models.FolderContent).filter(models.FolderContent.folder_parent_id == null()).all()
+        doc_id = [fc.content.document_id for fc  in db_folder_content if fc .content.document_id is not None]
+        folder_id = [fc.content.folder_id for fc in db_folder_content if fc .content.folder_id is not None]
+
+        return schemas.Folder(id=0,
+                            name="menu", 
+                            folders_id=folder_id,
+                            documents_id=doc_id)
+    
     db_folder = db.query(models.Folder).get(folder_id)
     if db_folder:
         return schemas.Folder(id=db_folder.id,
                              name=db_folder.name, 
                              folders_id=[fc.content.folder_id for fc in db_folder.contents if fc .content.folder_id is not None],
                              documents_id=[fc.content.document_id for fc  in db_folder.contents if fc .content.document_id is not None])
+
+   
+    

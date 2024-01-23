@@ -219,3 +219,9 @@ def get_np_dataset(dataset_id: int):
         "parametr": parm,
         "dataset": json.dumps(dataset)}).content
     return content
+
+
+@app.route("/folder/<int:folder_id>/contents/")
+def folder_content(folder_id: int):
+    content = requests.get(f'{host_db_manager}/folder/{folder_id}/contents').content
+    return content

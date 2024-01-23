@@ -8,6 +8,7 @@ class BaseDocument(BaseModel):
 
 
 class CreateDocument(BaseDocument):
+    folder_parent_id: int = 0
     pass
 
 
