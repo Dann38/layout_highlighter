@@ -69,7 +69,9 @@ def doc_read_one(doc_id: int):
 def doc_create():
     image = str(request.form["file"])
     name = str(request.form["name"])
+    folder_parent_id = int(request.form["folder_parent_id"])
     content = requests.post(f'{host_db_manager}/doc/create/', json={
+        "folder_parent_id": folder_parent_id,
         "image64": image,
         "name": name}).content
     return content
@@ -225,3 +227,19 @@ def get_np_dataset(dataset_id: int):
 def folder_content(folder_id: int):
     content = requests.get(f'{host_db_manager}/folder/{folder_id}/contents').content
     return content
+
+
+@app.route("/folder/create/", methods=["POST"])
+def folder_create():
+    name = str(request.form["name"])
+    folder_parent_id = int(request.form["folder_parent_id"])
+    content = requests.post(f'{host_db_manager}/folder/create/', json={
+        "folder_parent_id": folder_parent_id,
+        "name": name}).content
+    return content
+
+
+@app.route("/folder/delete/<int:folder_id>")
+def folder_delete(folder_id: int):
+    content = requests.delete(f'{host_db_manager}/folder/delete/{folder_id}').content
+    return content    

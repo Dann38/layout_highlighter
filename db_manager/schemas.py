@@ -9,7 +9,6 @@ class BaseDocument(BaseModel):
 
 class CreateDocument(BaseDocument):
     folder_parent_id: int = 0
-    pass
 
 
 class Document(BaseDocument):
@@ -84,7 +83,7 @@ class BaseFolder(BaseModel):
     name: str
 
 class CreateFolder(BaseFolder):
-    pass
+    folder_parent_id: int = 0
 
 class Folder(BaseFolder):
     id: int

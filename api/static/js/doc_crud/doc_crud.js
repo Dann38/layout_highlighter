@@ -1,4 +1,6 @@
 const menu_docs = document.getElementById('menu-docs');
+open_folder = {};
+
 var add_doc = function(doc){
   var card = $('\
     <div class="card card-doc col-sm-3">\
@@ -29,19 +31,53 @@ var add_doc = function(doc){
   card.append(manual_marking_btn)
 }
 
-var view_menu = function() {
+
+var add_folder = function(folder){
+  var card = $('\
+  <div class="card card-doc col-sm-3">\
+    <img class="card-img-top" src="'+src_icon_data_set+'" alt="folder">\
+    <div class="card-body">\
+      <h5 class="card-title">'+folder.name+'</h5>\
+    </div>\
+  </div>\
+  ')
+  $("#menu-docs").prepend(card);
+
+  var delete_btn = document.createElement("button");
+  var open_btn = document.createElement("button");
+  set_btn(delete_btn, "Удалить", "btn btn-outline-danger", function(){
+    deleteFolder(folder.id);
+    card.remove();
+  })
+  set_btn(open_btn, "Открыть", "btn btn-outline-success", function(){
+    view_menu(folder.id);
+  })
+
+
+  card.append(delete_btn);
+  card.append(open_btn);
+}
+
+
+var view_menu = function(folder_id) {
+  open_folder.old_id = open_folder.id;
+  open_folder.id = folder_id;
   menu_docs.innerText = "";
   const xml = new XMLHttpRequest();
-  xml.open("GET", "/folder/0/contents/");
+  xml.open("GET", "/folder/"+folder_id+"/contents/");
   xml.send();
   xml.onload = function() {
       if (xml.status == 200) {
           var rez =  $.parseJSON(xml.response);
           var docs_id = rez.documents_id;
+          var folders_id = rez.folders_id;
           for(var i = 0; i < docs_id.length; i++){
               view_doc_id(docs_id[i]);
           }
-          console.log(rez.folders_id);
+          for(var i = 0; i < folders_id.length; i++){
+              view_folder_id(folders_id[i]);
+          }
+          
       }
   }
 }
@@ -55,6 +91,19 @@ var view_doc_id = function(doc_id) {
           var doc =  $.parseJSON(xml.response);
           add_doc(doc);
           
+      }
+  }
+}
+
+var view_folder_id = function(folder_id) {
+  open_folder.id = folder_id;
+  const xml = new XMLHttpRequest();
+  xml.open("GET", "/folder/"+folder_id+"/contents/");
+  xml.send();
+  xml.onload = function() {
+      if (xml.status == 200) {
+          var folder =  $.parseJSON(xml.response);
+          add_folder(folder);
       }
   }
 }
@@ -77,6 +126,7 @@ var addDocument = function() {
     
       formData.append('file', base64String);
       formData.append('name', name);
+      formData.append('folder_parent_id', open_folder.id)
     
       xml.open('POST', '/doc/create/');
       xml.send(formData);
@@ -91,9 +141,35 @@ var addDocument = function() {
   reader.readAsDataURL(fileInput.files[0]);
 }
 
+var addFolder = function() {
+  const xml = new XMLHttpRequest();
+  const formData = new FormData();
+
+  const name = document.getElementById('folder-create-name').value;
+
+  formData.append('name', name);
+  formData.append('folder_parent_id', open_folder.id)
+  xml.open('POST', '/folder/create/');
+  xml.send(formData);
+  xml.onload = function() {
+    folder = $.parseJSON(xml.response);
+    add_folder(folder);
+
+  }
+}
+
 var deleteDocument = function(id) {
   const xml = new XMLHttpRequest();
   xml.open('GET', '/doc/delete/'+id);
+  xml.send();
+  xml.onload = function() {
+
+  }
+}
+
+var deleteFolder = function(id) {
+  const xml = new XMLHttpRequest();
+  xml.open('GET', '/folder/delete/'+id);
   xml.send();
   xml.onload = function() {
 
@@ -108,8 +184,12 @@ var openManualMarking = function(id) {
   window.location.replace("/manual_marking/"+id)
 }
 
-view_menu();
+view_menu(0);
 
 $("#doc-create-button").click(function(){
   addDocument();
+})
+
+$("#folder-create-button").click(function(){
+  addFolder();
 })
