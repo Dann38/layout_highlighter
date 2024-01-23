@@ -69,13 +69,14 @@ var view_menu = function(folder_id) {
   xml.onload = function() {
       if (xml.status == 200) {
           var rez =  $.parseJSON(xml.response);
-          var docs_id = rez.documents_id;
-          var folders_id = rez.folders_id;
-          for(var i = 0; i < docs_id.length; i++){
-              view_doc_id(docs_id[i]);
+          open_folder.docs_id = rez.documents_id;
+          open_folder.folders_id = rez.folders_id;
+
+          for(var i = 0; i < open_folder.docs_id.length; i++){
+              view_doc_id(open_folder.docs_id[i]);
           }
-          for(var i = 0; i < folders_id.length; i++){
-              view_folder_id(folders_id[i]);
+          for(var i = 0; i < open_folder.folders_id.length; i++){
+              view_folder_id(open_folder.folders_id[i]);
           }
           
       }
@@ -96,7 +97,6 @@ var view_doc_id = function(doc_id) {
 }
 
 var view_folder_id = function(folder_id) {
-  open_folder.id = folder_id;
   const xml = new XMLHttpRequest();
   xml.open("GET", "/folder/"+folder_id+"/contents/");
   xml.send();
