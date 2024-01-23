@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
+from sqlalchemy.sql import null
 
 import models, schemas
 from typing import List
@@ -196,3 +197,66 @@ def delete_segment_data(db: Session, sd_id: int) -> bool:
         db.commit()
         return True
     return False
+
+# ------------------------------------------------------------------------------------------------------------
+def create_folder(db: Session, folder: schemas.CreateFolder) -> schemas.Folder:
+    db_folder = models.Folder(name = folder.name)
+    db.add(db_folder)
+    db.commit()
+    db.refresh(db_folder)
+    return schemas.Folder(id=db_folder.id,
+                          name=db_folder.name, 
+                          folders_id=[],
+                          documents_id=[])
+
+
+def delete_folder(db: Session, folder_id: int) -> bool:
+    db_folder = db.query(models.Folder).get(folder_id)
+    if db_folder:
+        db.delete(db_folder)
+        db.commit()
+        return True
+    return False
+
+
+def move_folder(db: Session, folder_id: int, folder_parent_id) -> bool:
+    db_content = db.query(models.Content).filter(models.Content.folder_id == folder_id).first()
+    if folder_parent_id == 0:
+        folder_parent_id = null()
+    
+    if not db_content:
+        db_content = models.Content(folder_id=folder_id)
+        db.add(db_content)
+        db.commit()
+        db.refresh(db_content)
+        db_folder_content = models.FolderContent(folder_parent_id=folder_parent_id, content_id=db_content.id)
+        db.add(db_folder_content)
+    else: 
+        db_content.folder_content[0].folder_parent_id = folder_parent_id
+    db.commit()
+
+
+def move_document(db: Session, doc_id: int, folder_parent_id) -> bool:
+    db_content = db.query(models.Content).filter(models.Content.document_id == doc_id).first()
+    if folder_parent_id == 0:
+        folder_parent_id = null()
+
+    if not db_content:
+        db_content = models.Content(document_id=doc_id)
+        db.add(db_content)
+        db.commit()
+        db.refresh(db_content)
+        db_folder_content = models.FolderContent(folder_parent_id=folder_parent_id, content_id=db_content.id)
+        db.add(db_folder_content)
+    else: 
+        db_content.folder_content[0].folder_parent_id = folder_parent_id
+    db.commit()
+
+
+def read_folder_content(db: Session, folder_id: int) -> schemas.Folder:
+    db_folder = db.query(models.Folder).get(folder_id)
+    if db_folder:
+        return schemas.Folder(id=db_folder.id,
+                             name=db_folder.name, 
+                             folders_id=[fc.content.folder_id for fc in db_folder.contents if fc .content.folder_id is not None],
+                             documents_id=[fc.content.document_id for fc  in db_folder.contents if fc .content.document_id is not None])

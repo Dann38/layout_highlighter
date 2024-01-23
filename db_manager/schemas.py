@@ -78,4 +78,14 @@ class DatasetAll(BaseModel):
     documents: List[Document]
     segments: List[SegmentData]
     marking: List[MarkingSegment]
-    
+
+class BaseFolder(BaseModel):
+    name: str
+
+class CreateFolder(BaseFolder):
+    pass
+
+class Folder(BaseFolder):
+    id: int
+    folders_id: List[int]
+    documents_id: List[int]
