@@ -1,5 +1,6 @@
 const menu_docs = document.getElementById('menu-docs');
 open_folder = {};
+open_folder.history = new Array([0]);
 
 var add_doc = function(doc){
   var card = $('\
@@ -60,7 +61,14 @@ var add_folder = function(folder){
 
 
 var view_menu = function(folder_id) {
-  open_folder.old_id = open_folder.id;
+  var index = open_folder.history.length - 1;
+  var id_parent = open_folder.history[index];
+  if (id_parent == folder_id){
+    open_folder.history.pop();
+  }else{
+    open_folder.history.push(open_folder.id);
+  
+  }
   open_folder.id = folder_id;
   menu_docs.innerText = "";
   const xml = new XMLHttpRequest();
@@ -176,6 +184,15 @@ var deleteFolder = function(id) {
   }
 }
 
+var backFolder =function(){
+  var index = open_folder.history.length - 1;
+  if (index >= 0){
+    var id_parent = open_folder.history[index];
+    view_menu(id_parent);
+  }
+  
+}
+
 var openDocument = function(id) {
   window.location.replace("/research/"+id)
 }
@@ -192,4 +209,8 @@ $("#doc-create-button").click(function(){
 
 $("#folder-create-button").click(function(){
   addFolder();
+})
+
+$("#back-folder").click(function(){
+  backFolder();
 })
