@@ -113,7 +113,7 @@ var view_folder_id = function(folder_id) {
       if (xml.status == 200) {
           var folder =  $.parseJSON(xml.response);
           add_folder(folder);
-          console.log()
+          
       }
   }
 }
