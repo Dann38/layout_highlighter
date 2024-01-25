@@ -10,7 +10,7 @@ class Document(Base):
     image64 = Column(LargeBinary, nullable=True)
     name = Column(String, nullable=True)
     segment_data = relationship("SegmentData", cascade='all, delete')
-
+    content = relationship("Content", cascade="all, delete")
 
 class Processing(Base):
     __tablename__ = "processings"
@@ -45,3 +45,28 @@ class SegmentData(Base):
     marking_id = Column(Integer, ForeignKey('markingsegments.id'))
     marking = relationship("MarkingSegment")
     json_data = Column(String, nullable=True)
+
+
+class Folder(Base):
+    __tablename__ = "folders"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=True)
+    contents = relationship("FolderContent", cascade="all, delete")
+    content = relationship("Content", cascade="all, delete")
+
+class FolderContent(Base):
+    __tablename__ = "foldercontents"
+    id = Column(Integer, primary_key=True)
+    folder_parent_id = Column(Integer, ForeignKey("folders.id"))
+    folder_parent = relationship("Folder")
+    content_id = Column(Integer, ForeignKey("contents.id"))
+    content = relationship("Content")
+
+class Content(Base):
+    __tablename__ = "contents"
+    id = Column(Integer, primary_key=True)
+    document_id = Column(Integer,  ForeignKey('documents.id'), nullable=True)
+    document = relationship("Document")  
+    folder_id = Column(Integer,  ForeignKey('folders.id'), nullable=True)
+    folder = relationship("Folder") 
+    folder_content = relationship("FolderContent", cascade="all, delete")
