@@ -5,7 +5,7 @@ var autoBlock = function(){
     const xml = new XMLHttpRequest();
     const formData = new FormData();
     formData.append("doc_id", doc.id);
-    formData.append("proc_set", '{"research_block": true}');
+    formData.append("proc_set", '{"save_blocks":true}');
     
     xml.open("POST", "/doc/research/");
     xml.send(formData);

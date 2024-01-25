@@ -8,7 +8,7 @@ class BaseDocument(BaseModel):
 
 
 class CreateDocument(BaseDocument):
-    folder_parent_id: int = 0
+    pass
 
 
 class Document(BaseDocument):
@@ -78,14 +78,4 @@ class DatasetAll(BaseModel):
     documents: List[Document]
     segments: List[SegmentData]
     marking: List[MarkingSegment]
-
-class BaseFolder(BaseModel):
-    name: str
-
-class CreateFolder(BaseFolder):
-    folder_parent_id: int = 0
-
-class Folder(BaseFolder):
-    id: int
-    folders_id: List[int]
-    documents_id: List[int]
+    

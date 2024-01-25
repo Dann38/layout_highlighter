@@ -143,34 +143,3 @@ async def dataset_all(dataset_id: int, db: Session = Depends(get_db)) -> schemas
     return schemas.DatasetAll(documents=[crud.read_document(db=db, doc_id=doc_id) for doc_id in docs_id],
                               segments=sds,
                               marking=marks)
-
-# -----------------------------------------------------------------------------------------------------------
-
-@app.post("/folder/create/")
-async def create_folder(folder: schemas.CreateFolder, db: Session = Depends(get_db)) -> schemas.Folder:
-    folder = crud.create_folder(db=db, folder=folder)
-    return folder
-
-
-@app.delete("/folder/delete/{folder_id}/")
-async def delete_folder(folder_id: int, db: Session = Depends(get_db)) -> bool:
-    is_delete = crud.delete_folder(db=db, folder_id=folder_id)
-    return is_delete
-
-
-# Существует проблема с тем, что можно поместить папку родителя в папку ребенка
-@app.get("/folder/{folder_id}/move_to/{folder_parent_id}/")
-async def move_folder(folder_id: int, folder_parent_id: int, db: Session = Depends(get_db)):
-    return crud.move_folder(db=db, folder_id=folder_id, folder_parent_id=folder_parent_id)
-
-
-@app.get("/document/{doc_id}/move_to/{folder_parent_id}/")
-async def move_folder(doc_id: int, folder_parent_id: int, db: Session = Depends(get_db)):
-    return crud.move_document(db=db, doc_id=doc_id, folder_parent_id=folder_parent_id)
-
-
-@app.get("/folder/{folder_id}/contents/")
-async def read_folder_content(folder_id: int, db: Session = Depends(get_db)) -> schemas.Folder:
-    folder = crud.read_folder_content(db=db, folder_id=folder_id)
-    return folder
-
