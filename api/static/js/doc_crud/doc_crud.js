@@ -46,6 +46,32 @@ var view_menu = function() {
   }
 }
 
+var view_doc_id = function(doc_id) {
+  const xml = new XMLHttpRequest();
+  xml.open("GET", "/doc/read/"+doc_id);
+  xml.send();
+  xml.onload = function() {
+      if (xml.status == 200) {
+          var doc =  $.parseJSON(xml.response);
+          add_doc(doc);
+          
+      }
+  }
+}
+
+
+var view_folder_id = function(folder_id) {
+  const xml = new XMLHttpRequest();
+  xml.open("GET", "/folder/"+folder_id+"/contents/");
+  xml.send();
+  xml.onload = function() {
+      if (xml.status == 200) {
+          var folder =  $.parseJSON(xml.response);
+          add_folder(folder);
+          console.log()
+      }
+  }
+}
 
 var addDocument = function() {
   const xml = new XMLHttpRequest();
