@@ -11,27 +11,30 @@ class WidthBoldExtractor(BaseWordExtractor):
         for word in words:
             bold_val = self.evaluation_words(word.segment.get_segment_from_img(gray_img))
             bold = 0 if bold_val < 1 else 1
-            word.set_bold(bold_val)
+            word.set_bold(bold)
 
             
     def evaluation_words(self, image: np.ndarray) -> float:
         
         base_line_image = self._get_base_line_image(image)  # baseline - main font area
-        h = 30
-        image = cv2.resize(base_line_image, dsize=(h, round(h*base_line_image.shape[1]/base_line_image.shape[0])), interpolation=cv2.INTER_LINEAR)
-        base_line_image = image
-        p_img = base_line_image[:, :-1] - base_line_image[:, 1:]
-        p_img[abs(p_img) > 0] = 1.
-        p_img[p_img < 0] = 0.
-        p = p_img.sum() if p_img.shape[0] > 1 and p_img.shape[1] > 1  else p_img.shape[0]*p_img.shape[1]
+        # h = 30
+        # image = cv2.resize(base_line_image, dsize=(h, round(h*base_line_image.shape[1]/base_line_image.shape[0])), interpolation=cv2.INTER_LINEAR)
+        # base_line_image = image
+        p_img_x = base_line_image[:, :-1] - base_line_image[:, 1:]
+        p_img_y = base_line_image[:-1, :] - base_line_image[:1, :]
+        p_img_x[abs(p_img_x) > 0] = 1.
+        p_img_x[p_img_x < 0] = 0.
+        p_img_y[abs(p_img_y) > 0] = 1.
+        p_img_y[p_img_y < 0] = 0.
+        p = p_img_x.sum()+p_img_y.sum() if p_img_x.shape[0] > 1 and p_img_x.shape[1] > 1  else p_img.shape[0]*p_img.shape[1]
         
         s_img = 1 - self._get_rid_spaces(base_line_image)  # removing spaces from a string
         s = s_img.sum() if s_img.shape[0] > 1 and s_img.shape[1] > 1 else 0
         
         # h = base_line_image.shape[0] if base_line_image.shape[0]>0 else 1
-        if p*h == 0:
+        if p == 0:
             return 1
-        evaluation = s/(p*h)
+        evaluation = 2*s/p
         # evaluation = s/p 
         return evaluation
     
