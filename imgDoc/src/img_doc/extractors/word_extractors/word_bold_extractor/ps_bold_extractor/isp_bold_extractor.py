@@ -32,41 +32,39 @@ class ISPBoldExtractor(BaseWordExtractor):
         return bboxes_evaluation
 
     def __evaluation_one_bbox_image(self, image: np.ndarray) -> float:
-        # base_line_image = self.__get_base_line_image(image)
-        # base_line_image_without_spaces = self.__get_rid_spaces(base_line_image)
+        base_line_image = self.__get_base_line_image(image)
+        base_line_image_without_spaces = self.__get_rid_spaces(base_line_image)
 
+        p_img = base_line_image[:, :-1] - base_line_image[:, 1:]
+        p_img[abs(p_img) > 0] = 1.
+        p_img[p_img < 0] = 0.
+        p = p_img.mean()
+
+        s = 1 - base_line_image_without_spaces.mean()
+
+        if p > s or s == 0:
+            evaluation = 1.
+        else:
+            evaluation = p / s
+        return evaluation
+        # base_line_image = self.__get_base_line_image(image)  # baseline - main font area
+        # h = max(100, base_line_image.shape[0])
+        # image = cv2.resize(base_line_image, dsize=(h, round(h*base_line_image.shape[1]/base_line_image.shape[0])), interpolation=cv2.INTER_LINEAR)
+        # base_line_image = image
         # p_img = base_line_image[:, :-1] - base_line_image[:, 1:]
         # p_img[abs(p_img) > 0] = 1.
         # p_img[p_img < 0] = 0.
-        # p = p_img.mean()
-
-        # s = 1 - base_line_image_without_spaces.mean()
-
-        # if p > s or s == 0:
-        #     evaluation = 1.
-        # else:
-        #     evaluation = p / s
+        # p = p_img.sum() if p_img.shape[0] > 1 and p_img.shape[1] > 1  else p_img.shape[0]*p_img.shape[1]
+        
+        # s_img = 1 - self.__get_rid_spaces(base_line_image)  # removing spaces from a string
+        # s = s_img.sum() if s_img.shape[0] > 1 and s_img.shape[1] > 1 else 0
+        
+        # # h = base_line_image.shape[0] if base_line_image.shape[0]>0 else 1
+        # if p*h == 0:
+        #     return 1
+        # evaluation = s/(p*h)
+        # # evaluation = s/p 
         # return evaluation
-        base_line_image = self.__get_base_line_image(image)  # baseline - main font area
-        # h = 30
-        # image = cv2.resize(base_line_image, dsize=(h, round(h*base_line_image.shape[1]/base_line_image.shape[0])), interpolation=cv2.INTER_LINEAR)
-        # base_line_image = image
-        p_img_x = base_line_image[:, :-1] - base_line_image[:, 1:]
-        p_img_y = base_line_image[:-1, :] - base_line_image[:1, :]
-        p_img_x[abs(p_img_x) > 0] = 1.
-        p_img_x[p_img_x < 0] = 0.
-        p_img_y[abs(p_img_y) > 0] = 1.
-        p_img_y[p_img_y < 0] = 0.
-        p = p_img_x.sum()+p_img_y.sum() if p_img_x.shape[0] > 3 and p_img_x.shape[1] > 3  else p_img_x.shape[0]*p_img_x.shape[1]
-        
-        s_img = 1 - self.__get_rid_spaces(base_line_image)  # removing spaces from a string
-        s = s_img.sum() if s_img.shape[0] > 1 and s_img.shape[1] > 1 else 0
-        
-        # h = base_line_image.shape[0] if base_line_image.shape[0]>0 else 1
-        if p == 0:
-            return 1
-        evaluation = 2*s/p
-        return evaluation
 
     def __clusterize(self, bboxes_evaluation: List[float]) -> List[float]:
         vector_bbox_evaluation = np.array(bboxes_evaluation)
