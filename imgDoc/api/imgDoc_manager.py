@@ -46,7 +46,10 @@ class ImgDocManager:
         }
         self.LABEL_BLOCK_EXTRACTOR = {
             "mlp_len": MLPExtractor("/build/models/model-2.sav", {"len_vec": 5}),
-            "mlp_len_ang": MLPAngLenExtractor("/build/models/model-3.sav", {"len_vec": 5})
+            "mlp_len_big": MLPExtractor("/build/models/model-4.sav", {"len_vec": 5}),
+            "mlp_len_big50": MLPExtractor("/build/models/model-5.sav", {"len_vec": 50}),
+            "mlp_len_ang": MLPAngLenExtractor("/build/models/model-3.sav", {"len_vec": 5}),
+            "mlp_len_ang_big50": MLPAngLenExtractor("/build/models/model-6.sav", {"len_vec": 50})
         }
         self.binarizer = ValleyEmphasisBinarizer()
         
@@ -188,18 +191,6 @@ class ImgDocManager:
                 list_y.append(seg["marking_id"])
         
         return {"x": list_vec, "y": list_y}
-    
-    # def get_vec_from_words(self, words, len_vec):
-    #     if len(words) == 0:
-    #         return [0 for i in range(len_vec)]
-    #     neighbors = self.kmeanext.get_index_neighbors_word(words)
-    #     distans = self.kmeanext.get_distans(neighbors, words)
-    #     vec = np.ravel(np.array(distans))
-    #     vec = vec/vec.max()
-    #     vec, _ = np.histogram(vec, np.linspace(0, 1, len_vec+1))
-    #     normal = np.linalg.norm(vec)
-    #     vec = vec/normal if normal > 0 else vec
-    #     return vec.tolist()
     
     def get_dir(self):
         import os
