@@ -12,7 +12,7 @@ import numpy as np
 from typing import List
 from io import StringIO
 import json
-
+import os
 
 
 class TesseractWordExtractor(BaseWordExtractor):
@@ -183,7 +183,7 @@ class ImgDocManager:
         words = [word for word in words if is_into_segment(word.segment.get_center())]
         return segment, segment_image, words
     
-    def get_file_dataset(self, dataset, parametr):
+    def get_file_dataset(self, dataset, parametr, fun_get_image):
         list_vec = []
         list_y = []
         vec_len = parametr["vec_len"]
@@ -192,7 +192,7 @@ class ImgDocManager:
         is_into_segment = lambda point, json_seg: (json_seg["x_top_left"] < point[0] and json_seg["x_bottom_right"] > point[0] and
                                                    json_seg["y_top_left"] < point[1] and json_seg["y_bottom_right"] > point[1])
         for doc in dataset["documents"]:
-            image = self.base64image(doc["image64"])
+            image = fun_get_image(doc["image64"])
             words = self.word_ext.extract_from_img(image.img)
 
             list_seg = [seg for seg in dataset["segments"] if seg["document_id"] == doc["id"]]
@@ -202,8 +202,23 @@ class ImgDocManager:
                 list_y.append(seg["marking_id"])
         
         return {"x": list_vec, "y": list_y}
-    
-    def get_dir(self):
-        import os
-        return os.getcwd()
-    
+
+
+    def get_dataset_from_dir(self, path_dir, balans = 1000):
+        # Этот путь нужно указать в функции чтения fun_get_image
+        train_images = os.path.join(path_dir, "train")
+        with open(os.path.join(path_dir, "train.json"), "r") as f:
+            train_json = json.load(f)
+        dataset = dict()
+        dataset["documents"] = [{"image64": img["file_name"], "id": img["id"]} for img in train_json["images"]]
+        dataset["segments"] = []
+        list_count_category = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        for seg in train_json["annotations"]:
+            if list_count_category[seg["category_id"]] < balans:
+                dataset["segments"].append({"json_data": "{"+f'"x_top_left":{int(seg["bbox"][0])}, "y_top_left":{int(seg["bbox"][1])}, "x_bottom_right": {int(seg["bbox"][0]+seg["bbox"][2])}, "y_bottom_right": {int(seg["bbox"][1]+seg["bbox"][3])}'+"}",
+                                "marking_id": seg["category_id"],
+                                "document_id": seg["image_id"]
+                               })
+                list_count_category[seg["category_id"]] += 1
+ 
+        return dataset

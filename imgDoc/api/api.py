@@ -39,9 +39,5 @@ async def segment2vec_distribution(img_and_set_process: schemas.ImgAndSetProcess
 async def segment2vec_distribution(dataset_and_parametr: schemas.DatasetAndParametr):
     dataset = json.loads(dataset_and_parametr.dataset)
     parametr = json.loads(dataset_and_parametr.parametr)
-    rez = img_doc_manager.get_file_dataset(dataset, parametr)
+    rez = img_doc_manager.get_file_dataset(dataset, parametr, img_doc_manager.base64image)
     return json.dumps(rez)
-
-@app.get("/get_dir/")
-async def get_dir():
-    return img_doc_manager.get_dir()
