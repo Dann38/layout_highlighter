@@ -10,6 +10,7 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
         join_blocks,
         neighbors,
         distans,
+        dist_row,
         dist_word,
         graph,
         no_join_blocks
@@ -23,7 +24,16 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
 
         neighbors = self.get_index_neighbors_word(words)
         distans = self.get_distans(neighbors, words)
+        
         dist_word, dist_row = self.get_standart_distant(distans)
+        if "dist_row" in history:
+            if history["dist_row"] != "auto":
+                dist_row = history["dist_row"]
+        if "dist_word" in history: 
+            if history["dist_word"] != "auto":
+                dist_word = history["dist_word"]
+
+        
         graph = self.get_graph_words(words, neighbors, dist_word, dist_row, distans)
 
         list_block = []
@@ -44,7 +54,7 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
         if "dist_word" in history.keys():
             history["dist_word"] = dist_word
         if "dist_row" in history.keys():
-            history["dist_word"] = dist_row
+            history["dist_row"] = dist_row
         if "graph" in history.keys():
             history["graph"] = graph
         if "no_join_blocks" in history.keys():
