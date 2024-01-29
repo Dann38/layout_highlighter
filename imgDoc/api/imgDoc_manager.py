@@ -73,7 +73,7 @@ class ImgDocManager:
                 gray_image = Image(cv2.cvtColor(gray_img*255, cv2.COLOR_GRAY2BGR))
                 history["image64_binary"] = gray_image.get_base64().decode('utf-8')
                 history["words"] = [word.to_dict() for word in words]
-                
+
         if "research_block" in proc and proc["research_block"]:
                 
                 model_type = proc["model_type"] if "model_type" in proc else "mlp_len"
@@ -90,81 +90,8 @@ class ImgDocManager:
                 page = self.page_ext.extract_from_image(image)
                 page_info = page.to_dict()
                 for key, item in page_info.items():
-                    history[key] = item
-                # dist_row = None
-                # dist_word = None
-                # model_type = None
-                # model_version = None
-                # if "dist_row" in proc:
-                #     if proc["dist_row"] != "auto":
-                #         dist_row = proc["dist_row"]
-                # if "dist_word" in proc: 
-                #     if proc["dist_word"] != "auto":
-                #         dist_word = proc["dist_word"]
-                # if "model_type" in proc:
-                #     model_type = proc["model_type"]
-                # if "model_version" in proc:
-                #     model_version = proc["model_version"]
-                # history["dist_word"] = 0
-                # history["dist_row"] = 0
-                # history["join_blocks"] = []
-                # history["no_join_blocks"] = []
-                # history["distans"] = []
-                # history["neighbors"] = []
-                # if len(words) > 1:
-                #     self.proccessing(dist_row, dist_word, history, words, model_type, model_version)
-                # elif len(words) == 1:
-                #     block = Block()
-                #     block.set_words(words)
-                #     history["no_join_blocks"] = [block]
-
-                
-                # history["no_join_blocks"] = [block.to_dict() for block in history["no_join_blocks"]]
-                # history["join_blocks"] = [block.to_dict() for block in history["join_blocks"]]
-            
-        
+                    history[key] = item       
         return history
-    
-    # def proccessing(self, dist_row, dist_word, history, words, model_type, model_version):
-    #     neighbors = self.kmeanext.get_index_neighbors_word(words)
-    #     distans = self.kmeanext.get_distans(neighbors, words)
-    #     dist_word_, dist_row_ = self.kmeanext.get_standart_distant(distans)
-    #     if dist_row is None:
-    #         dist_row = dist_row_
-    #     if dist_word is None:
-    #         dist_word = dist_word_
-
-    #     graph = self.kmeanext.get_graph_words(words, neighbors, dist_word, dist_row, distans)
-    #     blocks = self.kmeanext.extract_from_word(words, history)
-        
-    #     list_block = []
-    #     for r in graph.get_related_graphs():
-    #         block = Block()
-    #         words_r = [words[n.index-1] for n in r.get_nodes()]
-    #         block.set_words(words_r)
-    #         list_block.append(block)
-    #     if model_type is None:
-    #         model_type = "mlp_len"
-    #     if model_version is None:
-    #         model_version = "micro_5"
-    #     self.LABEL_BLOCK_EXTRACTOR[model_type][model_version].extract(list_block)
-    #     join_intersect_block = self.kmeanext.join_intersect_blocks(list_block)
-
-    #     if "join_blocks" in history.keys():
-    #         history["join_blocks"] = join_intersect_block
-    #     if "neighbors" in history.keys():
-    #         history["neighbors"] = neighbors
-    #     if "distans" in history.keys():
-    #         history["distans"] = distans
-    #     if "dist_word" in history.keys():
-    #         history["dist_word"] = dist_word
-    #     if "dist_row" in history.keys():
-    #         history["dist_row"] = dist_row
-    #     if "graph" in history.keys():
-    #         history["graph"] = graph
-    #     if "no_join_blocks" in history.keys():
-    #         history["no_join_blocks"] = list_block
-
     
     def get_segment_img_word_from_image64(self, image64, proc):
         image = Image()
