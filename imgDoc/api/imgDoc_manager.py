@@ -100,7 +100,7 @@ class ImgDocManager:
                         dist_word = proc["dist_word"]
                 if "model_type" in proc:
                     model_type = proc["model_type"]
-                if "model_type" in proc:
+                if "model_version" in proc:
                     model_version = proc["model_version"]
                 history["dist_word"] = 0
                 history["dist_row"] = 0
