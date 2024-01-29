@@ -1,38 +1,19 @@
-import pytesseract
+
 import cv2
 import base64
 from img_doc.editors.binarizer import ValleyEmphasisBinarizer
-from img_doc.extractors.word_extractors import BaseWordExtractor
+from img_doc.extractors.word_extractors.word_extractor_from_img import TesseractWordExtractor
+
 from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor, ISPBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, MLPAngLenExtractor, AngleLengthExtractor
 from img_doc.data_structures import Word, Block
 from img_doc.data_structures import Image, ImageSegment
-import numpy as np
+
 from typing import List
 from io import StringIO
 import json
 import os
-
-
-class TesseractWordExtractor(BaseWordExtractor):
-    def extract_from_img(self, img: np) -> List[Word]:
-        tesseract_bboxes = pytesseract.image_to_data(
-            config="-l eng+rus",
-            image=img,
-            output_type=pytesseract.Output.DICT)
-        word_list = []
-        for index_bbox, level in enumerate(tesseract_bboxes["level"]):
-            if level == 5:
-                word = Word(text = tesseract_bboxes["text"][index_bbox])
-                word.set_point_and_size({
-                    "x_top_left": tesseract_bboxes["left"][index_bbox],
-                    "y_top_left": tesseract_bboxes["top"][index_bbox],
-                    "width": tesseract_bboxes["width"][index_bbox],
-                    "height": tesseract_bboxes["height"][index_bbox],
-                })
-                word_list.append(word)
-        return word_list
 
 
 class ImgDocManager:
@@ -75,7 +56,8 @@ class ImgDocManager:
         return rez
         
     def get_rez_proc(self, image64, proc):
-        image = self.base64image(image64)
+        image = Image()
+        image.set_base64(image64)
 
         history = dict()
 
@@ -162,13 +144,10 @@ class ImgDocManager:
         if "no_join_blocks" in history.keys():
             history["no_join_blocks"] = list_block
 
-    def base64image(self, image64) -> Image:
-        data = np.frombuffer(base64.b64decode(image64), np.uint8)
-        image_np = cv2.imdecode(data, cv2.IMREAD_COLOR)
-        return Image(img=image_np)
     
     def get_segment_img_word_from_image64(self, image64, proc):
-        image = self.base64image(image64)
+        image = Image()
+        image.set_base64(image64)
         segment = ImageSegment(x_top_left=proc["x_top_left"],
                                y_top_left=proc["y_top_left"],
                                x_bottom_right=proc["x_bottom_right"],
@@ -203,6 +182,12 @@ class ImgDocManager:
         
         return {"x": list_vec, "y": list_y}
 
+    def get_dataset_from_db(self, dataset, parametr):
+        def fun_get_image(ib64):
+            image = Image()
+            image.set_base64(ib64)
+            return image.img
+        return self.get_file_dataset(dataset, parametr, fun_get_image)
 
     def get_dataset_from_dir(self, path_dir, balans = 1000):
         # Этот путь нужно указать в функции чтения fun_get_image

@@ -27,6 +27,12 @@ class Image(ABC):
         img_bytes = img_array.tobytes()
         return base64.b64encode(img_bytes)
 
+    def set_base64(self, image64):
+        data = np.frombuffer(base64.b64decode(image64), np.uint8)
+        image_np = cv2.imdecode(data, cv2.IMREAD_COLOR)
+        self.img=image_np
+        return
+
     def __read(self, path):
         with open(path, "rb") as f:
             chunk = f.read()
