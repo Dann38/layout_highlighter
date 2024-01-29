@@ -12,7 +12,7 @@ import numpy as np
 from typing import List
 from io import StringIO
 import json
-
+import os
 
 
 class TesseractWordExtractor(BaseWordExtractor):
@@ -45,16 +45,24 @@ class ImgDocManager:
             "ps":PsBoldExtractor(),
         }
         self.LABEL_BLOCK_EXTRACTOR = {
-            "mlp_len": MLPExtractor("/build/models/model-2.sav", {"len_vec": 5}),
-            "mlp_len_ang": MLPAngLenExtractor("/build/models/model-3.sav", {"len_vec": 5})
+            "mlp_len": {
+                "micro_5": MLPExtractor("/build/models/mlp_len-micro_5.sav", {"len_vec": 5}),
+                "mini_publaynet_5": MLPExtractor("/build/models/mlp_len-mini_publaynet_5.sav", {"len_vec": 5}),
+                "mini_publaynet_50": MLPExtractor("/build/models/mlp_len-mini_publaynet_50.sav", {"len_vec": 50}),
+            },
+            "mlp_len_ang":{
+                "micro_5": MLPAngLenExtractor("/build/models/mlp_len_ang-micro_5.sav", {"len_vec": 5}),
+                "mini_publaynet_50": MLPAngLenExtractor("/build/models/mlp_len_ang-mini_publaynet_50.sav", {"len_vec": 50}),
+            },
         }
+        
         self.binarizer = ValleyEmphasisBinarizer()
         
 
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
         rez = {
-            "vec": self.LABEL_BLOCK_EXTRACTOR[proc["model_type"]].get_vec_from_words(words, proc["vec_len"]),
+            "vec": self.LABEL_BLOCK_EXTRACTOR[proc["model_type"]][proc["model_version"]].get_vec_from_words(words, proc["vec_len"]),
         }
         return rez
 
@@ -83,6 +91,7 @@ class ImgDocManager:
                 dist_row = None
                 dist_word = None
                 model_type = None
+                model_version = None
                 if "dist_row" in proc:
                     if proc["dist_row"] != "auto":
                         dist_row = proc["dist_row"]
@@ -91,6 +100,8 @@ class ImgDocManager:
                         dist_word = proc["dist_word"]
                 if "model_type" in proc:
                     model_type = proc["model_type"]
+                if "model_version" in proc:
+                    model_version = proc["model_version"]
                 history["dist_word"] = 0
                 history["dist_row"] = 0
                 history["join_blocks"] = []
@@ -98,7 +109,7 @@ class ImgDocManager:
                 history["distans"] = []
                 history["neighbors"] = []
                 if len(words) > 1:
-                    self.proccessing(dist_row, dist_word, history, words, model_type)
+                    self.proccessing(dist_row, dist_word, history, words, model_type, model_version)
                 elif len(words) == 1:
                     block = Block()
                     block.set_words(words)
@@ -111,7 +122,7 @@ class ImgDocManager:
         history["words"] = [word.to_dict() for word in words]
         return history
     
-    def proccessing(self, dist_row, dist_word, history, words, model_type):
+    def proccessing(self, dist_row, dist_word, history, words, model_type, model_version):
         neighbors = self.kmeanext.get_index_neighbors_word(words)
         distans = self.kmeanext.get_distans(neighbors, words)
         dist_word_, dist_row_ = self.kmeanext.get_standart_distant(distans)
@@ -131,7 +142,9 @@ class ImgDocManager:
             list_block.append(block)
         if model_type is None:
             model_type = "mlp_len"
-        self.LABEL_BLOCK_EXTRACTOR[model_type].extract(list_block)
+        if model_version is None:
+            model_version = "micro_5"
+        self.LABEL_BLOCK_EXTRACTOR[model_type][model_version].extract(list_block)
         join_intersect_block = self.kmeanext.join_intersect_blocks(list_block)
 
         if "join_blocks" in history.keys():
@@ -170,38 +183,42 @@ class ImgDocManager:
         words = [word for word in words if is_into_segment(word.segment.get_center())]
         return segment, segment_image, words
     
-    def get_file_dataset(self, dataset, parametr):
+    def get_file_dataset(self, dataset, parametr, fun_get_image):
         list_vec = []
         list_y = []
         vec_len = parametr["vec_len"]
         model_type = parametr["model_type"]
+        model_version = [parametr["model_version"]]
         is_into_segment = lambda point, json_seg: (json_seg["x_top_left"] < point[0] and json_seg["x_bottom_right"] > point[0] and
                                                    json_seg["y_top_left"] < point[1] and json_seg["y_bottom_right"] > point[1])
         for doc in dataset["documents"]:
-            image = self.base64image(doc["image64"])
+            image = fun_get_image(doc["image64"])
             words = self.word_ext.extract_from_img(image.img)
 
             list_seg = [seg for seg in dataset["segments"] if seg["document_id"] == doc["id"]]
             for seg in list_seg:
                 seg_words = [word for word in words if is_into_segment(word.segment.get_center(), json.loads(seg["json_data"]))]
-                list_vec.append(self.LABEL_BLOCK_EXTRACTOR[model_type].get_vec_from_words(seg_words, vec_len).tolist())
+                list_vec.append(self.LABEL_BLOCK_EXTRACTOR[model_type][model_version].get_vec_from_words(seg_words, vec_len).tolist())
                 list_y.append(seg["marking_id"])
         
         return {"x": list_vec, "y": list_y}
-    
-    # def get_vec_from_words(self, words, len_vec):
-    #     if len(words) == 0:
-    #         return [0 for i in range(len_vec)]
-    #     neighbors = self.kmeanext.get_index_neighbors_word(words)
-    #     distans = self.kmeanext.get_distans(neighbors, words)
-    #     vec = np.ravel(np.array(distans))
-    #     vec = vec/vec.max()
-    #     vec, _ = np.histogram(vec, np.linspace(0, 1, len_vec+1))
-    #     normal = np.linalg.norm(vec)
-    #     vec = vec/normal if normal > 0 else vec
-    #     return vec.tolist()
-    
-    def get_dir(self):
-        import os
-        return os.getcwd()
-    
+
+
+    def get_dataset_from_dir(self, path_dir, balans = 1000):
+        # Этот путь нужно указать в функции чтения fun_get_image
+        train_images = os.path.join(path_dir, "train")
+        with open(os.path.join(path_dir, "train.json"), "r") as f:
+            train_json = json.load(f)
+        dataset = dict()
+        dataset["documents"] = [{"image64": img["file_name"], "id": img["id"]} for img in train_json["images"]]
+        dataset["segments"] = []
+        list_count_category = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        for seg in train_json["annotations"]:
+            if list_count_category[seg["category_id"]] < balans:
+                dataset["segments"].append({"json_data": "{"+f'"x_top_left":{int(seg["bbox"][0])}, "y_top_left":{int(seg["bbox"][1])}, "x_bottom_right": {int(seg["bbox"][0]+seg["bbox"][2])}, "y_bottom_right": {int(seg["bbox"][1]+seg["bbox"][3])}'+"}",
+                                "marking_id": seg["category_id"],
+                                "document_id": seg["image_id"]
+                               })
+                list_count_category[seg["category_id"]] += 1
+ 
+        return dataset
