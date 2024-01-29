@@ -6,7 +6,7 @@ from img_doc.extractors.word_extractors.word_extractor_from_img import Tesseract
 
 from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor, ISPBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
-from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor, MLPAngLenExtractor, AngleLengthExtractor
+from img_doc.extractors.block_extractors.block_label_extractor import *
 from img_doc.data_structures import Word, Block
 from img_doc.data_structures import Image, ImageSegment
 from img_doc.extractors.page_extractors.page_extractors_from_img import W2BExtractor
@@ -36,6 +36,9 @@ class ImgDocManager:
                 "micro_5": MLPAngLenExtractor("/build/models/mlp_len_ang-micro_5.sav", {"len_vec": 5}),
                 "mini_publaynet_50": MLPAngLenExtractor("/build/models/mlp_len_ang-mini_publaynet_50.sav", {"len_vec": 50}),
             },
+            "rnd_walk_dist":{
+                "mini_publaynet_50": MLPRandomWalkExtractor("/build/models/rnd_walk_dist-mini_publaynet_50.sav", {"len_vec": 50})
+            }
         }
         
         self.binarizer = ValleyEmphasisBinarizer()
