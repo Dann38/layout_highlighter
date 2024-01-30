@@ -39,5 +39,5 @@ async def segment2vec_distribution(img_and_set_process: schemas.ImgAndSetProcess
 async def segment2vec_distribution(dataset_and_parametr: schemas.DatasetAndParametr):
     dataset = json.loads(dataset_and_parametr.dataset)
     parametr = json.loads(dataset_and_parametr.parametr)
-    rez = img_doc_manager.get_file_dataset(dataset, parametr, img_doc_manager.base64image)
+    rez = img_doc_manager.get_dataset_from_db(dataset, parametr)
     return json.dumps(rez)

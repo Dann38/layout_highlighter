@@ -1,1 +1,3 @@
 from .base_word_extractor import BaseWordExtractor
+
+from .word_extractor_from_img import TesseractWordExtractor
