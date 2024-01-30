@@ -4,7 +4,7 @@ import base64
 from img_doc.editors.binarizer import ValleyEmphasisBinarizer
 from img_doc.extractors.word_extractors.word_extractor_from_img import TesseractWordExtractor
 
-from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor, WidthBoldExtractor, ISPBoldExtractor
+from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import *
 from img_doc.data_structures import Word, Block
@@ -22,8 +22,6 @@ class ImgDocManager:
         self.kmeanext = KMeanBlockExtractor()
         self.page_ext = W2BExtractor()
         self.BOLD_EXTRACTORS = {
-            "isp": ISPBoldExtractor(),
-            "width": WidthBoldExtractor(),
             "ps":PsBoldExtractor(),
         }
         self.LABEL_BLOCK_EXTRACTOR = {
@@ -39,9 +37,9 @@ class ImgDocManager:
             "rnd_walk_dist":{
                 "mini_publaynet_50": MLPRandomWalkExtractor("/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", {"len_vec": 50})
             },
-            "rnd_walk_many_dist":{
-                "mini_publaynet_50": MLPRandomWalkManyDistExtractor("/build/models/mlp_rnd_walk_many_dist-mini_publaynet_50.sav", {"len_vec": 50})
-            }
+            # "rnd_walk_many_dist":{
+            #     "mini_publaynet_50": MLPRandomWalkManyDistExtractor("/build/models/mlp_rnd_walk_many_dist-mini_publaynet_50.sav", {"len_vec": 50})
+            # }
         }
         
         self.binarizer = ValleyEmphasisBinarizer()

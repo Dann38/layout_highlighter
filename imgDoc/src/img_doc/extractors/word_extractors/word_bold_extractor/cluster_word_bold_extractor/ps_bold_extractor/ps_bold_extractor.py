@@ -1,4 +1,5 @@
-from ..base_bold_extractor import BaseWordExtractor, Word, ImageSegment
+from ..base_cluster_word_bold_extractor import BaseClusterWordBoldExtractor
+from  img_doc.data_structures import Word
 from typing import List
 
 import numpy as np
@@ -6,11 +7,13 @@ import numpy as np
 PERMISSIBLE_H_BBOX = 5  # that height bbox after which it makes no sense сrop bbox
 PERMISSIBLE_W_BBOX = 3
 
-class PsBoldExtractor(BaseWordExtractor):
+class PsBoldExtractor(BaseClusterWordBoldExtractor):
     def extract(self, words: List[Word], gray_img: np.ndarray) -> List[Word]:
         for word in words:
             bold_val = self.evaluation_words(word.segment.get_segment_from_img(gray_img))
             word.set_bold(bold_val)
+        self.clusterize(np.array([]))
+            
 
             
     def evaluation_words(self, image: np.ndarray) -> float:

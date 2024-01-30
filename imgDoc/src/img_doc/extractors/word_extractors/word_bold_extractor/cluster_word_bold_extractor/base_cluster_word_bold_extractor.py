@@ -1,11 +1,20 @@
+from typing import List
+from img_doc.data_structures import Word
+from ..base_bold_extractor import BaseWordExtractor
+from abc import ABC, abstractclassmethod
 import numpy as np
 from scipy.stats import norm
 from sklearn.cluster import AgglomerativeClustering
 
 
-class BoldAgglomerativeClusterizer:
+class BaseClusterWordBoldExtractor(BaseWordExtractor):
     def __init__(self) -> None:
+        super().__init__()
         self.significance_level = 0.99
+
+    @abstractclassmethod
+    def extract(words: List[Word]) -> None:
+        pass
 
     def clusterize(self, x: np.ndarray) -> np.ndarray:
         x_vectors = self.__get_prop_vectors(x)

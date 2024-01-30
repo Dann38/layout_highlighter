@@ -7,7 +7,7 @@ from img_doc.data_structures import Word
 class TesseractWordExtractor(BaseWordExtractor):
     def extract_from_img(self, img: np) -> List[Word]:
         tesseract_bboxes = pytesseract.image_to_data(
-            config="-l eng+rus",
+            config="-l eng+rus --psm 4 --oem 3",
             image=img,
             output_type=pytesseract.Output.DICT)
         word_list = []
