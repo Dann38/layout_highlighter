@@ -1,3 +1,4 @@
 from .mpl_extractor import MLPExtractor
 from .mlp_random_walk import MLPRandomWalkExtractor
+from .mlp_random_walk_many_dist import MLPRandomWalkManyDistExtractor
 from .mlp_angle_length_extractor import MLPAngLenExtractor

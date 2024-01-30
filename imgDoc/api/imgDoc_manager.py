@@ -37,7 +37,10 @@ class ImgDocManager:
                 "mini_publaynet_50": MLPAngLenExtractor("/build/models/mlp_len_ang-mini_publaynet_50.sav", {"len_vec": 50}),
             },
             "rnd_walk_dist":{
-                "mini_publaynet_50": MLPRandomWalkExtractor("/build/models/rnd_walk_dist-mini_publaynet_50.sav", {"len_vec": 50})
+                "mini_publaynet_50": MLPRandomWalkExtractor("/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", {"len_vec": 50})
+            },
+            "rnd_walk_many_dist":{
+                "mini_publaynet_50": MLPRandomWalkManyDistExtractor("/build/models/mlp_rnd_walk_many_dist-mini_publaynet_50.sav", {"len_vec": 50})
             }
         }
         
