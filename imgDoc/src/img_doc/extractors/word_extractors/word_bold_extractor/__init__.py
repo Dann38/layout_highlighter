@@ -1,1 +1,1 @@
-from .cluster_word_bold_extractor import PsBoldExtractor
+from .cluster_word_bold_extractor import PsBoldExtractor, TextPsBoldExtractor

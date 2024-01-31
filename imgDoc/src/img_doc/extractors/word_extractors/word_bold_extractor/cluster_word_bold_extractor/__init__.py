@@ -1,1 +1,2 @@
 from .ps_bold_extractor import PsBoldExtractor
+from .text_ps_bold_extractor import TextPsBoldExtractor
