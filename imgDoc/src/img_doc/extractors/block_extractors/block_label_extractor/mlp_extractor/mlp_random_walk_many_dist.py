@@ -6,9 +6,9 @@ from ..base_block_label_extractor import BaseBlockLabelExtractor, Block, LABEL
 import pickle
 
 class MLPRandomWalkManyDistExtractor(BaseBlockLabelExtractor):
-    def __init__(self, filename, param):
+    def __init__(self, param):
         self.kmean_ext = KMeanBlockExtractor()
-        self.load_model = pickle.load(open(filename, 'rb')) 
+        self.load_model = pickle.load(open(param["model_file"], 'rb')) 
         self.param = param
 
     def extract(self, blocks: List[Block]) -> None:

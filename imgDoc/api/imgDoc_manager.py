@@ -25,23 +25,32 @@ class ImgDocManager:
             "ps":PsBoldExtractor(),
             "textps": TextPsBoldExtractor(),
         }
-        self.LABEL_BLOCK_EXTRACTOR = {
+
+        self.LABEL_BLOCK_EXTRACTOR_CLASS = {
+            "mlp_len": MLPExtractor,
+            "mlp_len_ang": MLPAngLenExtractor,
+            "rnd_walk_dist": MLPRandomWalkExtractor,
+        }
+        self.pass_config_model =  {"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5}
+        self.LABEL_BLOCK_EXTRACTOR_CONFIG= {
             "mlp_len": {
-                "micro_5": MLPExtractor("/build/models/mlp_len-micro_5.sav", {"len_vec": 5}),
-                "mini_publaynet_5": MLPExtractor("/build/models/mlp_len-mini_publaynet_5.sav", {"len_vec": 5}),
-                "mini_publaynet_50": MLPExtractor("/build/models/mlp_len-mini_publaynet_50.sav", {"len_vec": 50}),
+                "micro_5": {"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5},
+                "mini_publaynet_5": {"model_file": "/build/models/mlp_len-mini_publaynet_5.sav", "len_vec": 5},
+                "mini_publaynet_50": {"model_file": "/build/models/mlp_len-mini_publaynet_50.sav", "len_vec": 50},
             },
             "mlp_len_ang":{
-                "micro_5": MLPAngLenExtractor("/build/models/mlp_len_ang-micro_5.sav", {"len_vec": 5}),
-                "mini_publaynet_50": MLPAngLenExtractor("/build/models/mlp_len_ang-mini_publaynet_50.sav", {"len_vec": 50}),
+                "micro_5": {"model_file": "/build/models/mlp_len_ang-micro_5.sav", "len_vec": 5},
+                "mini_publaynet_50": {"model_file": "/build/models/mlp_len_ang-mini_publaynet_50.sav", "len_vec": 50},
             },
             "rnd_walk_dist":{
-                "mini_publaynet_50": MLPRandomWalkExtractor("/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", {"len_vec": 50})
+                "micro_50": {"model_file": "/build/models/mlp_rnd_walk_dist-micro_50.sav", "len_vec": 50},
+                "mini_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", "len_vec": 50}
             },
             # "rnd_walk_many_dist":{
             #     "mini_publaynet_50": MLPRandomWalkManyDistExtractor("/build/models/mlp_rnd_walk_many_dist-mini_publaynet_50.sav", {"len_vec": 50})
             # }
         }
+        
         
         self.binarizer = ValleyEmphasisBinarizer()
         
@@ -50,7 +59,7 @@ class ImgDocManager:
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
         model_type = proc["model_type"]
         model_version = proc["model_version"]
-        model = self.LABEL_BLOCK_EXTRACTOR[model_type][model_version]
+        model = self.LABEL_BLOCK_EXTRACTOR_CLASS[model_type](self.LABEL_BLOCK_EXTRACTOR_CONFIG[model_type][model_version])
         rez = {
             "vec": model.get_vec_from_words(words, proc["vec_len"]),
         }
@@ -84,7 +93,7 @@ class ImgDocManager:
                 model_type = proc["model_type"] if "model_type" in proc else "mlp_len"
                 model_version = proc["model_version"] if "model_version" in proc else "micro_5"
 
-                self.page_ext.block_label_ext = self.LABEL_BLOCK_EXTRACTOR[model_type][model_version]
+                self.page_ext.block_label_ext = self.LABEL_BLOCK_EXTRACTOR_CLASS[model_type](self.LABEL_BLOCK_EXTRACTOR_CONFIG[model_type][model_version])
         
                 self.page_ext.save_no_join_blocks = True
                 self.page_ext.save_neighbors = True
@@ -120,7 +129,9 @@ class ImgDocManager:
         list_y = []
         vec_len = parametr["vec_len"]
         model_type = parametr["model_type"]
-        model_version = [parametr["model_version"]]
+        conf = self.pass_config_model
+        conf["vec_len"] = vec_len 
+        model = self.LABEL_BLOCK_EXTRACTOR_CLASS[model_type](conf)
         is_into_segment = lambda point, json_seg: (json_seg["x_top_left"] < point[0] and json_seg["x_bottom_right"] > point[0] and
                                                    json_seg["y_top_left"] < point[1] and json_seg["y_bottom_right"] > point[1])
         for doc in dataset["documents"]:
@@ -130,7 +141,8 @@ class ImgDocManager:
             list_seg = [seg for seg in dataset["segments"] if seg["document_id"] == doc["id"]]
             for seg in list_seg:
                 seg_words = [word for word in words if is_into_segment(word.segment.get_center(), json.loads(seg["json_data"]))]
-                list_vec.append(self.LABEL_BLOCK_EXTRACTOR[model_type][model_version].get_vec_from_words(seg_words, vec_len).tolist())
+                np_vec = model.get_vec_from_words(seg_words, vec_len)
+                list_vec.append(np_vec.tolist())
                 list_y.append(seg["marking_id"])
         
         return {"x": list_vec, "y": list_y}
@@ -139,7 +151,7 @@ class ImgDocManager:
         def fun_get_image(ib64):
             image = Image()
             image.set_base64(ib64)
-            return image.img
+            return image
         return self.get_file_dataset(dataset, parametr, fun_get_image)
 
     def get_dataset_from_dir(self, path_dir, balans = 1000):

@@ -14,7 +14,7 @@ from img_doc.extractors.block_extractors.block_label_extractor import MLPExtract
 class W2BExtractor(BasePageExtractor):
     def __init__(self, word_ext: BaseWordExtractor=TesseractWordExtractor(), 
                  block_ext: BaseBlockExtractorFromWord=KMeanBlockExtractor(),
-                 block_label_ext: BaseBlockLabelExtractor=MLPExtractor("/build/models/mlp_len-micro_5.sav", {"len_vec": 5})) -> None:
+                 block_label_ext: BaseBlockLabelExtractor=MLPExtractor({"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5})) -> None:
         super().__init__()
         self.word_ext = word_ext
         self.block_ext = block_ext

@@ -61,7 +61,7 @@ class KMeanBlockExtractor(BaseBlockExtractorFromWord):
             history["no_join_blocks"] = list_block
         return join_intersect_block
 
-    def get_index_neighbors_word(self, words, max_level=3):
+    def get_index_neighbors_word(self, words, max_level=8):
         if len(words) == 1:
             return [[0,0,0,0]]
         if len(words) == 0:
