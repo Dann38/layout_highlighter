@@ -1,4 +1,5 @@
 from . import Word, Row
+from .base_info import BaseInfo
 from ..image import ImageSegment
 from typing import List, Dict
 
@@ -20,12 +21,17 @@ INT_LABEL = {
     5: "table",
 }
 class Block:
-    def __init__(self, rows: List[Row] = [], words: List[Word] = [], label: int = LABEL["text"],
+    def __init__(self, rows: List[Row] = [], words: List[Word] = [], label: int = LABEL["text"], 
+                 info: BaseInfo = None, caption: BaseInfo = None, notes: BaseInfo = None,
                  x0: int = 0, y0: int = 0, x1: int = 0, y1: int = 0):
         self.rows = rows
         self.words = words
         self.label: int = label
         self.segment = ImageSegment(x0, y0, x1, y1)
+
+        self.info = info
+        self.caption = caption
+        self.notes = notes
 
     def set_words(self, words):
         self.words = words
