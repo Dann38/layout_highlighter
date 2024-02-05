@@ -44,7 +44,8 @@ class ImgDocManager:
             },
             "rnd_walk_dist":{
                 "micro_50": {"model_file": "/build/models/mlp_rnd_walk_dist-micro_50.sav", "len_vec": 50},
-                "mini_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", "len_vec": 50}
+                "mini_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", "len_vec": 50},
+                "micro_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-micro_publaynet_50.sav", "len_vec": 50}
             },
             # "rnd_walk_many_dist":{
             #     "mini_publaynet_50": MLPRandomWalkManyDistExtractor("/build/models/mlp_rnd_walk_many_dist-mini_publaynet_50.sav", {"len_vec": 50})

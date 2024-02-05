@@ -28,7 +28,7 @@ class MLPRandomWalkManyDistExtractor(BaseBlockLabelExtractor):
         neighbors = self.kmean_ext.get_index_neighbors_word(words)
         distans = self.kmean_ext.get_distans(neighbors, words)
         old_node = rng.integers(len(words))
-        vec = np.zeros(len_vec)
+        vec = np.zeros(len_vec*4)
         for i in range(len_vec):
             r = rng.integers(4)
             new_node = neighbors[old_node][r]
