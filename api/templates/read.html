@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include 'import/head.html' %}
+    <title>ImgDoc Обработка</title>
+    <script>
+        var doc = {}
+        var proc = {}
+    </script>
+</head>
+<body>
+    {% include 'read/model_add.html' %}
+    <div class="container">
+        {% include 'nav/main_menu.html' %}
+        {% include 'read/upload_doc.html'%}
+        <div class="row">
+            <div class="col-lg-4">
+                Загрузка изображения
+            </div>
+            <div class="col-lg-8">
+                Само изображение и результат
+            </div>
+        </div>
+        
+    </div>
+    
+</body>
+{% include 'import/read_js.html' %}
+</html>

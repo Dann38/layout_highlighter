@@ -144,7 +144,6 @@ var addDocument = function() {
       xml.onload = function() {
         rez = $.parseJSON(xml.response);
         add_doc(rez);
-
       }
 
   }

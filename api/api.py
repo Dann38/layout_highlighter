@@ -30,6 +30,9 @@ def research(doc_id: int):
     }
     return render_template("research.html", context=context)
 
+@app.route("/read/")
+def read():
+    return render_template("read.html")
 
 @app.route("/manual_marking/<int:doc_id>")
 def manual_marking(doc_id: int):
