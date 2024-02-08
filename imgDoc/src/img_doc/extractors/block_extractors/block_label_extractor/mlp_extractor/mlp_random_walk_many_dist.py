@@ -4,21 +4,22 @@ import numpy as np
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from ..base_block_label_extractor import BaseBlockLabelExtractor, Block, LABEL
 import pickle
+import tensorflow as tf
 
 class MLPRandomWalkManyDistExtractor(BaseBlockLabelExtractor):
     def __init__(self, param):
         self.kmean_ext = KMeanBlockExtractor()
-        self.load_model = pickle.load(open(param["model_file"], 'rb')) 
+        
+        self.load_model = tf.saved_model.load(param["model_file"])
         self.param = param
 
     def extract(self, blocks: List[Block]) -> None:
         for block in blocks:
             words = block.words
             vec = self.get_vec_from_words(words, len_vec=self.param["len_vec"])
-            rez = self.load_model.predict(np.array([vec]))[0]
+            rez = self.load_model(np.array([vec], dtype="float32"))[0]
             class_model = [LABEL["text"], LABEL["header"], LABEL["list"], LABEL["table"], LABEL["no_struct"]]
-            
-            block.label = class_model[np.argmax(rez)]
+            block.label = class_model[rez]
     
 
     def get_vec_from_words(self, words, len_vec=5):

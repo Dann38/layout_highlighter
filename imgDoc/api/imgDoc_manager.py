@@ -1,4 +1,3 @@
-
 import cv2
 import base64
 from img_doc.editors.binarizer import ValleyEmphasisBinarizer
@@ -30,7 +29,8 @@ class ImgDocManager:
             "mlp_len": MLPExtractor,
             "mlp_len_ang": MLPAngLenExtractor,
             "rnd_walk_dist": MLPRandomWalkExtractor,
-            "rnd_walk_many_dist": MLPRandomWalkExtractor,
+            "rnd_walk_many_dist": MLPRandomWalkManyDistExtractor,
+            "RWMDMA": MDistMAng,
         }
         self.pass_config_model =  {"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5}
         self.LABEL_BLOCK_EXTRACTOR_CONFIG= {
@@ -49,7 +49,11 @@ class ImgDocManager:
                 "micro_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-micro_publaynet_50.sav", "len_vec": 50}
             },
             "rnd_walk_many_dist":{
-                "mini_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_many_dist-mini_publaynet_50.sav", "len_vec": 200},
+                "mini_publaynet_50": {"model_file": "/build/models/RWMD-MP50", "len_vec": 50},
+                "do_mini_publaynet_50": {"model_file": "/build/models/dropout_RWMD-MP50", "len_vec": 50,},
+            },
+            "RWMDMA":{
+                "MP50": {"path_model": "/build/models/MDistMAng-MP50", "count_node": 50}
             }
         }
         
