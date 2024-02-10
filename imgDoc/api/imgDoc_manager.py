@@ -31,6 +31,7 @@ class ImgDocManager:
             "rnd_walk_dist": MLPRandomWalkExtractor,
             "rnd_walk_many_dist": MLPRandomWalkManyDistExtractor,
             "RWMDMA": MDistMAng,
+            "RWMDMAB": MDistMAngBold,
         }
         self.pass_config_model =  {"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5}
         self.LABEL_BLOCK_EXTRACTOR_CONFIG= {
@@ -54,6 +55,9 @@ class ImgDocManager:
             },
             "RWMDMA":{
                 "MP50": {"path_model": "/build/models/MDistMAng-MP50", "count_node": 50}
+            },
+            "RWMDMAB":{
+                "MP50": {"path_model": "/build/models/MDistMAngBold-MP50", "count_node": 50}
             }
         }
         

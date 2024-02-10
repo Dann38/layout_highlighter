@@ -1,15 +1,16 @@
 from typing import List
 from img_doc.data_structures import Word
-from ..base_bold_extractor import BaseWordExtractor
+from ..base_bold_extractor import BaseBoldWordExtractor
 from abc import ABC, abstractclassmethod
 import numpy as np
 from scipy.stats import norm
 from sklearn.cluster import AgglomerativeClustering
 
 
-class BaseClusterWordBoldExtractor(BaseWordExtractor):
+class BaseClusterWordBoldExtractor(BaseBoldWordExtractor):
     def __init__(self) -> None:
         super().__init__()
+        self.boolean = True
         self.significance_level = 0.99
 
     @abstractclassmethod

@@ -8,13 +8,18 @@ PERMISSIBLE_H_BBOX = 5  # that height bbox after which it makes no sense сrop b
 PERMISSIBLE_W_BBOX = 3
 
 class PsBoldExtractor(BaseClusterWordBoldExtractor):
+    def __init__(self, boolean=True) -> None:
+        super().__init__()
+        self.boolean = boolean
+
     def extract(self, words: List[Word], gray_img: np.ndarray):
         for word in words:
             bold_val = self.evaluation_words(word.segment.get_segment_from_img(gray_img))
             word.set_bold(bold_val)
-        bold_vals = self.clusterize(np.array([word.bold for word in words])).tolist()
-        for bold, word in zip(bold_vals, words):
-            word.bold = int(bold)
+        if self.boolean:
+            bold_vals = self.clusterize(np.array([word.bold for word in words])).tolist()
+            for bold, word in zip(bold_vals, words):
+                word.bold = int(bold)
 
 
             

@@ -3,10 +3,13 @@ from img_doc.data_structures import Page, Image
 from .. import BasePageExtractor
 
 from img_doc.extractors.word_extractors import BaseWordExtractor
+from img_doc.extractors.word_extractors.word_bold_extractor.base_bold_extractor import BaseBoldWordExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import BaseBlockExtractorFromWord
 from img_doc.extractors.block_extractors.block_label_extractor import BaseBlockLabelExtractor
+from img_doc.editors.binarizer import ValleyEmphasisBinarizer
 
 from img_doc.extractors.word_extractors.word_extractor_from_img import TesseractWordExtractor 
+from img_doc.extractors.word_extractors.word_bold_extractor import PsBoldExtractor
 from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
 from img_doc.extractors.block_extractors.block_label_extractor import MLPExtractor
 
@@ -14,12 +17,15 @@ from img_doc.extractors.block_extractors.block_label_extractor import MLPExtract
 class W2BExtractor(BasePageExtractor):
     def __init__(self, word_ext: BaseWordExtractor=TesseractWordExtractor(), 
                  block_ext: BaseBlockExtractorFromWord=KMeanBlockExtractor(),
-                 block_label_ext: BaseBlockLabelExtractor=MLPExtractor({"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5})) -> None:
+                 block_label_ext: BaseBlockLabelExtractor=MLPExtractor({"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5}),
+                 word_bold_ext: BaseBoldWordExtractor = PsBoldExtractor(boolean=False)) -> None:
         super().__init__()
         self.word_ext = word_ext
+        self.word_bold_ext = word_bold_ext
         self.block_ext = block_ext
         self.block_label_ext = block_label_ext
-        
+        self.binarize = ValleyEmphasisBinarizer()
+
         self.save_no_join_blocks = False
         self.save_neighbors = False
         self.save_distans = False
@@ -31,6 +37,8 @@ class W2BExtractor(BasePageExtractor):
     def extract_from_image(self, image: Image) -> Page:
         words = self.word_ext.extract_from_img(image.img)
         history = self.get_history()
+        gray_image = self.binarize.binarize(image.img)
+        self.word_bold_ext.extract(words, gray_image)
         blocks = self.block_ext.extract_from_word(words=words, history=history)
         self.block_label_ext.extract(blocks)
         page = Page(blocks=blocks, words=words, image=image, processing_info=history)
