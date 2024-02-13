@@ -5,7 +5,7 @@ from typing import Dict, List
 
 
 class ImageSegment(ABC):
-    def __init__(self, x_top_left, y_top_left, x_bottom_right, y_bottom_right):
+    def __init__(self, x_top_left=0, y_top_left=0, x_bottom_right=0, y_bottom_right=0):
         self.x_top_left = x_top_left
         self.y_top_left = y_top_left
         self.x_bottom_right = x_bottom_right

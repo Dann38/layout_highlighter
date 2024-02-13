@@ -1,8 +1,9 @@
 from .font import Font 
 from typing import List
+from img_doc.data_structures import SegmentInformation
 
 class Templayte:
     def __init__(self) -> None:
         self.fonts: List[Font] = None
-        # self.position: List[] # список нужных блоков на страницы
+        self.segments: List[SegmentInformation] = []
         
