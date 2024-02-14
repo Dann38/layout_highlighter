@@ -4,7 +4,7 @@ import numpy as np
 from typing import Dict
 
 class KMeanBlockExtractor(BaseBlockExtractorFromWord):
-    def extract_from_word(self, words: List[Word], history: Dict) -> List[Block]:
+    def extract_from_word(self, words: List[Word], history: Dict={}) -> List[Block]:
         """
         history:
         join_blocks,

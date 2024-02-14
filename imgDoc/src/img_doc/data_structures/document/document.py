@@ -19,7 +19,8 @@ class Document:
         if path_file.lower().endswith(IMAGE_END):
             image = Image()
             image.set_img_from_path(path_file)
-            self.pages.append(image)
+            page = Page(image=image)
+            self.pages.append(page)
         elif path_file.lower().endswith(PDF_END):
             images = convert_from_path(path_file)
         

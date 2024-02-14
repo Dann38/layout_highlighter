@@ -16,13 +16,12 @@ class BaseVecExtractor(BaseBlockLabelExtractor):
 
     def extract(self, blocks: List[Block]) -> None:
         for block in blocks:
-            words = block.words
-            vec = self.get_vec_from_words(words)
+            vec = self.get_vec_from_words(block)
             rez = self.load_model(np.array([vec], dtype="float32"))[0]
             class_model = [LABEL["text"], LABEL["header"], LABEL["list"], LABEL["table"], LABEL["no_struct"]]
             block.label = class_model[rez]
     
     @abstractmethod
-    def get_vec_from_words(self, words: List[Word]) -> np.ndarray:
+    def get_vec_from_block(self, block: Block) -> np.ndarray:
         pass
         

@@ -2,7 +2,8 @@ from ..base_vec_extractor import BaseVecExtractor
 import numpy as np
 
 class MDistMAng(BaseVecExtractor):
-    def get_vec_from_words(self, words):
+    def get_vec_from_block(self, block):
+        words = block.words
         rng = np.random.default_rng()
         count_node = self.param["count_node"]
         vec = np.zeros(count_node*8)
