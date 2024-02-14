@@ -1,5 +1,5 @@
 from .word import Word
-from ..image.image_segment import ImageSegment
+from ...document.data_structures.page.data_structures.image.image_segment import ImageSegment
 from typing import List
 
 
