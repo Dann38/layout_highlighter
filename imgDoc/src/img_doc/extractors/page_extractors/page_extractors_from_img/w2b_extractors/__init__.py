@@ -1,1 +1,0 @@
-from .base_w2b_extractor import W2BExtractor

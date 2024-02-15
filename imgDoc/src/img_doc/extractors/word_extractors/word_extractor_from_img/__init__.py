@@ -1,1 +1,0 @@
-from .tesseract_extractor import TesseractWordExtractor

@@ -65,12 +65,14 @@ class ImageSegment(ABC):
         points1 = [(seg.x_top_left, seg.y_top_left),
                    (seg.x_top_left, seg.y_bottom_right),
                    (seg.x_bottom_right, seg.y_top_left),
-                   (seg.x_bottom_right, seg.y_bottom_right)]
+                   (seg.x_bottom_right, seg.y_bottom_right),
+                   seg.get_center()]
 
         points2 = [(self.x_top_left, self.y_top_left),
                    (self.x_top_left, self.y_bottom_right),
                    (self.x_bottom_right, self.y_top_left),
-                   (self.x_bottom_right, self.y_bottom_right)]
+                   (self.x_bottom_right, self.y_bottom_right),
+                   self.get_center()]
 
         for p in points1:
             if (self.x_top_left < p[0]) and (self.x_bottom_right > p[0]) and \
@@ -80,6 +82,7 @@ class ImageSegment(ABC):
             if (seg.x_top_left < p[0]) and (seg.x_bottom_right > p[0]) and \
                     (seg.y_top_left < p[1]) and (seg.y_bottom_right > p[1]):
                 return True
+        
         return False
 
     def add_segment(self, seg):

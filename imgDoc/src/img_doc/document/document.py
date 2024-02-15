@@ -11,9 +11,11 @@ class Document:
         self.pages: List[Page] = []
         self.templates: List[Templayte] = []
         self.path: str
+        self.metadata: dict
 
 
     def set_from_path(self, path_file):
+        self.path = path_file
         if path_file.lower().endswith(IMAGE_END):
             page = Page()
             page.set_from_path(path_file)
@@ -24,3 +26,12 @@ class Document:
                 page = Page()
                 page.set_from_np(np.array(im))
                 self.pages.append(page)
+
+    def update_image_from_path(self, path_file): # need for dataset extractors
+        self.path = path_file
+        if path_file.lower().endswith(IMAGE_END):
+            self.pages[0].set_from_path(path_file)
+        elif path_file.lower().endswith(PDF_END):
+            images = convert_from_path(path_file)
+            for i, im in enumerate(images):
+                self.pages[i].set_from_np(np.array(im))

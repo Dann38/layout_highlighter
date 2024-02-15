@@ -1,6 +1,5 @@
 from typing import List, Dict, Any
-# from .data_structures.document import Block
-from .data_structures import Image, Word
+from .data_structures import Image, Word, Block
 from .extractors import Words2Paragraph, TesseractWordExtractor
 
 
@@ -15,8 +14,8 @@ WORD_EXTRACTORS = {
 class Page:
     def __init__(self) -> None:
         self.image: Image
-        # self.blocks = blocks
-        self.words: List[Word]
+        self.blocks: List[Block] = []
+        self.words: List[Word] = []
         # self.processing_info = processing_info
 
     def to_dict(self):

@@ -3,7 +3,7 @@ from img_doc.document.data_structures.page.data_structures.image import SetImage
 from img_doc.document.data_structures.page.data_structures.paragraph import Paragraph
 
 class Words2Paragraph(BaseParagraphExtractor):
-    def extract(self, page: "Page", conf={}):
+    def extract(self, page: "Page", conf):
         if "word_extractor" in conf.keys():
             conf_word_ext = conf["word_extractor"]
             page.extract_word(method=conf_word_ext["method"], conf=conf_word_ext["conf"])
@@ -11,7 +11,12 @@ class Words2Paragraph(BaseParagraphExtractor):
             page.extract_word()
 
         set_segment = SetImageSegment([word.segment for word in page.words])
-        set_segment.extract_parant_segment(method="kmean", conf={"dist_row": "auto", "dist_word": "auto"})
+
+        if "paragraph_extractor" in conf.keys():
+            conf_parag_ext = conf["paragraph_extractor" ]
+            set_segment.extract_parant_segment(method=conf_parag_ext["method"], conf=conf_parag_ext["conf"])
+        else:
+            set_segment.extract_parant_segment()
 
         page.paragraphs = []
         for pseg in set_segment.parent_segments:
