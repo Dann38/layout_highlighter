@@ -1,12 +1,24 @@
 from typing import Dict
-from ...document.data_structures.page.data_structures.image.image_segment import ImageSegment
+from ..image import ImageSegment
 
 
 class Word:
-    def __init__(self, x0: int = 0, y0: int = 0, x1: int = 0, y1: int = 0, text: str = "", bold: float = None):
-        self.segment = ImageSegment(x0, y0, x1, y1)
-        self.text = text
-        self.bold = bold
+    def __init__(self, dict_word):
+        self.segment = ImageSegment()
+        if "width" in dict_word.keys():
+            self.set_point_and_size(dict_word)
+        else:
+            self.set_two_points(dict_word)
+        
+        self.text = ""
+        if "text" in dict_word.keys():
+            self.text = dict_word["text"]
+        
+        self.bold = None
+        if "bold" in dict_word.keys():
+            self.bold = dict_word["bold"]
+        
+        
 
     def set_two_points(self, points: Dict):
         """

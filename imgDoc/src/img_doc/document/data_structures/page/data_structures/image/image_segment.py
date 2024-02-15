@@ -2,10 +2,10 @@ from abc import ABC
 import numpy as np
 
 from typing import Dict, List
-
+import matplotlib.pyplot as plt 
 
 class ImageSegment(ABC):
-    def __init__(self, x_top_left=0, y_top_left=0, x_bottom_right=0, y_bottom_right=0):
+    def __init__(self, x_top_left=None, y_top_left=None, x_bottom_right=None, y_bottom_right=None):
         self.x_top_left = x_top_left
         self.y_top_left = y_top_left
         self.x_bottom_right = x_bottom_right
@@ -58,3 +58,44 @@ class ImageSegment(ABC):
         self.y_top_left = min(list_y_top_left)
         self.x_bottom_right = max(list_x_bottom_right)
         self.y_bottom_right = max(list_y_bottom_right)
+
+
+
+    def is_intersection(self, seg):
+        points1 = [(seg.x_top_left, seg.y_top_left),
+                   (seg.x_top_left, seg.y_bottom_right),
+                   (seg.x_bottom_right, seg.y_top_left),
+                   (seg.x_bottom_right, seg.y_bottom_right)]
+
+        points2 = [(self.x_top_left, self.y_top_left),
+                   (self.x_top_left, self.y_bottom_right),
+                   (self.x_bottom_right, self.y_top_left),
+                   (self.x_bottom_right, self.y_bottom_right)]
+
+        for p in points1:
+            if (self.x_top_left < p[0]) and (self.x_bottom_right > p[0]) and \
+                    (self.y_top_left < p[1]) and (self.y_bottom_right > p[1]):
+                return True
+        for p in points2:
+            if (seg.x_top_left < p[0]) and (seg.x_bottom_right > p[0]) and \
+                    (seg.y_top_left < p[1]) and (seg.y_bottom_right > p[1]):
+                return True
+        return False
+
+    def add_segment(self, seg):
+        c2 = seg.get_segment_2p()
+        self.set_segment_2p({
+            "x_top_left": min(self.x_top_left, c2["x_top_left"]),
+            "x_bottom_right": max(self.x_bottom_right, c2["x_bottom_right"]),
+            "y_top_left": min(self.y_top_left, c2["y_top_left"]),
+            "y_bottom_right": max(self.y_bottom_right, c2["y_bottom_right"]),
+        })
+
+
+    def plot(self, color="b", text="", width=1):
+        x0 = self.x_top_left
+        y0 = self.y_top_left
+        x1 = self.x_bottom_right
+        y1 = self.y_bottom_right
+        plt.plot([x0, x0, x1, x1, x0], [y0, y1, y1, y0, y0], color=color, linewidth=width)
+        plt.text(x=x0, y=y0, s=text)

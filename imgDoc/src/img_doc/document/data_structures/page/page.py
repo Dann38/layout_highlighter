@@ -1,13 +1,22 @@
 from typing import List, Dict, Any
-# from .data_structures.document import Block, Word
-from .data_structures.image import Image
-from .extractors import Words2Paragraph
+# from .data_structures.document import Block
+from .data_structures import Image, Word
+from .extractors import Words2Paragraph, TesseractWordExtractor
+
+
+PARAGRAPH_EXTRACTORS = {
+    "words2paragraph": Words2Paragraph()
+}
+
+WORD_EXTRACTORS = {
+    "tesseract": TesseractWordExtractor()
+}
 
 class Page:
     def __init__(self) -> None:
         self.image: Image
         # self.blocks = blocks
-        # self.words = words
+        self.words: List[Word]
         # self.processing_info = processing_info
 
     def to_dict(self):
@@ -25,8 +34,15 @@ class Page:
     def set_from_np(self, np_array):
         self.image = Image(img=np_array)
 
-    # def 
+    def extract_paragraphs(self, method:str = "words2paragraph", conf={}):
+        PARAGRAPH_EXTRACTORS[method].extract(self, conf)
 
-    # def extract_paragraphs(self, paragraph_ext = Words2Paragraph()):
-    #     self.extract_words()
-    #     paragraph_ext(self.image)
+    def extract_word(self, method:str = "tesseract", conf={}):
+        WORD_EXTRACTORS[method].extract(self, conf)
+
+    def set_words_from_dict(self, list_words: List[dict]):
+        self.words = []
+        for dict_word in list_words:
+            word = Word(dict_word)
+            self.words.append(word)
+

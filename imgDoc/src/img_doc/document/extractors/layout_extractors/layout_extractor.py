@@ -1,4 +1,4 @@
-from img_doc import Document
+from img_doc import DocumentModel
 
 class LayoutExtractor:
     def extract(self, doc:Document) -> None:

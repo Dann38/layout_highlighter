@@ -4,7 +4,7 @@ from .image_segment import ImageSegment
 import os
 import cv2
 import base64
-
+import matplotlib.pyplot as plt 
 
 class Image(ABC):
     """
@@ -39,3 +39,6 @@ class Image(ABC):
         chunk_arr = np.frombuffer(chunk, dtype=np.uint8)
         return cv2.imdecode(chunk_arr, cv2.IMREAD_COLOR)
 
+
+    def plot(self):
+        plt.imshow(self.img)

@@ -1,2 +1,0 @@
-from .k_mean_block_extractor.k_mean_block_extractor import KMeanBlockExtractor
-from .base_block_extractor_from_word import BaseBlockExtractorFromWord

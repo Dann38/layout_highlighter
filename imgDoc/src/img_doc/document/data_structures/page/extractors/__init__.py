@@ -1,1 +1,2 @@
-from .paragraph_extractor import *
+from .paragraph_extractors import *
+from .word_extractors import *

@@ -1,2 +1,2 @@
-from .image import *
-from .document import *
+# from .image import *
+# from .document import *
