@@ -1,1 +1,0 @@
-from .word2block2blabel_extractor import Word2Block2BlockLabelExtractor
