@@ -19,29 +19,31 @@ class BaseRandomWalkClassificator(BaseWordBlockClassificator):
     def words_classification(self, words: List[Word]) -> List[float]:
         vec = self.get_words_vec(words)
 
-        return [float]
+        return vec 
     
     def get_words_vec(self, words):
-        
+        self.set_segments = SetImageSegment([word.segment for word in words])
+        self.set_segments.extract_neighbors()
 
-        set_segments = SetImageSegment([word.segment for word in words])
-        set_segments.extract_neighbors()
-
-        rnd_walk = set_segments.get_rnd_walk(c)
-        len_node_vec = len(self.get_node_vec(self.neighbors, 0, 0)) 
+        rnd_walk = self.set_segments.get_rnd_walk(self.count_step)
+        len_node_vec = len(self.get_node_vec(0, 0)) 
         len_vec = self.count_step*len_node_vec
         vec = np.zeros(len_vec)
+
         
-        self.words = words
+        for i, i_node in enumerate(rnd_walk[:-1]):
+            j_node = rnd_walk[i+1]
+            vec[len_node_vec*i:len_node_vec*(i+1)] = self.get_node_vec(i_node, j_node) 
+        
 
         return vec
     
 
-    def get_node_vec(self, i_node):
+    def get_node_vec(self, i_node, j_node):
         properties_list = {
-            "dist": self.get_dist,
-            "many_dist": self.get_many_dist,
-            "many_angle": self.get_many_angle,
+            "dist": lambda: self.set_segments.get_many_dist(i_node, j_node),
+            "many_dist": lambda: self.set_segments.get_many_dist(i_node),
+            "many_angle": lambda: self.set_segments.get_many_angle(i_node),
 
         }
         rez = np.array([])

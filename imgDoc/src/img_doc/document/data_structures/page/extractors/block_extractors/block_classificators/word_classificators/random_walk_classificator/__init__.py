@@ -1,0 +1,1 @@
+from .base_random_walk_classificator import BaseRandomWalkClassificator
