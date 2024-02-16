@@ -1,1 +1,1 @@
-from .block import Block
+from .block import Block, BLOCK_LABEL

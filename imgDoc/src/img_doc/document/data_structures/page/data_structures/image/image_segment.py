@@ -95,6 +95,41 @@ class ImageSegment(ABC):
         })
 
 
+    def get_min_dist(self, seg: "ImageSegment"):
+        x_right = seg.x_top_left-self.x_bottom_right
+        x_left = self.x_top_left-seg.x_bottom_right 
+        y_bottom = seg.y_top_left-self.y_bottom_right
+        y_top = self.y_top_left-seg.y_bottom_right
+
+        
+        dist = [
+            [x_right,y_bottom], 
+            [x_left,y_bottom], 
+            [x_right,y_top],
+            [x_left,y_top]
+        ]
+
+        array_d = [
+            x_right**2 + y_bottom**2,
+            x_left**2 + y_bottom**2,
+            x_right**2 + y_top**2,
+            x_left**2 + y_top**2
+        ]
+
+        i = np.argmin(array_d)
+        
+        return array_d[i]**0.5 if dist[i][0]*dist[i][1] > 0 else max(dist[i])
+
+
+    def get_angle_center(self, seg: "ImageSegment"):
+        # abs(cos x)
+        x1, y1 = self.get_center() 
+        x2, y2 = seg.get_center() 
+        den = ((y1-y2)**2 + (x1-x2)**2)**0.5
+        num = abs(x1-x2)
+        return num/den if den != 0 else 0.0
+        
+
     def plot(self, color="b", text="", width=1):
         x0 = self.x_top_left
         y0 = self.y_top_left
