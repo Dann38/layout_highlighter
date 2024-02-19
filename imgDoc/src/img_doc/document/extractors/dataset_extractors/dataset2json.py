@@ -16,16 +16,22 @@ def dataset2json(path_json:str, path_dataset:str, ds_ext: BaseDatasetDocExtracto
     if is_only_segment:
         for i, doc in enumerate(docs):
             print(f"{i*coef_proc:.2f}%"+" "*10, end="\r")
-            x, y = fun_doc2vecs(doc)
-            for xi, yi in zip(x, y):
-                x_array.append(xi)
-                y_array.append(yi)
+            try:
+                x, y = fun_doc2vecs(doc)
+                for xi, yi in zip(x, y):
+                    x_array.append(xi)
+                    y_array.append(yi)
+            except:
+                print("ERROR:", doc.path)
     else:
         for i, doc in enumerate(docs):
-            print(f"{i*coef_proc:.2f}%"+" "*10, end="\r")
-            x, y = fun_doc2vecs(doc)
-            x_array.append(x)
-            y_array.append(y)
+            try:
+                print(f"{i*coef_proc:.2f}%"+" "*10, end="\r")
+                x, y = fun_doc2vecs(doc)
+                x_array.append(x)
+                y_array.append(y)
+            except:
+                print("ERROR:", doc.path)
 
     finish_create_vec = time()
 
