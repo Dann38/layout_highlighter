@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 from ..image import ImageSegment
 
 
@@ -12,11 +12,11 @@ class Word:
         
         self.text = ""
         if "text" in dict_word.keys():
-            self.text = dict_word["text"]
+            self.set_text(dict_word["text"])
         
         self.bold = None
         if "bold" in dict_word.keys():
-            self.bold = dict_word["bold"]
+            self.set_bold(dict_word["bold"])
         
         
 
@@ -37,7 +37,7 @@ class Word:
 
     def set_bold(self, bold: float):
         self.bold = bold
-
+    
     def to_dict(self) -> Dict:
         any_date = {
             "text": self.text

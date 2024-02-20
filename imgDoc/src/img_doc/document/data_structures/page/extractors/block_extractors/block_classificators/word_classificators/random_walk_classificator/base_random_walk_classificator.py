@@ -3,6 +3,7 @@ from img_doc.document.data_structures.page.data_structures import Word
 from ..base_word_classificators import BaseWordBlockClassificator
 from img_doc.document.data_structures.page.data_structures import SetImageSegment
 import numpy as np
+import tensorflow as tf
 """
 По словам формируется граф и по нему осуществляются случайные блуждания.
 Из каждого узла извлекаются свойства из которых формируется вектор.
@@ -11,21 +12,18 @@ import numpy as np
 
 
 class BaseRandomWalkClassificator(BaseWordBlockClassificator):
-    def __init__(self, properties, count_step) -> None:
+    def __init__(self, properties, count_step, path_model=None) -> None:
         self.properties = properties
         self.count_step = count_step
-
-
-    def words_classification(self, words: List[Word]) -> List[float]:
-        vec = self.get_words_vec(words)
-
-        return vec 
+        self.model = None
+        if path_model is not None:
+            self.model = tf.saved_model.load(path_model)
     
     def get_words_vec(self, words):
         self.set_segments = SetImageSegment([word.segment for word in words])
         self.set_segments.extract_neighbors()
 
-        rnd_walk = self.set_segments.get_rnd_walk(self.count_step)
+        rnd_walk = self.set_segments.get_rnd_walk(self.count_step+1)
         len_node_vec = len(self.get_node_vec(0, 0)) 
         len_vec = self.count_step*len_node_vec
         vec = np.zeros(len_vec)
@@ -35,7 +33,11 @@ class BaseRandomWalkClassificator(BaseWordBlockClassificator):
             j_node = rnd_walk[i+1]
             vec[len_node_vec*i:len_node_vec*(i+1)] = self.get_node_vec(i_node, j_node) 
         
-
+        for i in range(len_node_vec):
+            max_ = np.max(np.abs(vec[i::len_node_vec]))
+            vec[i::len_node_vec] = vec[i::len_node_vec]/max_ if max_ != 0 else vec[i::len_node_vec]
+        # vec[vec == np.inf] = 1.0
+        # vec[vec == -np.inf] = -1.0
         return vec
     
 
@@ -44,7 +46,7 @@ class BaseRandomWalkClassificator(BaseWordBlockClassificator):
             "dist": lambda: self.set_segments.get_many_dist(i_node, j_node),
             "many_dist": lambda: self.set_segments.get_many_dist(i_node),
             "many_angle": lambda: self.set_segments.get_many_angle(i_node),
-
+            "place_in_block": lambda: self.set_segments.get_place_in_block(i_node),
         }
         rez = np.array([])
         for p in self.properties:

@@ -10,6 +10,7 @@ class ImageSegment(ABC):
         self.y_top_left = y_top_left
         self.x_bottom_right = x_bottom_right
         self.y_bottom_right = y_bottom_right
+        self.info = dict()
 
     def get_segment_from_img(self, img: np.ndarray):
         h0 = self.y_top_left
@@ -60,7 +61,12 @@ class ImageSegment(ABC):
         self.y_bottom_right = max(list_y_bottom_right)
 
 
+    def add_info(self, key:str, val):
+        self.info[key] = val
 
+    def get_info(self, key):
+        return self.info[key]
+    
     def is_intersection(self, seg):
         points1 = [(seg.x_top_left, seg.y_top_left),
                    (seg.x_top_left, seg.y_bottom_right),

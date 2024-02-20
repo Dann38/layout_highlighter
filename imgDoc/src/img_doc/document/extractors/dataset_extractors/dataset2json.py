@@ -1,9 +1,8 @@
 from .base_dataset_extractor import BaseDatasetDocExtractor
-import json
 from time import time
 
 
-def dataset2json(path_json:str, path_dataset:str, ds_ext: BaseDatasetDocExtractor, fun_doc2vecs,  is_only_segment:bool = True):
+def dataset2json(path_dataset:str, ds_ext: BaseDatasetDocExtractor, fun_doc2vecs,  is_only_segment:bool = True):
     start = time()
     
     docs = ds_ext.dataset_extractor(path_dataset)
@@ -35,11 +34,8 @@ def dataset2json(path_json:str, path_dataset:str, ds_ext: BaseDatasetDocExtracto
 
     finish_create_vec = time()
 
-    with open(path_json, "w") as f:
-        json.dump({"x": x_array, "y": y_array}, f)
-    
-    finish_save_file = time()
     print(f"open dataset: {finish_read_dataset_time-start:.0f} sec.")
     print(f"create dataset: {finish_create_vec-finish_read_dataset_time:.0f} sec.")
-    print(f"save json: {finish_save_file-finish_create_vec:.0f} sec.")
+
+    return {"x": x_array, "y": y_array}
 

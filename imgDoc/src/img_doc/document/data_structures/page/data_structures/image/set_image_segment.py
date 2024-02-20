@@ -26,12 +26,12 @@ class SetImageSegment:
     
     def get_rnd_walk(self, count_step: int, start_node: int = None) -> List[int]:
         rng = np.random.default_rng()
-        old_node = rng.integers(len(self.neighbors)) if start_node is None else start_node
+        self.old_node = rng.integers(len(self.neighbors)) if start_node is None else start_node
         list_walk = []
         for i in range(count_step):
             r = rng.integers(4)
-            self.new_node = self.neighbors[old_node][r]
-            list_walk.append(old_node)
+            self.new_node = self.neighbors[self.old_node][r]
+            list_walk.append(self.old_node)
             self.old_node = self.new_node
         return list_walk
     
@@ -47,5 +47,5 @@ class SetImageSegment:
     def get_many_angle(self, index1) -> List[float]:
         return [self.get_angle(index1, n) for n in self.neighbors[index1]]
 
-    def get_bold(self) -> np.ndarray:
-        pass
+    def get_place_in_block(self, index1) -> List[float]:
+        return list(self.segments[index1].get_info("place_in_block"))
