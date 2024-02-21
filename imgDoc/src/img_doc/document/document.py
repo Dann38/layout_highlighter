@@ -1,5 +1,6 @@
 from pdf2image import convert_from_path, convert_from_bytes
-from .data_structures import Page, Templayte
+from .page import Page
+from .templayte import Templayte
 from typing import List
 import numpy as np
 

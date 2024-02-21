@@ -1,2 +1,3 @@
 from .document import Document
-from .data_structures import *
+from .page import *
+from .templayte import Templayte
