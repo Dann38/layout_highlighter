@@ -42,3 +42,8 @@ class Image(ABC):
 
     def plot(self):
         plt.imshow(self.img)
+
+    def resize(self, k):
+        dim = (round(k*self.img.shape[1]), round(k*self.img.shape[0]))
+        self.img = cv2.resize(self.img, dim, interpolation = cv2.INTER_AREA)
+        self.segment.resize(k)

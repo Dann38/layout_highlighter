@@ -1,5 +1,6 @@
 from abc import ABC, abstractclassmethod
-from img_doc.data_structures import ImageSegment, Word
+from img_doc.document.page import Word
+from img_doc.image import ImageSegment
 from typing import List
 
 class BaseBoldWordExtractor(ABC):

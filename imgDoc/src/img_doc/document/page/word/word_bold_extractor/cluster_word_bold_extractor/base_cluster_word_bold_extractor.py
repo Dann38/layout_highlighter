@@ -1,5 +1,5 @@
 from typing import List
-from img_doc.data_structures import Word
+from img_doc.document.page import Word
 from ..base_bold_extractor import BaseBoldWordExtractor
 from abc import ABC, abstractclassmethod
 import numpy as np

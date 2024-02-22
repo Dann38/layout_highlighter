@@ -143,3 +143,9 @@ class ImageSegment(ABC):
         y1 = self.y_bottom_right
         plt.plot([x0, x0, x1, x1, x0], [y0, y1, y1, y0, y0], color=color, linewidth=width)
         plt.text(x=x0, y=y0, s=text)
+
+    def resize(self, k):
+        self.x_top_left = round(k*self.x_top_left)
+        self.y_top_left = round(k*self.y_top_left)
+        self.x_bottom_right = round(k*self.x_bottom_right)
+        self.y_bottom_right = round(k*self.y_bottom_right)

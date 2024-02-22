@@ -1,5 +1,5 @@
 from ..base_cluster_word_bold_extractor import BaseClusterWordBoldExtractor
-from  img_doc.data_structures import Word
+from  img_doc.document.page import Word
 from typing import List
 
 import numpy as np

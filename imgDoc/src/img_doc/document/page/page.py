@@ -55,4 +55,10 @@ class Page:
         block.set_words_from_dict(list_words)
         block.classification(conf["classification"])
         return block
-        
+    
+    def resize(self, k):
+        self.image.resize(k)
+        for block in self.blocks:
+            block.segment.resize(k, resize_word=False)
+        for word in self.words:
+            word.segment.resize(k)
