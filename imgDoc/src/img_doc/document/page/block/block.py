@@ -3,8 +3,11 @@ from typing import List
 from ..paragraph import Paragraph
 from img_doc.image import ImageSegment
 from ..word import Word
+from ..extractors.block_extractors import BaseRandomWalkClassificator
 
-BLOCK_LABEL = ["no_struct", "text", "header",  "list", "table"]
+CLASSIFICATOR = {
+    "walk_rnd": BaseRandomWalkClassificator
+}
 
 class Block(ABC):
     def __init__(self):
@@ -23,3 +26,20 @@ class Block(ABC):
             word_dict = word.segment.get_segment_2p()
             x1, y1 = word_dict["x_top_left"],word_dict["y_top_left"]
             word.segment.add_info("place_in_block",((x1-x0)/block_w, (y1-y0)/block_h))
+
+    def classification(self, conf):
+        classificator = CLASSIFICATOR[conf["type"]](conf["conf"])
+        classificator.classification(self)
+
+
+    def set_words_from_dict(self, list_words: List[dict]):
+        self.words = []
+        for dict_word in list_words:
+            word = Word(dict_word)
+            self.words.append(word)
+
+    def get_text(self):
+        str_ = ""
+        for word in self.words:
+            str_ += word.text + ' '
+        return str_

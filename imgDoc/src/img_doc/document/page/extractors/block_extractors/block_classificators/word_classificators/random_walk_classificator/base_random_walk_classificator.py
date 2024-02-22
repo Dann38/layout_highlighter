@@ -1,7 +1,6 @@
 from typing import List
-from img_doc.document.data_structures.page.data_structures import Word
 from ..base_word_classificators import BaseWordBlockClassificator
-from img_doc.document.data_structures.page.data_structures import SetImageSegment
+from img_doc.image import SetImageSegment
 import numpy as np
 import tensorflow as tf
 """
@@ -12,12 +11,12 @@ import tensorflow as tf
 
 
 class BaseRandomWalkClassificator(BaseWordBlockClassificator):
-    def __init__(self, properties, count_step, path_model=None) -> None:
-        self.properties = properties
-        self.count_step = count_step
+    def __init__(self, conf) -> None:
+        self.properties = conf["properties"]
+        self.count_step = conf["count_step"]
         self.model = None
-        if path_model is not None:
-            self.model = tf.saved_model.load(path_model)
+        if "path_model" in conf:
+            self.model = tf.saved_model.load(conf["path_model"])
     
     def get_words_vec(self, words):
         self.set_segments = SetImageSegment([word.segment for word in words])

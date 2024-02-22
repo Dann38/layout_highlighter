@@ -47,3 +47,12 @@ class Page:
             word = Word(dict_word)
             self.words.append(word)
 
+    def get_block_from_segment(self, segment, conf) -> Block:
+        block = Block()
+        block.segment = segment
+        img = block.segment.get_segment_from_img(self.image.img)
+        list_words = WORD_EXTRACTORS[conf["extractor_word"]["method"]].extract_from_img(img, conf["extractor_word"]["conf"])
+        block.set_words_from_dict(list_words)
+        block.classification(conf["classification"])
+        return block
+        
