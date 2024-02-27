@@ -12,11 +12,11 @@ class ImageSegment(ABC):
         self.y_bottom_right = y_bottom_right
         self.info = dict()
 
-    def get_segment_from_img(self, img: np.ndarray):
-        h0 = self.y_top_left
-        h1 = self.y_bottom_right
-        w0 = self.x_top_left
-        w1 = self.x_bottom_right
+    def get_segment_from_img(self, img: np.ndarray, delta=0):
+        h0 = self.y_top_left - delta
+        h1 = self.y_bottom_right +  delta
+        w0 = self.x_top_left - delta
+        w1 = self.x_bottom_right + delta
         return img[h0:h1, w0:w1, :] if len(img.shape) == 3 else img[h0:h1, w0:w1]
 
     def get_segment_2p(self):

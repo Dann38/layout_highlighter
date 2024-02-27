@@ -17,20 +17,12 @@ class BaseClusterWordBoldExtractor(BaseBoldWordExtractor):
     def extract(words: List[Word]) -> None:
         pass
 
-    def clusterize(self, x: np.ndarray) -> np.ndarray:
-        x_vectors = self.__get_prop_vectors(x)
+    def clusterize(self, x_vectors: np.ndarray) -> np.ndarray:
+        # x_vectors = self.__get_prop_vectors(x)
         x_clusters = self.__get_clusters(x_vectors)
-        x_indicator = self.__get_indicator(x, x_clusters)
+        x_indicator = self.__get_indicator(x_vectors[:, 0], x_clusters)
         return x_indicator
 
-    def __get_prop_vectors(self, x: np.ndarray) -> np.ndarray:
-        nearby_x = x.copy()
-        nearby_x[:-1] += x[1:]
-        nearby_x[1:] += x[:-1]
-        nearby_x[0] += x[0]
-        nearby_x[-1] += x[-1]
-        nearby_x = nearby_x / 3.
-        return np.stack((x, nearby_x), 1)
 
     def __get_clusters(self, x_vectors: np.ndarray) -> np.ndarray:
         agg = AgglomerativeClustering()
