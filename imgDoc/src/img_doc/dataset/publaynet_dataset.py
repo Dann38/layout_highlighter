@@ -1,7 +1,7 @@
 import os
 import json
 from typing import List
-
+from img_doc.document import Document
 
 # Номер символа, с которого начинается информация о картинках, аннотации, категориях
 IMAGE_START = 1 
@@ -151,3 +151,30 @@ class PubLayNetDataset:
             rez.append(fun_from_tmp_and_path_image(tmp_json, path_image))
         return rez
 
+    def read_file(self, path, fun_read = None):
+        fun_read = self.base_read if fun_read is None else fun_read
+        return self.fun_from_file_with_tmp(path, fun_read)
+    
+       
+    def fun_from_file_with_tmp(self, path, fun_from_tmp_and_path_image):
+        path_tmp_json =os.path.join(self.tmp_path_train_jsons, path+".json")
+        with open(path_tmp_json, "r") as f:
+            tmp_json = json.load(f)
+        path_image = os.path.join(self.path_dir_train_image, path)
+        return fun_from_tmp_and_path_image(tmp_json, path_image)
+
+
+    def base_read(self, tmp_json, img_path) -> Document:
+        doc = Document()
+        doc.set_from_path(img_path)
+        doc.pages[0].set_blocks_from_dict(tmp_json["blocks"])
+        doc.pages[0].set_words_from_dict(tmp_json["additional_info"]["words"])
+        for word in doc.pages[0].words:
+            for block in doc.pages[0].blocks:
+                if block.segment.is_intersection(word.segment):
+                    block.words.append(word)
+        return doc
+    
+    def get_list_file_name(self) -> List[str]:
+        list_tmp_jsons = os.listdir(self.tmp_path_train_jsons)
+        return [name[:-5] for name in list_tmp_jsons]
