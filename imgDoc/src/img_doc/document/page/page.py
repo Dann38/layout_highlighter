@@ -47,6 +47,12 @@ class Page:
             word = Word(dict_word)
             self.words.append(word)
 
+    def set_blocks_from_dict(self, list_blocks: List[dict]):
+        self.blocks = []
+        for dict_block in list_blocks:
+            block = Block(dict_block)
+            self.blocks.append(block)
+
     def get_block_from_segment(self, segment, conf) -> Block:
         block = Block()
         block.segment = segment

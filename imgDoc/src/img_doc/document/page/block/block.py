@@ -10,11 +10,18 @@ CLASSIFICATOR = {
 }
 
 class Block(ABC):
-    def __init__(self):
+    def __init__(self, dict_block):
+        self.segment = ImageSegment()
+        if "width" in dict_block.keys():
+            self.segment.set_segment_p_size(dict_block)
+        else:
+            self.segment.set_segment_2p(dict_block)
+        
         self.paragraphs: List[Paragraph] = []
-        self.segment: ImageSegment
         self.words: List[Word] = []
-        self.label: int
+        self.label = None
+        if "label" in dict_block.keys():
+            self.label = dict_block["label"]
     
 
     def extract_place_in_block_word_segments(self):
