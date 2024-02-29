@@ -36,7 +36,7 @@ class Block(ABC):
 
     def extract_bold_for_word_segments(self):
         for word in self.words:
-            word.segment.add_info("bold", word.bold)
+            word.segment.add_info("bold", [word.bold])
 
     def classification(self, conf):
         classificator = CLASSIFICATOR[conf["type"]](conf["conf"])

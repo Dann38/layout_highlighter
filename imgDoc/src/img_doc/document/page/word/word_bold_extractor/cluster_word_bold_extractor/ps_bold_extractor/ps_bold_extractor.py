@@ -92,7 +92,7 @@ class PsBoldExtractor(BaseClusterWordBoldExtractor):
         a1 = mean_.min()
         a2 = mean_.max()
         mean_len = len(mean_)
-        c_min = mean_len
+        c_min = np.inf
         h_min = 0
         h_max = len(mean_)-1
         for b1 in range(mean_len//2):
