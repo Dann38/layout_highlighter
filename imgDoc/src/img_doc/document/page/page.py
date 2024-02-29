@@ -2,7 +2,7 @@ from typing import List
 from img_doc.image import Image, ImageSegment
 from .word import Word
 from .block import Block
-from .extractors import Words2Paragraph, TesseractWordExtractor
+from .extractors import Words2Paragraph, TesseractWordExtractor, SPHBoldExtractor
 
 
 PARAGRAPH_EXTRACTORS = {
@@ -11,6 +11,10 @@ PARAGRAPH_EXTRACTORS = {
 
 WORD_EXTRACTORS = {
     "tesseract": TesseractWordExtractor()
+}
+
+BOLD_EXTRACTORS = {
+    "sph": SPHBoldExtractor()
 }
 
 class Page:
@@ -40,6 +44,9 @@ class Page:
 
     def extract_word(self, method:str = "tesseract", conf={}):
         WORD_EXTRACTORS[method].extract(self, conf)
+
+    def extract_word_bold(self, method:str = "sph", conf={}):
+        BOLD_EXTRACTORS[method].extract(self, conf)
 
     def set_words_from_dict(self, list_words: List[dict]):
         self.words = []

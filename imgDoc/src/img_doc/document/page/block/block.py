@@ -24,7 +24,7 @@ class Block(ABC):
             self.label = dict_block["label"]
     
 
-    def extract_place_in_block_word_segments(self):
+    def extract_place_in_block_for_word_segments(self):
         block_h = self.segment.get_height()
         block_w = self.segment.get_width()
         block_dict = self.segment.get_segment_2p()
@@ -33,6 +33,10 @@ class Block(ABC):
             word_dict = word.segment.get_segment_2p()
             x1, y1 = word_dict["x_top_left"],word_dict["y_top_left"]
             word.segment.add_info("place_in_block",((x1-x0)/block_w, (y1-y0)/block_h))
+
+    def extract_bold_for_word_segments(self):
+        for word in self.words:
+            word.segment.add_info("bold", word.bold)
 
     def classification(self, conf):
         classificator = CLASSIFICATOR[conf["type"]](conf["conf"])

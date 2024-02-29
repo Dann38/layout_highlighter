@@ -45,7 +45,8 @@ class BaseRandomWalkClassificator(BaseWordBlockClassificator):
             "dist": lambda: self.set_segments.get_many_dist(i_node, j_node),
             "many_dist": lambda: self.set_segments.get_many_dist(i_node),
             "many_angle": lambda: self.set_segments.get_many_angle(i_node),
-            "place_in_block": lambda: self.set_segments.get_place_in_block(i_node),
+            "place_in_block": lambda: self.set_segments.get_info_segment(i_node, "place_in_block"),
+            "bold": lambda: self.set_segments.get_info_segment(i_node, "bold"),
         }
         rez = np.array([])
         for p in self.properties:

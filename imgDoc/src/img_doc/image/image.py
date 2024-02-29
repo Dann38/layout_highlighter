@@ -6,6 +6,12 @@ import cv2
 import base64
 import matplotlib.pyplot as plt 
 
+from .editors.binarizer import ValleyEmphasisBinarizer
+
+BINARIZER = {
+    "valley_emphasis": ValleyEmphasisBinarizer()
+}
+
 class Image(ABC):
     """
     img : RGB !!!
@@ -47,3 +53,6 @@ class Image(ABC):
         dim = (round(k*self.img.shape[1]), round(k*self.img.shape[0]))
         self.img = cv2.resize(self.img, dim, interpolation = cv2.INTER_AREA)
         self.segment.resize(k)
+
+    def get_binary_image(self, method:str = "valley_emphasis", conf={}):
+        return BINARIZER[method].binarize(self.img)

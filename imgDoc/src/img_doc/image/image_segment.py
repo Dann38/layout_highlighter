@@ -61,7 +61,7 @@ class ImageSegment(ABC):
         self.y_bottom_right = max(list_y_bottom_right)
 
 
-    def add_info(self, key:str, val):
+    def add_info(self, key:str, val:np.ndarray):
         self.info[key] = val
 
     def get_info(self, key):

@@ -20,7 +20,9 @@ class BaseWordBlockClassificator(BaseBlockClassificator):
         
     
     def get_block_vec(self, block: "Block"):
-        block.extract_place_in_block_word_segments()
+        block.extract_place_in_block_for_word_segments()
+        block.extract_bold_for_word_segments() # перенос свойства bold из слова в информацию о сегменте.
+
         return self.get_words_vec(block.words)
 
     @abstractmethod
