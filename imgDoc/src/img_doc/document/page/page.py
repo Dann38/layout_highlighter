@@ -54,6 +54,16 @@ class Page:
             word = Word(dict_word)
             self.words.append(word)
 
+    def extract_place_in_page_for_block_segments(self):
+        page_h = self.image.segment.get_height()
+        page_w = self.image.segment.get_width()
+        page_dict = self.image.segment.get_segment_2p()
+        x0, y0 = page_dict["x_top_left"],page_dict["y_top_left"] 
+        for block in self.blocks:
+            block_dict = block.segment.get_segment_2p()
+            x1, y1 = block_dict["x_top_left"], block_dict["y_top_left"]
+            block.segment.add_info("place_in_page",((x1-x0)/page_w, (y1-y0)/page_h))
+
     def set_blocks_from_dict(self, list_blocks: List[dict]):
         self.blocks = []
         for dict_block in list_blocks:
@@ -68,6 +78,8 @@ class Page:
         block.classification(conf["classification"])
         return block
     
+    
+
     def resize(self, k):
         self.image.resize(k)
         for block in self.blocks:

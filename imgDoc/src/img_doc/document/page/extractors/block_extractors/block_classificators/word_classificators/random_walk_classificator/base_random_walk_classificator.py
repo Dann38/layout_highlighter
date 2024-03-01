@@ -2,7 +2,6 @@ from typing import List
 from ..base_word_classificators import BaseWordBlockClassificator
 from img_doc.image import SetImageSegment
 import numpy as np
-import tensorflow as tf
 """
 По словам формируется граф и по нему осуществляются случайные блуждания.
 Из каждого узла извлекаются свойства из которых формируется вектор.
@@ -11,13 +10,6 @@ import tensorflow as tf
 
 
 class BaseRandomWalkClassificator(BaseWordBlockClassificator):
-    def __init__(self, conf) -> None:
-        self.properties = conf["properties"]
-        self.count_step = conf["count_step"]
-        self.model = None
-        if "path_model" in conf:
-            self.model = tf.saved_model.load(conf["path_model"])
-    
     def get_words_vec(self, words):
         self.set_segments = SetImageSegment([word.segment for word in words])
         self.set_segments.extract_neighbors()
@@ -47,6 +39,7 @@ class BaseRandomWalkClassificator(BaseWordBlockClassificator):
             "many_angle": lambda: self.set_segments.get_many_angle(i_node),
             "place_in_block": lambda: self.set_segments.get_info_segment(i_node, "place_in_block"),
             "bold": lambda: self.set_segments.get_info_segment(i_node, "bold"),
+            "height": lambda: self.set_segments.get_height(i_node),
         }
         rez = np.array([])
         for p in self.properties:

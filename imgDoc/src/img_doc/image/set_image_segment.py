@@ -46,6 +46,10 @@ class SetImageSegment:
 
     def get_many_angle(self, index1) -> List[float]:
         return [self.get_angle(index1, n) for n in self.neighbors[index1]]
+    
+    def get_height(self, index1) -> List[float]:
+        mean_ = self.get_mean_height()
+        return [self.segments[index1].get_height()/mean_]
 
     def get_info_segment(self, index1, key_info) -> List[float]:
         rez = self.segments[index1].get_info(key_info)

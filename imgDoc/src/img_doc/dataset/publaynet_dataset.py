@@ -131,13 +131,18 @@ class PubLayNetDataset:
 
         return images
     
-    def get_json_from_tmps_and_images(self, fun_from_tmp_and_path_image):
-        train = self.__get_json_from_train_tmps_and_images(fun_from_tmp_and_path_image)
+    def get_json_from_tmps_and_images(self, fun_from_tmp_and_path_image, balans = False):
+        train = self.__get_json_from_train_tmps_and_images(fun_from_tmp_and_path_image, balans)
 
         return {"train": train}
     
-    def __get_json_from_train_tmps_and_images(self, fun_from_tmp_and_path_image):
-        list_tmp_jsons = os.listdir(self.tmp_path_train_jsons)
+    def __get_json_from_train_tmps_and_images(self, fun_from_tmp_and_path_image, balans):
+
+        if balans:
+            balans_dict = self.__get_balans_dict_train_image_with_index_label_block()
+            list_tmp_jsons = [doc + ".json" for doc in balans_dict.keys()]
+        else:
+            list_tmp_jsons = os.listdir(self.tmp_path_train_jsons)
         rez = []
         a = 1/len(list_tmp_jsons)
         print("train:")
@@ -147,6 +152,8 @@ class PubLayNetDataset:
             path_tmp_json =os.path.join(self.tmp_path_train_jsons, name_tmp_json)
             with open(path_tmp_json, "r") as f:
                 tmp_json = json.load(f)
+                if balans:
+                    tmp_json["blocks"] = [tmp_json["blocks"][i] for i in balans_dict[os.path.basename(path_tmp_json[:-5])]]
             path_image = os.path.join(self.path_dir_train_image, name_tmp_json[:-5])
             rez.append(fun_from_tmp_and_path_image(tmp_json, path_image))
         return rez
@@ -163,6 +170,41 @@ class PubLayNetDataset:
         path_image = os.path.join(self.path_dir_train_image, path)
         return fun_from_tmp_and_path_image(tmp_json, path_image)
 
+
+    def get_dict_image_with_label_block(self):
+        dict_image_with_label_block = self.__get_dict_train_image_with_label_block()
+        return {"train": dict_image_with_label_block}
+    
+    def __get_dict_train_image_with_label_block(self):
+        dict_image_with_label_block = dict()
+        paths = self.get_list_file_name()
+        for path in paths:
+            path_tmp_json =os.path.join(self.tmp_path_train_jsons, path+".json")
+            with open(path_tmp_json, "r") as f:
+                tmp_json = json.load(f)
+                dict_image_with_label_block[path] = [b["label"] for b in tmp_json["blocks"]]
+        return dict_image_with_label_block
+
+    def __get_balans_dict_train_image_with_index_label_block(self):
+        no_balans = self.__get_dict_train_image_with_label_block()
+        ls = {0: 0, 1: 0, 2:0, 3: 0, 4:0}
+        for doc, segs in no_balans.items():
+            for seg in segs:
+                ls[seg] += 1
+        min_seg = min([ el for _, el in ls.items()])
+
+        balans = dict()
+
+        ls = {0: 0, 1: 0, 2:0, 3: 0, 4:0}
+        for doc, segs in no_balans.items():
+            for i, seg in enumerate(segs):
+                if ls[seg] < min_seg:
+                    ls[seg] += 1
+                    if doc in balans:
+                        balans[doc].append(i)    
+                    else:
+                        balans[doc] = [i]
+        return balans
 
     def base_read(self, tmp_json, img_path) -> Document:
         doc = Document()
