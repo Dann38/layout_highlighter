@@ -35,6 +35,11 @@ class SetImageSegment:
             self.old_node = self.new_node
         return list_walk
     
+    def get_list_random_node(self, count_node: int) -> List[int]:
+        rng = np.random.default_rng()
+        list_rnd = [rng.integers(len(self.neighbors)) for i in range(count_node)]
+        return list_rnd
+    
     def get_dist(self, index1, index2) -> float:
         return self.segments[index1].get_min_dist(self.segments[index2])
 

@@ -10,8 +10,6 @@ from abc import abstractmethod
 """
 class BaseWordBlockClassificator(BaseBlockClassificator):
     def __init__(self, conf) -> None:
-        self.properties = conf["properties"]
-        self.count_step = conf["count_step"]
         self.model = None
         if "path_model" in conf:
             self.model = tf.saved_model.load(conf["path_model"])

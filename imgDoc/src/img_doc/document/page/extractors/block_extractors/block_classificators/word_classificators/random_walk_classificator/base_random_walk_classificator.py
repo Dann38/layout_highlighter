@@ -10,6 +10,11 @@ import numpy as np
 
 
 class BaseRandomWalkClassificator(BaseWordBlockClassificator):
+    def __init__(self, conf) -> None:
+        super().__init__(conf)
+        self.properties = conf["properties"]
+        self.count_step = conf["count_step"]
+        
     def get_words_vec(self, words):
         self.set_segments = SetImageSegment([word.segment for word in words])
         self.set_segments.extract_neighbors()
