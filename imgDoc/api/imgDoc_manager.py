@@ -62,8 +62,7 @@ class ImgDocManager:
                     doc.pages[0].extract_word_bold()
                 doc.pages[0].classification_block(proc["research_block"])
                 page = self.page_ext.extract_from_image(image)
-                
-                history[key] = item       
+                      
         return history
     
     def get_segment_img_word_from_image64(self, image64, proc):
