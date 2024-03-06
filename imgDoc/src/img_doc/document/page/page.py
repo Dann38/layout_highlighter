@@ -3,7 +3,7 @@ from img_doc.image import Image, ImageSegment
 from .word import Word
 from .block import Block
 from .extractors import Words2Paragraph, TesseractWordExtractor, SPHBoldExtractor
-
+from .extractors.block_extractors import BaseRandomWalkClassificator, BaseRandomDeepNodeClassificator, PageAndWordClassificator
 
 PARAGRAPH_EXTRACTORS = {
     "words2paragraph": Words2Paragraph()
@@ -15,6 +15,11 @@ WORD_EXTRACTORS = {
 
 BOLD_EXTRACTORS = {
     "sph": SPHBoldExtractor()
+}
+
+BLOCK_CLASSIFICATOR = {
+    "page_and_deep": BaseRandomDeepNodeClassificator,
+    "page_and_walk": BaseRandomWalkClassificator
 }
 
 class Page:
@@ -72,13 +77,23 @@ class Page:
 
     def get_block_from_segment(self, segment: ImageSegment, conf) -> Block:
         block = Block(segment.get_segment_2p())
-        img = block.segment.get_segment_from_img(self.image.img)
-        list_words = WORD_EXTRACTORS[conf["extractor_word"]["method"]].extract_from_img(img, conf["extractor_word"]["conf"])
-        block.set_words_from_dict(list_words)
-        block.classification(conf["classification"])
-        return block
+        self.extract_word(conf["extractor_word"]["method"],conf["extractor_word"]["conf"])
+        for word in self.words:
+            if block.segment.is_intersection(word.segment):
+                block.words.append(word)
+        if "page_classification" in conf:
+            self.extract_word_bold()
+            self.blocks = [block] #TODO Придумать как сделать без затирания блоков
+            self.classification_block(conf["page_classification"])
+            return self.blocks[0]
+        else:
+            block.classification(conf["classification"])
+            return block
     
-    
+    def classification_block(self, conf):
+        rnd_classifier = BLOCK_CLASSIFICATOR[conf["type"]](conf["rnd_conf"])
+        classifier = PageAndWordClassificator(rnd_classifier, conf["conf"])
+        classifier.classification(self)
 
     def resize(self, k):
         self.image.resize(k)

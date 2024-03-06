@@ -1,14 +1,8 @@
 import cv2
 import base64
-from img_doc.editors.binarizer import ValleyEmphasisBinarizer
-from img_doc.extractors.word_extractors.word_extractor_from_img import TesseractWordExtractor
-
-from img_doc.extractors.word_extractors.word_bold_extractor import *
-from img_doc.extractors.block_extractors.block_extractor_from_word import KMeanBlockExtractor
-from img_doc.extractors.block_extractors.block_label_extractor import *
-from img_doc.data_structures import Word, Block
-from img_doc.data_structures import Image, ImageSegment
-from img_doc.extractors.page_extractors.page_extractors_from_img import W2BExtractor
+from img_doc.document import Document, Page, Block
+from img_doc.image import Image, ImageSegment
+from img_doc.extractors import LayoutExtractor
 from typing import List
 from io import StringIO
 import json
@@ -16,54 +10,8 @@ import os
 
 
 class ImgDocManager:
-    def __init__(self):
-        self.word_ext = TesseractWordExtractor()
-        self.kmeanext = KMeanBlockExtractor()
-        self.page_ext = W2BExtractor()
-        self.BOLD_EXTRACTORS = {
-            "ps":PsBoldExtractor(),
-            "textps": TextPsBoldExtractor(),
-        }
-
-        self.LABEL_BLOCK_EXTRACTOR_CLASS = {
-            "mlp_len": MLPExtractor,
-            "mlp_len_ang": MLPAngLenExtractor,
-            "rnd_walk_dist": MLPRandomWalkExtractor,
-            "rnd_walk_many_dist": MLPRandomWalkManyDistExtractor,
-            "RWMDMA": MDistMAng,
-            "RWMDMAB": MDistMAngBold,
-        }
-        self.pass_config_model =  {"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5}
-        self.LABEL_BLOCK_EXTRACTOR_CONFIG= {
-            "mlp_len": {
-                "micro_5": {"model_file": "/build/models/mlp_len-micro_5.sav", "len_vec": 5},
-                "mini_publaynet_5": {"model_file": "/build/models/mlp_len-mini_publaynet_5.sav", "len_vec": 5},
-                "mini_publaynet_50": {"model_file": "/build/models/mlp_len-mini_publaynet_50.sav", "len_vec": 50},
-            },
-            "mlp_len_ang":{
-                "micro_5": {"model_file": "/build/models/mlp_len_ang-micro_5.sav", "len_vec": 5},
-                "mini_publaynet_50": {"model_file": "/build/models/mlp_len_ang-mini_publaynet_50.sav", "len_vec": 50},
-            },
-            "rnd_walk_dist":{
-                "micro_50": {"model_file": "/build/models/mlp_rnd_walk_dist-micro_50.sav", "len_vec": 50},
-                "mini_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-mini_publaynet_50.sav", "len_vec": 50},
-                "micro_publaynet_50": {"model_file": "/build/models/mlp_rnd_walk_dist-micro_publaynet_50.sav", "len_vec": 50}
-            },
-            "rnd_walk_many_dist":{
-                "mini_publaynet_50": {"model_file": "/build/models/RWMD-MP50", "len_vec": 50},
-                "do_mini_publaynet_50": {"model_file": "/build/models/dropout_RWMD-MP50", "len_vec": 50,},
-            },
-            "RWMDMA":{
-                "MP50": {"path_model": "/build/models/MDistMAng-MP50", "count_node": 50}
-            },
-            "RWMDMAB":{
-                "MP50": {"path_model": "/build/models/MDistMAngBold-MP50", "count_node": 50}
-            }
-        }
-        
-        
-        self.binarizer = ValleyEmphasisBinarizer()
-        
+    def __init__(self) -> None:
+        self.layaout_ext = LayoutExtractor()
 
     def segment2vec_distribution(self, image64, proc):
         _, _, words = self.get_segment_img_word_from_image64(image64, proc)
@@ -86,6 +34,11 @@ class ImgDocManager:
     def get_rez_proc(self, image64, proc):
         image = Image()
         image.set_base64(image64)
+        page = Page()
+        doc = Document()
+        page.image = image
+        page.set_from_np(page.image.img)
+        doc.pages = [page]
 
         history = dict()
         
@@ -99,22 +52,18 @@ class ImgDocManager:
                 history["words"] = [word.to_dict() for word in words]
 
         if "research_block" in proc and proc["research_block"]:
-                
-                model_type = proc["model_type"] if "model_type" in proc else "mlp_len"
-                model_version = proc["model_version"] if "model_version" in proc else "micro_5"
-
-                self.page_ext.block_label_ext = self.LABEL_BLOCK_EXTRACTOR_CLASS[model_type](self.LABEL_BLOCK_EXTRACTOR_CONFIG[model_type][model_version])
-        
-                self.page_ext.save_no_join_blocks = True
-                self.page_ext.save_neighbors = True
-                self.page_ext.save_distans = True
-
-                self.page_ext.set_dist_row = proc["dist_row"] if "dist_row" in proc else None 
-                self.page_ext.set_dist_word = proc["dist_word"] if "dist_word" in proc else None 
+                self.layaout_ext.extract(doc)
+                doc.pages[0].blocks = []
+                for paragraph in doc.pages[0].paragraphs:
+                    block = Block()
+                    block.segment = paragraph.segment
+                    block.words = paragraph.words
+                    doc.pages[0].blocks.append(block)
+                    doc.pages[0].extract_word_bold()
+                doc.pages[0].classification_block(proc["research_block"])
                 page = self.page_ext.extract_from_image(image)
-                page_info = page.to_dict()
-                for key, item in page_info.items():
-                    history[key] = item       
+                
+                history[key] = item       
         return history
     
     def get_segment_img_word_from_image64(self, image64, proc):

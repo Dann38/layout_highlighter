@@ -131,12 +131,17 @@ class PubLayNetDataset:
 
         return images
     
-    def get_json_from_tmps_and_images(self, fun_from_tmp_and_path_image, balans = False):
-        train = self.__get_json_from_train_tmps_and_images(fun_from_tmp_and_path_image, balans)
+    def create_json_from_tmps_and_images(self, fun_from_tmp_and_path_image, path_dir_jsons, balans = False, count_train_files=1):
+        """
+        path_dir_json - в конце без "/"
+        """
+        os.mkdir(path_dir_jsons)
+        base_name_train = os.path.join(path_dir_jsons, "train")
+        train = self.__create_json_from_train_tmps_and_images(fun_from_tmp_and_path_image, base_name_train, balans, count_train_files)
 
         return {"train": train}
     
-    def __get_json_from_train_tmps_and_images(self, fun_from_tmp_and_path_image, balans):
+    def __create_json_from_train_tmps_and_images(self, fun_from_tmp_and_path_image, base_name_train, balans, count_train_files):
 
         if balans:
             balans_dict = self.__get_balans_dict_train_image_with_index_label_block()
@@ -145,10 +150,14 @@ class PubLayNetDataset:
             list_tmp_jsons = os.listdir(self.tmp_path_train_jsons)
         rez = []
         a = 1/len(list_tmp_jsons)
+        micro_len = 0
+        micro_max = 1/count_train_files
+        micro_i = 0
         print("train:")
         for i, name_tmp_json in enumerate(list_tmp_jsons):
-            pr = a*i*100
+            pr = a*(i+1)*100
             print(f"    {pr:.2f}%    ", end="\r" )
+
             path_tmp_json =os.path.join(self.tmp_path_train_jsons, name_tmp_json)
             with open(path_tmp_json, "r") as f:
                 tmp_json = json.load(f)
@@ -156,6 +165,16 @@ class PubLayNetDataset:
                     tmp_json["blocks"] = [tmp_json["blocks"][i] for i in balans_dict[os.path.basename(path_tmp_json[:-5])]]
             path_image = os.path.join(self.path_dir_train_image, name_tmp_json[:-5])
             rez.append(fun_from_tmp_and_path_image(tmp_json, path_image))
+
+            micro_len += a
+            if micro_len >= micro_max:
+                name_saving_file = base_name_train+f"_{micro_i}.json"  
+                with open(name_saving_file, "w") as f:
+                    json.dump({"train": rez}, f)
+                rez = []
+                micro_i += 1
+                micro_len = 0
+                
         return rez
 
     def read_file(self, path, fun_read = None):

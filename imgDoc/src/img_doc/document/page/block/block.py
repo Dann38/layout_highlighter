@@ -3,10 +3,11 @@ from typing import List
 from ..paragraph import Paragraph
 from img_doc.image import ImageSegment
 from ..word import Word
-from ..extractors.block_extractors import BaseRandomWalkClassificator
+from ..extractors.block_extractors import BaseRandomWalkClassificator, BaseRandomDeepNodeClassificator
 
 CLASSIFICATOR = {
-    "walk_rnd": BaseRandomWalkClassificator
+    "walk_rnd": BaseRandomWalkClassificator,
+    "deep_rnd": BaseRandomDeepNodeClassificator,
 }
 
 class Block(ABC):
