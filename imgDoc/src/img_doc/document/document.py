@@ -29,7 +29,7 @@ class Document:
                 page.set_from_np(np.array(im))
                 self.pages.append(page)
 
-    def update_image_from_path(self, path_file): # need for dataset extractors
+    def update_image_from_path(self, path_file): # need for dataset extractors #TODO Проверить до сих пор нужен
         self.path = path_file
         if path_file.lower().endswith(IMAGE_END):
             self.pages[0].set_from_path(path_file)
