@@ -55,3 +55,10 @@ class Block(ABC):
         for word in self.words:
             str_ += word.text + ' '
         return str_
+    
+    def to_dict(self):
+        block_dict = self.segment.get_segment_2p()
+        block_dict["text"] = self.get_text()
+        if self.label is not None:
+            block_dict["label"] = self.label
+        return block_dict
