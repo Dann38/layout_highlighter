@@ -12,12 +12,10 @@ import numpy as np
 class BaseRandomWalkClassificator(BaseWordBlockClassificator):
     def __init__(self, conf) -> None:
         super().__init__(conf)
-        self.properties = conf["properties"]
         self.count_step = conf["count_step"]
         
-    def get_words_vec(self, words):
-        self.set_segments = SetImageSegment([word.segment for word in words])
-        self.set_segments.extract_neighbors()
+    def get_vec_each_segment(self, set_segments):
+        self.set_segments = set_segments
 
         rnd_walk = self.set_segments.get_rnd_walk(self.count_step+1)
         len_node_vec = len(self.get_node_vec(0, 0)) 
@@ -48,8 +46,9 @@ class BaseRandomWalkClassificator(BaseWordBlockClassificator):
         }
         rez = np.array([])
         for p in self.properties:
-            vec_p = properties_list[p]()
-            rez = np.concatenate((rez, vec_p), axis=0)
+            if p in properties_list:
+                vec_p = properties_list[p]()
+                rez = np.concatenate((rez, vec_p), axis=0)
         return rez
     
 

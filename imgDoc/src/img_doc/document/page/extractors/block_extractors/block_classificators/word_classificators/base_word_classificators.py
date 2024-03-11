@@ -2,6 +2,7 @@ from ..base_block_classificator import BaseBlockClassificator, BLOCK_LABEL
 from typing import List
 import numpy as np
 import tensorflow as tf
+from img_doc.image import SetImageSegment
 
 from abc import abstractmethod
 
@@ -10,6 +11,7 @@ from abc import abstractmethod
 """
 class BaseWordBlockClassificator(BaseBlockClassificator):
     def __init__(self, conf) -> None:
+        self.properties = conf["properties"]
         self.model = None
         if "path_model" in conf:
             self.model = tf.saved_model.load(conf["path_model"])
@@ -31,10 +33,28 @@ class BaseWordBlockClassificator(BaseBlockClassificator):
             block.extract_place_in_block_for_word_segments()
         if "bold" in self.properties:
             block.extract_bold_for_word_segments() # перенос свойства bold из слова в информацию о сегменте.
+        
+        set_segments = SetImageSegment([word.segment for word in block.words])
+        set_segments.extract_neighbors()
 
-        return self.get_words_vec(block.words)
+        word_vec = self.get_vec_each_segment(set_segments)
+        block_vec = self.get_vec_set_segment(set_segments)
+
+        return np.concatenate((word_vec, block_vec), axis=0)
+
+
+    def get_vec_set_segment(self, set_segments: SetImageSegment):
+        properties_list = {
+            "hist_dist": lambda: set_segments.get_dist_hist(),
+            "hist_ang": lambda: set_segments.get_ang_hist(),
+        }
+        rez = np.array([])
+        for p in self.properties:
+            if p in properties_list:
+                vec_p = properties_list[p]()
+                rez = np.concatenate((rez, vec_p), axis=0)
+        return rez
 
     @abstractmethod
-    def get_words_vec(self, words):
+    def get_vec_each_segment(self, words):
         pass
-

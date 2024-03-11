@@ -14,13 +14,11 @@ N - число узлов, M - вектор характеризующий уз�
 class BaseRandomDeepNodeClassificator(BaseWordBlockClassificator):
     def __init__(self, conf) -> None:
         super().__init__(conf)
-        self.properties = conf["properties"]
         self.count_node = conf["count_node"]
         self.deep = conf["deep"]
 
-    def get_words_vec(self, words):
-        self.set_segments = SetImageSegment([word.segment for word in words])
-        self.set_segments.extract_neighbors()
+    def get_vec_each_segment(self, set_segments: SetImageSegment):
+        self.set_segments = set_segments
         rnd_nodes = self.set_segments.get_list_random_node(self.count_node)
         
         len_node_vec = len(self.get_deep_node_vec(0, self.deep)) 
@@ -31,9 +29,10 @@ class BaseRandomDeepNodeClassificator(BaseWordBlockClassificator):
         for i, i_node in enumerate(rnd_nodes):
             vec[len_node_vec*i:len_node_vec*(i+1)] = self.get_deep_node_vec(i_node, self.deep) 
         
-        for i in range(len_node_vec):
-            max_ = np.max(np.abs(vec[i::len_node_vec]))
-            vec[i::len_node_vec] = vec[i::len_node_vec]/max_ if max_ != 0 else vec[i::len_node_vec]
+        len_node_one_vec = len(self.get_node_vec(0))
+        for i in range(len_node_one_vec):
+            max_ = np.max(np.abs(vec[i::len_node_one_vec]))
+            vec[i::len_node_one_vec] = vec[i::len_node_one_vec]/max_ if max_ != 0 else vec[i::len_node_one_vec]
         # vec[vec == np.inf] = 1.0
         # vec[vec == -np.inf] = -1.0
         return vec
@@ -62,8 +61,9 @@ class BaseRandomDeepNodeClassificator(BaseWordBlockClassificator):
         
         rez = np.array([])
         for p in self.properties:
-            vec_p = properties_list[p]()
-            rez = np.concatenate((rez, vec_p), axis=0)
+            if p in properties_list:
+                vec_p = properties_list[p]()
+                rez = np.concatenate((rez, vec_p), axis=0)
         return rez
     
 

@@ -150,7 +150,7 @@ class PubLayNetDataset:
             list_tmp_jsons = os.listdir(self.tmp_path_train_jsons)
         rez = []
         a = 1/len(list_tmp_jsons)
-        micro_len = 0
+        micro_len = a
         micro_max = 1/count_train_files
         micro_i = 0
         print("train:")

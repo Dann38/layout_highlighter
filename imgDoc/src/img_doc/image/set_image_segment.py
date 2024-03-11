@@ -59,3 +59,19 @@ class SetImageSegment:
     def get_info_segment(self, index1, key_info) -> List[float]:
         rez = self.segments[index1].get_info(key_info)
         return list(rez)
+    
+    def get_dist_hist(self)-> List[float]:
+        dists = np.array([x for i in range(len(self.segments)) for x in self.get_many_dist(i)])
+        rez = np.histogram(dists, bins=11)[0]
+        max_ = rez.max()
+        if max_ != 0:
+            rez = rez/max_
+        return rez        
+    
+    def get_ang_hist(self)-> List[float]:
+        angs = np.array([x for i in range(len(self.segments)) for x in self.get_many_angle(i)])
+        rez = np.histogram(angs, bins=11)[0]
+        max_ = rez.max()
+        if max_ != 0:
+            rez = rez/max_
+        return rez 
