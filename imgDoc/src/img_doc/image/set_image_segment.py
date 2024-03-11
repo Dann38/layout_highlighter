@@ -75,3 +75,19 @@ class SetImageSegment:
         if max_ != 0:
             rez = rez/max_
         return rez 
+    
+    def get_bold_hist(self)-> List[float]:
+        bolds = np.array([self.get_info_segment(i, "bold") for i in range(len(self.segments))])
+        rez = np.histogram(bolds, bins=11)[0]
+        max_ = rez.max()
+        if max_ != 0:
+            rez = rez/max_
+        return rez 
+    
+    def get_height_hist(self):
+        heights = np.array([self.segments[i].get_height() for i in range(len(self.segments))])
+        rez = np.histogram(heights, bins=11)[0]
+        max_ = rez.max()
+        if max_ != 0:
+            rez = rez/max_
+        return rez

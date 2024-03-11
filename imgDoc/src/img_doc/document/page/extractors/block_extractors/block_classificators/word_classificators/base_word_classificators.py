@@ -31,7 +31,7 @@ class BaseWordBlockClassificator(BaseBlockClassificator):
     def get_block_vec(self, block: "Block"):
         if "place_in_block" in self.properties:
             block.extract_place_in_block_for_word_segments()
-        if "bold" in self.properties:
+        if "bold" in self.properties or "hist_bold" in self.properties:
             block.extract_bold_for_word_segments() # перенос свойства bold из слова в информацию о сегменте.
         
         set_segments = SetImageSegment([word.segment for word in block.words])
@@ -47,6 +47,8 @@ class BaseWordBlockClassificator(BaseBlockClassificator):
         properties_list = {
             "hist_dist": lambda: set_segments.get_dist_hist(),
             "hist_ang": lambda: set_segments.get_ang_hist(),
+            "hist_bold": lambda: set_segments.get_bold_hist(),
+            "hist_height": lambda: set_segments.get_height_hist(),
         }
         rez = np.array([])
         for p in self.properties:

@@ -150,7 +150,7 @@ class PubLayNetDataset:
             list_tmp_jsons = os.listdir(self.tmp_path_train_jsons)
         rez = []
         a = 1/len(list_tmp_jsons)
-        micro_len = a
+        micro_len = 0
         micro_max = 1/count_train_files
         micro_i = 0
         print("train:")
@@ -174,8 +174,11 @@ class PubLayNetDataset:
                 rez = []
                 micro_i += 1
                 micro_len = 0
-                
-        return rez
+        if len(rez) != 0:
+            name_saving_file = base_name_train+f"_{micro_i}.json"  
+            with open(name_saving_file, "w") as f:
+                json.dump({"train": rez}, f)
+            rez = []
 
     def read_file(self, path, fun_read = None):
         fun_read = self.base_read if fun_read is None else fun_read

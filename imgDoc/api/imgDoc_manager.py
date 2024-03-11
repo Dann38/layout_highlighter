@@ -26,6 +26,23 @@ conf={
     },
 }
 
+conf_new={
+    "extractor_word":{
+        "method":"tesseract",
+        "conf": {"lang": "eng+rus", "psm": 4, "oem": 3, "k": 1},
+    },
+    "page_classification":{
+        "type": "page_and_walk",
+        "rnd_conf": {
+            "properties":["hist_ang", "hist_bold", "hist_dist", "hist_height"],
+            "count_step":0},
+        "conf": {
+            "properties":["place_in_page", "count_word_in_page"],
+            "path_model": "/build/model_training/models/Hdabh-PLN/"
+        }
+    },
+}
+
 
 class ImgDocManager:
     def __init__(self) -> None:
@@ -72,12 +89,13 @@ class ImgDocManager:
         if "research_block" in proc and proc["research_block"]:
                 self.layaout_ext.extract(doc)
                 doc.pages[0].blocks = []
+                doc.pages[0].extract_word_bold()
                 for paragraph in doc.pages[0].paragraphs:
                     block = Block(paragraph.segment.get_segment_2p())
                     block.words = paragraph.words
                     doc.pages[0].blocks.append(block)
-                doc.pages[0].extract_word_bold()
-                doc.pages[0].classification_block(conf["page_classification"])
+                
+                doc.pages[0].classification_block(conf_new["page_classification"])
                 dict_page = doc.pages[0].to_dict()
                 history["join_blocks"] = dict_page["blocks"]
                 history["words"] = dict_page["words"]
