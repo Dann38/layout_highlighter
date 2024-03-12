@@ -1,5 +1,5 @@
 from typing import List
-from img_doc.image import Image, ImageSegment
+from img_doc.image import Image, ImageSegment, SetImageSegment, PositionException
 from .word import Word
 from .block import Block
 from .extractors import Words2Paragraph, TesseractWordExtractor, SPHBoldExtractor
@@ -56,8 +56,12 @@ class Page:
     def set_words_from_dict(self, list_words: List[dict]):
         self.words = []
         for dict_word in list_words:
-            word = Word(dict_word)
-            self.words.append(word)
+            try:
+                word = Word(dict_word)
+                self.words.append(word)
+            except PositionException:
+                pass
+            
 
     def extract_place_in_page_for_block_segments(self):
         page_h = self.image.segment.get_height()
@@ -72,8 +76,14 @@ class Page:
     def set_blocks_from_dict(self, list_blocks: List[dict]):
         self.blocks = []
         for dict_block in list_blocks:
-            block = Block(dict_block)
-            self.blocks.append(block)
+            try:
+                block = Block(dict_block)
+                self.blocks.append(block)
+            except PositionException:
+                pass
+
+    def get_word_set_segments(self):
+        return SetImageSegment([word.segment for word in self.words])
 
     def get_block_from_segment(self, segment: ImageSegment, conf) -> Block:
         block = Block(segment.get_segment_2p())

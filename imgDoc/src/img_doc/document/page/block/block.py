@@ -12,11 +12,8 @@ CLASSIFICATOR = {
 
 class Block(ABC):
     def __init__(self, dict_block):
-        self.segment = ImageSegment()
-        if "width" in dict_block.keys():
-            self.segment.set_segment_p_size(dict_block)
-        else:
-            self.segment.set_segment_2p(dict_block)
+        self.segment = ImageSegment(dict_p_size = dict_block) if "width" in dict_block else ImageSegment(dict_2p = dict_block)
+        
         
         self.paragraphs: List[Paragraph] = []
         self.words: List[Word] = []
@@ -62,3 +59,10 @@ class Block(ABC):
         if self.label is not None:
             block_dict["label"] = self.label
         return block_dict
+    
+class BlockWithoutWords(Exception):
+    def __init__(self) -> None:
+        pass
+
+    def __str__(self) -> str:
+        return "Count words in block is Zero"

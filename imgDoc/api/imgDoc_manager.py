@@ -97,6 +97,9 @@ class ImgDocManager:
                 
                 doc.pages[0].classification_block(conf_new["page_classification"])
                 dict_page = doc.pages[0].to_dict()
+                set_segments = doc.pages[0].get_word_set_segments()
+                set_segments.extract_neighbors()
+                history["neighbors"] = set_segments.neighbors
                 history["join_blocks"] = dict_page["blocks"]
                 history["words"] = dict_page["words"]
                       

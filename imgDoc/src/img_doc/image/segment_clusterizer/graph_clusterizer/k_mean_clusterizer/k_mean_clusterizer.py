@@ -10,8 +10,7 @@ class KMeanClusterizer(BaseSegmentClusterizer):
         if len(segments) == 0:
             return []
         elif len(segments) == 1:
-            segment = ImageSegment()
-            segment.set_segment_2p(segments[0].get_segment_2p())
+            segment = ImageSegment(dict_2p=segments[0].get_segment_2p())
             return [segment]
 
         neighbors = self.get_index_neighbors_segment(segments)
@@ -30,7 +29,7 @@ class KMeanClusterizer(BaseSegmentClusterizer):
 
         parent_segments = []
         for r in graph.get_related_graphs():
-            seg = ImageSegment()
+            seg = ImageSegment(0, 0, 1, 1)
             segment_r = [segments[n.index-1] for n in r.get_nodes()]
             seg.set_segment_max_segments(segment_r)
             parent_segments.append(seg)
@@ -72,7 +71,7 @@ class KMeanClusterizer(BaseSegmentClusterizer):
     def get_hash_matrix(self, segments):
         n = len(segments)
 
-        big_segment = ImageSegment(0, 0, 0, 0)
+        big_segment = ImageSegment(0, 0, 1, 1)
         big_segment.set_segment_max_segments(segments)
 
         h = big_segment.get_height()
@@ -83,8 +82,8 @@ class KMeanClusterizer(BaseSegmentClusterizer):
         m_width = int(np.ceil((n * coef) ** 0.5))
         m_height = int(np.ceil(m_width / coef))
 
-        dh = h / m_height
-        dw = w / m_width
+        dh =  (m_height-1) / h
+        dw = (m_width-1) / w
         ch = big_segment.y_top_left
         cw = big_segment.x_top_left
         hashkey = lambda seg: self.get_index_hash(seg, dh, dw, ch, cw)
@@ -99,8 +98,8 @@ class KMeanClusterizer(BaseSegmentClusterizer):
 
     def get_index_hash(self, seg, dh, dw, ch, cw):
         x_c, y_c = seg.get_center()
-        hash_i = int((y_c - ch) / dh)
-        hash_j = int((x_c - cw) / dw)
+        hash_i = int((y_c - ch) * dh)
+        hash_j = int((x_c - cw) * dw)
         return hash_i, hash_j
 
     def get_segment_hash_cell(self, hash_matrix, hash_i, hash_j):
@@ -112,28 +111,39 @@ class KMeanClusterizer(BaseSegmentClusterizer):
         index_h_max = len(hash_matrix)
         index_w_max = len(hash_matrix[0])
 
+        neighbors = []
         if vec in ("left", "right"):
             new_index_w = index_w - level if vec == "left" else index_w + level
+            if new_index_w < 0 or new_index_w >= index_w_max:
+                return k
             new_index_h = index_h
-
             new_index_h0 = max(0, index_h - level)
-            new_index_h1 = min(index_h_max - 1, index_h + level)
+            new_index_h1 = min(index_h_max - 1 , index_h + level) 
+            for new_index_h in range(new_index_h0, new_index_h1+1):
+                neighbors += self.get_segment_hash_cell(hash_matrix, new_index_h, new_index_w)
+             
             
         elif vec in ("top", "bottom"):
             new_index_h = index_h - level if vec == "top" else index_h + level
             new_index_w = index_w
+            if new_index_h < 0 or new_index_h >= index_h_max:
+                return k
             new_index_w0 = max(0, index_w - level)
             new_index_w1 = min(index_w_max - 1, index_w + level)
-            
+            for new_index_w in range(new_index_w0, new_index_w1+1):
+                neighbors += self.get_segment_hash_cell(hash_matrix, new_index_h, new_index_w)
+             
 
-        if new_index_w < 0 or new_index_w >= index_w_max or new_index_h < 0 or new_index_h >= index_h_max:
-            return k
-        else:
-            neighbors = []
-            if vec in ("left", "right"):
-                neighbors += self.get_segment_hash_cell(hash_matrix, new_index_h, new_index_w)
-            else:
-                neighbors += self.get_segment_hash_cell(hash_matrix, new_index_h, new_index_w)
+        # if new_index_w < 0 or new_index_w >= index_w_max or new_index_h < 0 or new_index_h >= index_h_max:
+        #     return k
+        # else:
+        #     neighbors = []
+        #     if vec in ("left", "right"):
+        #         neighbors += self.get_segment_hash_cell(hash_matrix, new_index_h, new_index_w)
+        #     else:
+        #         neighbors += self.get_segment_hash_cell(hash_matrix, new_index_h, new_index_w)
+
+
 
         min_distance = np.inf
         min_index = k
@@ -216,9 +226,9 @@ class KMeanClusterizer(BaseSegmentClusterizer):
             for vec, n2 in enumerate(ed_k):
                 set_n = {n1, n2}
                 if n1 != n2 and not (set_n in edges):
-                    if (vec in (0, 2)) and (distans[n1][vec] < dist_row) and (distans[n1][vec] > 0):
+                    if (vec in (0, 2)) and (distans[n1][vec] <= dist_row) and (distans[n1][vec] > 0):
                         edges.append(set_n)
-                    elif (vec in (1, 3)) and (distans[n1][vec] < dist_word) and (distans[n1][vec] > 0):
+                    elif (vec in (1, 3)) and (distans[n1][vec] <= dist_word) and (distans[n1][vec] > 0):
                         edges.append(set_n)
         for i, seg in enumerate(segments):
             c1x, c1y = seg.get_center()

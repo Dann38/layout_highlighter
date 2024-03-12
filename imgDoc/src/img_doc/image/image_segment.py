@@ -5,11 +5,13 @@ from typing import Dict, List
 import matplotlib.pyplot as plt 
 
 class ImageSegment(ABC):
-    def __init__(self, x_top_left=None, y_top_left=None, x_bottom_right=None, y_bottom_right=None):
-        self.x_top_left = x_top_left
-        self.y_top_left = y_top_left
-        self.x_bottom_right = x_bottom_right
-        self.y_bottom_right = y_bottom_right
+    def __init__(self, x_top_left=None, y_top_left=None, x_bottom_right=None, y_bottom_right=None, dict_2p=None, dict_p_size=None):
+        if dict_2p is not None:
+            self.set_segment_2p(dict_2p)
+        elif dict_p_size is not None:
+            self.set_segment_p_size(dict_p_size)
+        else:
+            self._set_segment(x_top_left, y_top_left, x_bottom_right, y_bottom_right)
         self.info = dict()
 
     def get_segment_from_img(self, img: np.ndarray, delta=0):
@@ -38,17 +40,28 @@ class ImageSegment(ABC):
         y_c = round((self.y_top_left + self.y_bottom_right) / 2)
         return x_c, y_c
 
+    def _set_segment(self, x_top_left:int, y_top_left: int, x_bottom_right: int, y_bottom_right: int):
+        if x_top_left >= x_bottom_right or y_top_left >= y_bottom_right:
+            raise PositionException(x_top_left, y_top_left, x_bottom_right, y_bottom_right)
+        for cord in [x_top_left, y_top_left, x_bottom_right, y_bottom_right]:
+            if type(cord) is float:
+                raise TypeArgError(x_top_left, y_top_left, x_bottom_right, y_bottom_right)    
+        self.x_top_left = x_top_left
+        self.y_top_left = y_top_left
+        self.x_bottom_right = x_bottom_right
+        self.y_bottom_right = y_bottom_right
+
+
     def set_segment_2p(self, dict_2point: Dict):
-        self.x_top_left = dict_2point["x_top_left"]
-        self.y_top_left = dict_2point["y_top_left"]
-        self.x_bottom_right = dict_2point["x_bottom_right"]
-        self.y_bottom_right = dict_2point["y_bottom_right"]
+        self._set_segment(dict_2point["x_top_left"], dict_2point["y_top_left"], 
+                          dict_2point["x_bottom_right"], dict_2point["y_bottom_right"])
+        
 
     def set_segment_p_size(self, dict_2point: Dict):
-        self.x_top_left = dict_2point["x_top_left"]
-        self.y_top_left = dict_2point["y_top_left"]
-        self.x_bottom_right = dict_2point["width"] + self.x_top_left
-        self.y_bottom_right = dict_2point["height"] + self.y_top_left
+        self._set_segment(dict_2point["x_top_left"], dict_2point["y_top_left"], 
+                          dict_2point["width"] + dict_2point["x_top_left"],
+                          dict_2point["height"] + dict_2point["y_top_left"])
+    
 
     def set_segment_max_segments(self, segments: List["ImageSegment"]):
         list_x_top_left = [segment.x_top_left for segment in segments]
@@ -149,3 +162,30 @@ class ImageSegment(ABC):
         self.y_top_left = round(k*self.y_top_left)
         self.x_bottom_right = round(k*self.x_bottom_right)
         self.y_bottom_right = round(k*self.y_bottom_right)
+
+
+class SegmentException(Exception):
+    def __init__(self, x_top_left, y_top_left, x_bottom_right, y_bottom_right):
+        self.x_top_left = x_top_left
+        self.x_bottom_right = x_bottom_right
+        self.y_top_left = y_top_left
+        self.y_bottom_right = y_bottom_right
+
+class PositionException(SegmentException):
+    def __str__(self):
+        return f"\nx_top_left = {self.x_top_left} < x_bottom_right = {self.x_bottom_right}\n" \
+               f"y_top_left = {self.y_top_left} < y_bottom_right = {self.y_bottom_right}\n"
+    
+class TypeArgError(SegmentException):
+    def __str__(self):
+        str_ = ""
+        if type(self.x_top_left) is not int:
+            str_ += f"x_top_left - {type(self.x_top_left)}\n"
+        if type(self.x_bottom_right) is not int:
+            str_ += f"x_bottom_right - {type(self.x_bottom_right)}\n"
+        if type(self.y_top_left) is not int:
+            str_ += f"y_top_left - {type(self.y_top_left)}\n"
+        if type(self.y_bottom_right) is not int:
+            str_ += f"x_top_left - {type(self.y_bottom_right)}\n"
+        return str_
+ 

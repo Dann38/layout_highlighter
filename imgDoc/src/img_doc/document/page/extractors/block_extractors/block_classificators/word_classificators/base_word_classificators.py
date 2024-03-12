@@ -29,6 +29,8 @@ class BaseWordBlockClassificator(BaseBlockClassificator):
         
     
     def get_block_vec(self, block: "Block"):
+        if len(block.words) == 0:
+            raise ValueError()
         if "place_in_block" in self.properties:
             block.extract_place_in_block_for_word_segments()
         if "bold" in self.properties or "hist_bold" in self.properties:
