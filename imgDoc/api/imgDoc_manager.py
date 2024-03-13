@@ -44,6 +44,7 @@ conf_new={
 }
 
 
+
 class ImgDocManager:
     def __init__(self) -> None:
         self.layaout_ext = LayoutExtractor()
@@ -105,6 +106,20 @@ class ImgDocManager:
                       
         return history
     
+    def get_info_block(self, image64, block):
+        image = Image()
+        image.set_base64(image64)
+        page = Page()
+        doc = Document()
+        page.image = image
+        page.set_from_np(page.image.img)
+        doc.pages = [page]
+        block = doc.get_info_from_segment(num_page=0, x_top_left=block["x_top_left"], 
+                                                      y_top_left=block["y_top_left"], 
+                                                      x_bottom_right=block["x_bottom_right"], 
+                                                      y_bottom_right=block["y_bottom_right"], 
+                                                      conf=conf_new)
+        return block.to_dict()
     # def get_segment_img_word_from_image64(self, image64, proc):
     #     image = Image()
     #     image.set_base64(image64)

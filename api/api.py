@@ -34,6 +34,15 @@ def research(doc_id: int):
 def read():
     return render_template("read.html")
 
+@app.route("/read/block_info/", methods=["POST"])
+def read_block_info():
+    image = str(request.form["base_image64"])
+    process = str(request.form["block"])
+    content = requests.post(f'{host_img_doc}/block_info/', json={
+        "image64": image,
+        "process": process}).content
+    return content
+
 @app.route("/manual_marking/<int:doc_id>")
 def manual_marking(doc_id: int):
     context = {
