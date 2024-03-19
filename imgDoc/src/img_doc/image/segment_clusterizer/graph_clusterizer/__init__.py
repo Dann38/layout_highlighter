@@ -1,1 +1,2 @@
 from .k_mean_clusterizer import KMeanClusterizer
+from .gnn_clusterizer import GNNClusterizer

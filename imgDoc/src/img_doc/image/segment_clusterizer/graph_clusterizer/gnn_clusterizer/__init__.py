@@ -1,0 +1,1 @@
+from .gnn_clusterizer import GNNClusterizer
