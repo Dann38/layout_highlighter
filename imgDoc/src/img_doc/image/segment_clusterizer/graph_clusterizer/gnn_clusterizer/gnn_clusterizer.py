@@ -27,8 +27,8 @@ class GNNClusterizer(KMeanClusterizer):
         vecs = [[] for s in segments]
         
         for i, nodes in enumerate(neighbors):
-            x = sum([xs[n] for n in nodes])/4
-            y = sum([ys[n] for n in nodes])/4
+            x = sum([xs[n]-xs[i] for n in nodes])/4
+            y = sum([ys[n]-ys[i] for n in nodes])/4
             vecs[i].append(x)
             vecs[i].append(y)
 
